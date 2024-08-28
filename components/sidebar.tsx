@@ -75,7 +75,7 @@ export default function Sidebar() {
         />
         <h2 className="text-lg font-semibold">Acme Inc.</h2>
       </div>
-      <Separator />
+      <Separator className="mx-auto w-4/5" />
       <ScrollArea className="flex-1">
         <nav className="p-2">
           {routes.map((route) => (
