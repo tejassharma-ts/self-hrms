@@ -4,20 +4,24 @@ import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Separator } from "@/components/ui/separator"
 import { ChevronDown, ChevronUp, Home, Settings, Users, BarChart, Files } from "lucide-react"
+import { useRouter } from 'next/navigation'
 
 type Route = {
   name: string
+  path: string
   icon: React.ReactNode
-  subRoutes?: { name: string; path: string }[]
+  subRoutes?: { name: string; path: string }[],
 }
 
 const routes: Route[] = [
   {
     name: 'Dashboard',
+    path: '/dashboard',
     icon: <Home className="h-4 w-4" />,
   },
   {
     name: 'Users',
+    path: '/users',
     icon: <Users className="h-4 w-4" />,
     subRoutes: [
       { name: 'All Users', path: '/users' },
@@ -26,6 +30,7 @@ const routes: Route[] = [
   },
   {
     name: 'Reports',
+    path: '/reports',
     icon: <BarChart className="h-4 w-4" />,
     subRoutes: [
       { name: 'Sales Report', path: '/reports/sales' },
@@ -34,10 +39,12 @@ const routes: Route[] = [
   },
   {
     name: 'Documents',
+    path: '/documents',
     icon: <Files className="h-4 w-4" />,
   },
   {
     name: 'Settings',
+    path: '/settings',
     icon: <Settings className="h-4 w-4" />,
   },
 ]
@@ -45,6 +52,7 @@ const routes: Route[] = [
 export default function Sidebar() {
   const [expandedRoutes, setExpandedRoutes] = useState<string[]>([])
   const [selectedRoute, setSelectedRoute] = useState<string>('')
+  const router = useRouter()
 
   const toggleRoute = (routeName: string) => {
     setExpandedRoutes(prev =>
@@ -54,11 +62,9 @@ export default function Sidebar() {
     )
   }
 
-  const handleRouteClick = (routeName: string) => {
+  const handleRouteClick = (routeName: string, path: string) => {
     setSelectedRoute(routeName)
-    if (routes.find(route => route.name === routeName)?.subRoutes) {
-      toggleRoute(routeName)
-    }
+    router.push(path)
   }
 
   return (
@@ -80,25 +86,33 @@ export default function Sidebar() {
         <nav className="p-2">
           {routes.map((route) => (
             <div key={route.name} className="mb-1">
-              <Button
-                variant="ghost"
-                className={`w-full justify-start transition-colors ${
-                  selectedRoute === route.name
-                    ? 'bg-black text-white hover:bg-black/90 hover:text-white'
-                    : 'hover:bg-gray-200'
-                }`}
-                onClick={() => handleRouteClick(route.name)}
-              >
-                {route.icon}
-                <span className="ml-2 flex-1 text-left">{route.name}</span>
+              <div className="flex items-center">
+                <Button
+                  variant="ghost"
+                  className={`w-full justify-start transition-colors ${
+                    selectedRoute === route.name
+                      ? 'bg-black text-white'
+                      : 'hover:bg-gray-200'
+                  }`}
+                  onClick={() => handleRouteClick(route.name, route.path)}
+                >
+                  {route.icon}
+                  <span className="ml-2 flex-1 text-left">{route.name}</span>
+                </Button>
                 {route.subRoutes && (
-                  expandedRoutes.includes(route.name) ? (
-                    <ChevronUp className="h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4" />
-                  )
+                  <Button
+                    variant="ghost"
+                    className="ml-2"
+                    onClick={() => toggleRoute(route.name)}
+                  >
+                    {expandedRoutes.includes(route.name) ? (
+                      <ChevronUp className="h-4 w-4" />
+                    ) : (
+                      <ChevronDown className="h-4 w-4" />
+                    )}
+                  </Button>
                 )}
-              </Button>
+              </div>
               {route.subRoutes && expandedRoutes.includes(route.name) && (
                 <div className="ml-4 mt-1 space-y-1">
                   {route.subRoutes.map((subRoute) => (
@@ -110,7 +124,7 @@ export default function Sidebar() {
                           ? 'bg-black text-white'
                           : 'hover:bg-gray-200'
                       }`}
-                      onClick={() => setSelectedRoute(subRoute.name)}
+                      onClick={() => handleRouteClick(subRoute.name, subRoute.path)}
                     >
                       {subRoute.name}
                     </Button>
