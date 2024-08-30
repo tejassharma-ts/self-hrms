@@ -113,7 +113,7 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedPro
     }
 
     return (
-        <div className=" mt-20 mx-auto">
+        <div className="mx-auto">
             <div className="flex gap-4 mb-4">
                 <Select onValueChange={setFilter}>
                     <SelectTrigger className="rounded-full bg-black text-white w-fit gap-2">

@@ -70,15 +70,15 @@ export default function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col">
       <div className="flex items-center space-x-2 p-4 bg-white">
-        <img
-          alt="Company logo"
-          className="h-8 w-8 rounded-full"
-          src="/placeholder.svg"
-          style={{
-            aspectRatio: "32/32",
-            objectFit: "cover",
-          }}
-        />
+        {/* <img */}
+        {/*   alt="Company logo" */}
+        {/*   className="h-8 w-8 rounded-full" */}
+        {/*   src="/placeholder.svg" */}
+        {/*   style={{ */}
+        {/*     aspectRatio: "32/32", */}
+        {/*     objectFit: "cover", */}
+        {/*   }} */}
+        {/* /> */}
         <h2 className="text-lg font-semibold">Acme Inc.</h2>
       </div>
       <Separator className="mx-auto w-4/5" />
