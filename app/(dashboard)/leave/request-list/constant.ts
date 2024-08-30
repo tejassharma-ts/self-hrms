@@ -1,0 +1,57 @@
+export const employeeListCell = [
+  "Name",
+  "department",
+  "leave",
+  "date requested",
+  "Reason of Leave",
+  "Duration",
+  "Status",
+];
+
+export const employeeListData = [
+  {
+    name: "John Doe",
+    department: "Engineering",
+    leave: "Vacation",
+    dateRequested: "2024-08-28",
+    reasonOfLeave: "Family Vacation",
+    duration: "2 weeks",
+    status: "approved",
+  },
+  {
+    name: "Jane Smith",
+    department: "Marketing",
+    leave: "Sick Leave",
+    dateRequested: "2024-08-25",
+    reasonOfLeave: "Flu",
+    duration: "3 days",
+    status: "pending",
+  },
+  {
+    name: "Robert Brown",
+    department: "Human Resources",
+    leave: "Maternity Leave",
+    dateRequested: "2024-08-20",
+    reasonOfLeave: "Childbirth",
+    duration: "3 months",
+    status: "approved",
+  },
+  {
+    name: "Emily White",
+    department: "Finance",
+    leave: "Personal Leave",
+    dateRequested: "2024-08-22",
+    reasonOfLeave: "Moving House",
+    duration: "1 week",
+    status: "denied",
+  },
+  {
+    name: "Michael Green",
+    department: "IT Support",
+    leave: "Compassionate Leave",
+    dateRequested: "2024-08-27",
+    reasonOfLeave: "Family Emergency",
+    duration: "1 week",
+    status: "approved",
+  },
+];
