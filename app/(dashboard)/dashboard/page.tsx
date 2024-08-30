@@ -12,7 +12,7 @@ import Project from "./_components/Project"
 
 export default function GridCards() {
   return (
-    <div className="container mx-auto pt-20 p-4">
+    <div className="container mx-auto p-4">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-11 gap-2">
         <div className="col-span-3 mb-4">
           <WelcomeCard />

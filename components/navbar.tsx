@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator"
 
 export default function Navbar() {
   return (
-    <nav className="flex items-center relative z-50 justify-end p-4 bg-slate-50">
+    <nav className="flex items-center z-50 justify-end p-4 bg-slate-50 sticky top-0">
       <div className="flex items-center space-x-4">
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
