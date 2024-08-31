@@ -7,18 +7,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { employeeListCell, employeeListData } from "../constant";
-import { Icons } from "@/components/Icons";
+import { employeeListCellLeave, employeeLeaveData } from "../constant";
 
-export default function EmployeeList() {
+export default function EmployeeLeave() {
   return (
     <div>
       <Table>
         <TableCaption>A list of employees as per requested filter.</TableCaption>
         <TableHeader>
           <TableRow>
-            {employeeListCell.map((cell, idx) => (
+            {employeeListCellLeave.map((cell, idx) => (
               <TableHead key={idx} className="capitalize">
                 {cell}
               </TableHead>
@@ -26,7 +24,7 @@ export default function EmployeeList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {employeeListData.map((col, idx) => (
+          {employeeLeaveData.map((col, idx) => (
             <TableRow key={idx}>
               <TableCell className="font-medium">{col.name}</TableCell>
               <TableCell>{col.department}</TableCell>
@@ -35,18 +33,6 @@ export default function EmployeeList() {
               <TableCell>{col.reasonOfLeave}</TableCell>
               <TableCell>{col.duration}</TableCell>
               <TableCell className="capitalize">{col.status}</TableCell>
-              <TableCell>
-                <Select defaultValue={col.status}>
-                  <SelectTrigger noChev className="h-auto w-auto border-none bg-transparent p-0">
-                    <Icons.option className="size-4" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="denied">Denied</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-              </TableCell>
             </TableRow>
           ))}
         </TableBody>
