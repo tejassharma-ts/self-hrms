@@ -52,54 +52,54 @@ export function TabsWrapper({
   }, [options]);
 
   return (
-    <Card>
-      <Tabs
-        value={options.activeTab}
-        onValueChange={(value) =>
-          setOptions((pre) => ({ ...pre, activeTab: value }))
-        }
-        defaultValue={options.activeFilter}
-      >
-        <CardHeader className="relative">
-          <TabsList className="self-start">
-            <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
-            <TabsTrigger value="leave-balance">Leave Balance</TabsTrigger>
-            <TabsTrigger value="calender">Calender</TabsTrigger>
-          </TabsList>
-          <div className="absolute right-0 top-4">
-            <Select
-              value={options.activeFilter}
-              onValueChange={(value: Filter) =>
-                setOptions((pre) => ({ ...pre, activeFilter: value }))
-              }
-            >
-              <SelectTrigger
-                className={cn(
-                  buttonVariants({
-                    variant: "default",
-                    className: "w-auto",
-                  }),
-                )}
-              >
-                <SelectValue placeholder="Filter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="approved">Approved</SelectItem>
-                <SelectItem value="denied">Denied</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <TabsContent value="leave-request">
-            <EmployeeList />
-          </TabsContent>
-          <TabsContent value="calender">
-            <CustomCalendar />
-          </TabsContent>
-        </CardContent>
-      </Tabs>
-    </Card>
+    <>
+      <div className="mb-2 flex items-center justify-between space-y-2">
+        <h1 className="text-2xl font-bold tracking-tight">Employee Request List</h1>
+      </div>
+      <Card>
+        <Tabs
+          value={options.activeTab}
+          onValueChange={(value) => setOptions((pre) => ({ ...pre, activeTab: value }))}
+          defaultValue={options.activeFilter}>
+          <CardHeader className="relative px-0">
+            <TabsList className="self-start">
+              <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
+              <TabsTrigger value="leave-balance">Leave Balance</TabsTrigger>
+              <TabsTrigger value="calender">Calender</TabsTrigger>
+            </TabsList>
+            <div className="absolute right-0 top-4">
+              <Select
+                value={options.activeFilter}
+                onValueChange={(value: Filter) =>
+                  setOptions((pre) => ({ ...pre, activeFilter: value }))
+                }>
+                <SelectTrigger
+                  className={cn(
+                    buttonVariants({
+                      variant: "default",
+                      className: "w-auto",
+                    }),
+                  )}>
+                  <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="approved">Approved</SelectItem>
+                  <SelectItem value="denied">Denied</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <TabsContent value="leave-request">
+              <EmployeeList />
+            </TabsContent>
+            <TabsContent value="calender">
+              <CustomCalendar />
+            </TabsContent>
+          </CardContent>
+        </Tabs>
+      </Card>
+    </>
   );
 }
