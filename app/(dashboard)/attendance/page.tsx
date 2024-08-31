@@ -47,7 +47,7 @@ const page = () => {
             {selectedProfile ?
                 <div className='flex flex-row gap-10' >
                     <AttendanceDashboard />
-                    <ProjectTimeline/>
+                    <ProjectTimeline />
                 </div>
                 :
                 <AttendanceList />

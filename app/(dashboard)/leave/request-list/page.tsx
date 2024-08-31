@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { TabsWrapper } from "./_components/TabsWrapper";
 
 type EmployeeRequestListPageProps = {
