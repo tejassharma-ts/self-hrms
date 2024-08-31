@@ -68,7 +68,7 @@ export default function Sidebar() {
   }
 
   return (
-    <div className="flex h-screen w-64 flex-col">
+    <div className="flex h-screen w-64 flex-col fixed left-0">
       <div className="flex items-center space-x-2 p-4 bg-white">
         {/* <img */}
         {/*   alt="Company logo" */}

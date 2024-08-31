@@ -4,7 +4,7 @@ const EmployeeRequestList = () => {
   const rows = 11; // Number of rows in the list
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
+    <div>
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-2xl font-bold">Employee request List 20</h1>
         <div className="space-x-2">
