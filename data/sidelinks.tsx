@@ -55,8 +55,20 @@ export const sidelinks: SideLink[] = [
   {
     title: "Leave",
     label: "3",
-    href: "#",
+    href: "/leave",
     icon: <Icons.absent size={18} />,
+    sub: [
+      {
+        title: "Employee",
+        href: "#",
+        icon: <></>,
+      },
+      {
+        title: "Something",
+        href: "#",
+        icon: <></>,
+      },
+    ],
   },
   {
     title: "Expenses",
