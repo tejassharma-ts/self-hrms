@@ -1,11 +1,12 @@
 "use client"
 import React from 'react'
-import Calender from './_components/Calender'
+import CustomCalender from './_components/CustomCalender'
 
 const page = () => {
   return (
     <div className='h-screen w-full'>
-      <Calender/>
+      
+      <CustomCalender/>
     </div>
   )
 }
