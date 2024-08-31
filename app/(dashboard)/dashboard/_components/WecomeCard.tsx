@@ -8,11 +8,12 @@ export default async function WelcomeCard() {
   // await delay(2000);
 
   return (
-    <Card className="w-full max-w-md h-48 mx-auto overflow-hidden relative">
-      <div 
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('/placeholder.svg?height=256&width=384')" }}
-      />
+    <Card className="w-full max-w-md h-48 mx-auto overflow-hidden relative bg-black">
+      {/* <img src="/welcome-card-bg.svg" className="absolute inset-0 w-full h-full"/> */}
+      {/* <div  */}
+      {/*   className="absolute inset-0 bg-cover bg-center" */}
+      {/*   style={{ backgroundImage: "" }} */}
+      {/* /> */}
       <div className="absolute inset-0 bg-black bg-opacity-50" />
       <CardContent className="relative z-10 flex flex-col h-full p-6">
         <div className="flex-grow">

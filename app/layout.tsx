@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import MainLayout from "@/components/custom/main-layout";
-import Sidebar from "@/components/sidebar";
 
 const fontMain = localFont({
   src: "../assets/Inter-VariableFont_slnt,wght.ttf",
@@ -22,7 +21,6 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${fontMain.variable} antialiased`}>
       <body>
-        <Sidebar />
         <MainLayout>{children}</MainLayout>
       </body>
     </html>
