@@ -1,74 +1,78 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { CalendarIcon, Clock, X } from 'lucide-react'
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import Image from 'next/image'
+import { useState } from "react";
+import { CalendarIcon, Clock, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import Image from "next/image";
 
 // Mock data for teams
 const teams = [
-  { id: 'team1', name: 'Marketing' },
-  { id: 'team2', name: 'Development' },
-  { id: 'team3', name: 'Design' },
-  { id: 'team4', name: 'Sales' },
-]
+  { id: "team1", name: "Marketing" },
+  { id: "team2", name: "Development" },
+  { id: "team3", name: "Design" },
+  { id: "team4", name: "Sales" },
+];
 
 export default function ScheduleMeeting() {
-  const [focusedInput, setFocusedInput] = useState('')
-  const [selectedTeams, setSelectedTeams] = useState<{ id: string; name: string }[]>([])
+  const [focusedInput, setFocusedInput] = useState("");
+  const [selectedTeams, setSelectedTeams] = useState<
+    { id: string; name: string }[]
+  >([]);
 
   const handleFocus = (inputName: string) => {
-    setFocusedInput(inputName)
-  }
+    setFocusedInput(inputName);
+  };
 
   const handleBlur = () => {
-    setFocusedInput('')
-  }
+    setFocusedInput("");
+  };
 
   const handleTeamSelect = (teamId: string) => {
-    const team = teams.find(t => t.id === teamId)
-    if (team && !selectedTeams.some(t => t.id === teamId)) {
-      setSelectedTeams([...selectedTeams, team])
+    const team = teams.find((t) => t.id === teamId);
+    if (team && !selectedTeams.some((t) => t.id === teamId)) {
+      setSelectedTeams([...selectedTeams, team]);
     }
-  }
+  };
 
   const handleRemoveTeam = (teamId: string) => {
-    setSelectedTeams(selectedTeams.filter(team => team.id !== teamId))
-  }
+    setSelectedTeams(selectedTeams.filter((team) => team.id !== teamId));
+  };
 
   return (
-    <Card className="w-full max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>Schedule Meeting</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-4">
-          {['title', 'description', 'link'].map((inputName) => (
-            <div key={inputName}>
-              <Label
-                htmlFor={inputName}
-                className={`text-sm font-medium ${
-                  focusedInput === inputName ? 'text-primary' : 'text-muted-foreground'
-                }`}
-              >
-                {inputName.charAt(0).toUpperCase() + inputName.slice(1)}
-              </Label>
-              <input
-                id={inputName}
-                type={inputName === 'link' ? 'url' : 'text'}
-                className={`w-full bg-transparent border-b border-input px-3 py-2 text-sm focus:outline-none ${
-                  focusedInput === inputName ? 'border-primary' : ''
-                }`}
-                onFocus={() => handleFocus(inputName)}
-                onBlur={handleBlur}
-              />
-            </div>
-          ))}
-        </div>
+    <div className="w-full mx-auto mt-4">
+      <div className="flex flex-col space-y-8">
+        {["title", "description", "link"].map((inputName) => (
+          <div key={inputName}>
+            <Label
+              htmlFor={inputName}
+              className={`text-sm font-semibold ${
+                focusedInput === inputName
+                  ? "text-primary"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {inputName.charAt(0).toUpperCase() + inputName.slice(1)}
+            </Label>
+            <input
+              id={inputName}
+              type={inputName === "link" ? "url" : "text"}
+              className={`w-full bg-transparent border-b border-input px-3 py-2 text-sm focus:outline-none ${
+                focusedInput === inputName ? "border-primary" : ""
+              }`}
+              onFocus={() => handleFocus(inputName)}
+              onBlur={handleBlur}
+            />
+          </div>
+        ))}
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="date" className="text-sm font-medium">
@@ -131,10 +135,9 @@ export default function ScheduleMeeting() {
             ))}
           </div>
         </div>
-      </CardContent>
-      <CardFooter>
         <Button className="w-full rounded-full">Create Event</Button>
-      </CardFooter>
-    </Card>
-  )
+      </div>
+    </div>
+  );
 }
+

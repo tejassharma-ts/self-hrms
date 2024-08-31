@@ -1,22 +1,35 @@
-import React from 'react';
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from 'recharts';
+"use client";
 
-const data = [
-  { name: 'A', uv: 40 },
-  { name: 'B', uv: 32 },
-  { name: 'C', uv: 63 },
-  { name: 'D', uv: 32 },
-  { name: 'E', uv: 52 },
-  { name: 'F', uv: 23 },
-  { name: 'G', uv: 34 },
-  { name: 'H', uv: 32 },
-  { name: 'I', uv: 48 },
-  { name: 'J', uv: 100 },
-];
+import React from "react";
+import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const BarChartComponent = () => {
+type Data = {
+  name: string;
+  uv: number;
+}[];
+
+const BarChartComponent = ({ data }: { data: Data }) => {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
+  // TODO: give the correct type
+  function handleBarClick(data: any) {
+    const params = new URLSearchParams(searchParams);
+    params.set("project", data.name);
+    replace(`${pathname}?${params.toString()}`);
+  }
+
   return (
-    <div style={{ width: '100%', height: 300, backgroundColor: '#1F231F', borderRadius:'10px' }}>
+    <div
+      style={{
+        width: "100%",
+        height: 300,
+        backgroundColor: "#1F231F",
+        borderRadius: "10px",
+      }}
+    >
       <ResponsiveContainer>
         <BarChart
           data={data}
@@ -27,22 +40,20 @@ const BarChartComponent = () => {
             bottom: 5,
           }}
         >
-          <XAxis 
-            dataKey="name" 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: 'white' }} 
+          <XAxis
+            dataKey="name"
+            axisLine={false}
+            tickLine={false}
+            tick={{ fill: "white" }}
           />
-          <YAxis 
-            axisLine={false} 
-            tickLine={false} 
-            tick={{ fill: 'white' }} 
-          />
-          <Bar 
-            dataKey="uv" 
-            fill="white" 
+          <YAxis axisLine={false} tickLine={false} tick={{ fill: "white" }} />
+          <Bar
+            dataKey="uv"
+            fill="white"
             radius={[5, 5, 0, 0]}
             barSize={10}
+            className="cursor-pointer"
+            onClick={handleBarClick}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -51,3 +62,4 @@ const BarChartComponent = () => {
 };
 
 export default BarChartComponent;
+

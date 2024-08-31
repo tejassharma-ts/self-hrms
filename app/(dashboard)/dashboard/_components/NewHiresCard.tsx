@@ -1,6 +1,7 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { delay } from "@/lib/utils"
 
 const jobSeekers = [
   { id: 1, name: "Alice Johnson", role: "Frontend Developer" },
@@ -13,7 +14,9 @@ const jobSeekers = [
   { id: 8, name: "Hannah Montana", role: "Full Stack Developer" },
 ]
 
-export default function NewHiresCard() {
+export default async function NewHiresCard() {
+  // fetch new hires employee
+  // await delay(2000);
   return (
     <Card className="w-full h-48 max-w-md mx-auto">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 px-4">
@@ -30,7 +33,7 @@ export default function NewHiresCard() {
                 <h3 className="font-semibold">{seeker.name}</h3>
                 <p className="text-sm text-gray-500">{seeker.role}</p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="px-5 h-7">
                 Send
               </Button>
             </div>

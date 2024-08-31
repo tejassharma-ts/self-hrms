@@ -1,6 +1,8 @@
+import { delay } from "@/lib/utils";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 
-export default function PendingRequests() {
+export default async function PendingRequests() {
+  // await delay(2000);
   return (
     <Card className="w-full h-[300px] max-w-md">
       <CardHeader>

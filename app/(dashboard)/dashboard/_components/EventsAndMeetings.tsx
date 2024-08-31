@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { delay } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusCircle, X } from "lucide-react";
 import ScheduleMeeting from "../_modals/ScheduleMeeting";
+import AddNewEvent from "../_modals/AddNewEvent";
 
 // Mock data for events and meetings
 const events = [
@@ -16,12 +17,9 @@ const events = [
   { title: "Networking Event", subtitle: "Industry Meetup", time: "6:00 PM" },
 ];
 
-export default function EventsAndMeetings() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+export default async function EventsAndMeetings() {
+  // fetch all the events and  meetings
+  // await delay(2000);
 
   return (
     <>
@@ -42,27 +40,10 @@ export default function EventsAndMeetings() {
             ))}
           </ScrollArea>
         </CardContent>
-        <CardFooter>
-          <Button variant="outline" className="w-full rounded-full text-sm" onClick={toggleModal}>
-            <PlusCircle className="mr-2 h-3 w-3" />
-            Add new Event
-          </Button>
+        <CardFooter className="flex justify-center">
+          <AddNewEvent />
         </CardFooter>
       </Card>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={toggleModal}
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <ScheduleMeeting />
-          </div>
-        </div>
-      )}
     </>
   );
 }

@@ -1,27 +1,35 @@
-'use client'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import WelcomeCard from "./_components/WecomeCard"
-import NewHiresCard from "./_components/NewHiresCard"
-import ValueCard from "./_components/ValueCard"
-import PendingRequests from "./_components/PendingRequests"
-import EmployeesOnLeave from "./_components/EmployeesOnLeave"
-import EventsAndMeetings from "./_components/EventsAndMeetings"
-import ProjectAnalytics from "./_components/ProjectAnalytics"
-import Project from "./_components/Project"
+import WelcomeCard from "./_components/WecomeCard";
+import NewHiresCard from "./_components/NewHiresCard";
+import ValueCard from "./_components/ValueCard";
+import PendingRequests from "./_components/PendingRequests";
+import EmployeesOnLeave from "./_components/EmployeesOnLeave";
+import EventsAndMeetings from "./_components/EventsAndMeetings";
+import ProjectAnalytics from "./_components/ProjectAnalytics";
+import Project from "./_components/Project";
+import { Suspense } from "react";
+import WelcomeCardSkeleton from "./_skeletons/WelcomeCardSkeleton";
+import CheckedIn from "./_components/CheckedIn";
+import AbsentMatrics from "./_components/AbsentMatrics";
 
-
-export default function GridCards() {
+type GridCardsProps = {
+  searchParams: {
+    projectName: string;
+  };
+};
+export default function GridCards({ searchParams }: GridCardsProps) {
   return (
     <div className="container mx-auto p-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-11 gap-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-11 gap-4">
         <div className="col-span-3 mb-4">
-          <WelcomeCard />
+          <Suspense fallback={<WelcomeCardSkeleton />}>
+            <WelcomeCard />
+          </Suspense>
         </div>
         <div className="col-span-2 mb-4">
-          <ValueCard key={1} value={200} title="Checked In" subtitle="Open/Closed" />
+          <CheckedIn />
         </div>
         <div className="col-span-2 mb-4">
-          <ValueCard key={2} value={40} title="Absent" subtitle="Not checked In + On Leave" />
+          <AbsentMatrics />
         </div>
         <div className="col-span-4 mb-4">
           <NewHiresCard />
@@ -39,9 +47,9 @@ export default function GridCards() {
           <ProjectAnalytics />
         </div>
         <div className="col-span-3 mb-4">
-          <Project />
+          <Project name={searchParams.projectName || "frame-jar"} />
         </div>
       </div>
     </div>
-  )
+  );
 }

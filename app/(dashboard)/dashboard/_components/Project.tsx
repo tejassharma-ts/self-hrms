@@ -1,9 +1,16 @@
+import { delay } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
-export default function Project() {
+type ProjectProps = {
+  name: string
+}
+
+export default async function Project({ name }: ProjectProps) {
+  // fetch the project details 
+  // await delay(2000);
   return (
     <Card className="w-full h-[407px] max-w-sm p-4">
       <div className="flex justify-between items-start">
