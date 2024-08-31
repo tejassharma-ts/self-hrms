@@ -53,42 +53,8 @@ const CustomCalendar = () => {
     
 
     return (
-        <div className="px-20 py-10">
-            <div className="flex  items-center justify-between">
-                <div className="flex space-x-10 text-lg font-semibold">
-                    <a
-                        href="#"
-                        className={`pb-2 ${selectedLink === 'Leave Requests' ? 'border-b-4 border-black text-black' : 'text-gray-500'}`}
-                        onClick={() => setSelectedLink('Leave Requests')}
-                    >
-                        Leave Requests
-                    </a>
-                    <a
-                        href="#"
-                        className={`pb-2 ${selectedLink === 'On Leave' ? 'border-b-4 border-black text-black' : 'text-gray-500'}`}
-                        onClick={() => setSelectedLink('On Leave')}
-                    >
-                        On Leave
-                    </a>
-                    <a
-                        href="#"
-                        className={`pb-2 ${selectedLink === 'Calendar' ? 'border-b-4 border-black text-black' : 'text-gray-500'}`}
-                        onClick={() => setSelectedLink('Calendar')}
-                    >
-                        Calendar
-                    </a>
-
-                </div>
-                <div className="flex flex-row items-center justify-between">
-                    <Button className="hover:bg-white bg-white text-black  px-6 border rounded-3xl">
-                        + Add Holiday
-                    </Button>
-                </div>
-            </div>
-
-
-
-            <div className="mt-10 flex items-center justify-center relative">
+        <div>
+            <div className="flex items-center justify-center relative">
                 <button
                     onClick={handlePrevious}
                     className="text-lg h-10 w-10 rounded-full border hover:bg-gray-300 absolute left-80"

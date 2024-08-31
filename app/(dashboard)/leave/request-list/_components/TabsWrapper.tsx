@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import CustomCalendar from "../../_components/CustomCalender";
 
 type Filter = "approved" | "denied" | "pending";
 
@@ -63,9 +64,6 @@ export function TabsWrapper({
           <TabsList className="self-start">
             <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
             <TabsTrigger value="leave-balance">Leave Balance</TabsTrigger>
-            <TabsTrigger value="employee-availability">
-              Employee Availability
-            </TabsTrigger>
             <TabsTrigger value="calender">Calender</TabsTrigger>
           </TabsList>
           <div className="absolute right-0 top-4">
@@ -97,7 +95,9 @@ export function TabsWrapper({
           <TabsContent value="leave-request">
             <EmployeeList />
           </TabsContent>
-          <TabsContent value="password">Change your password here.</TabsContent>
+          <TabsContent value="calender">
+            <CustomCalendar />
+          </TabsContent>
         </CardContent>
       </Tabs>
     </Card>
