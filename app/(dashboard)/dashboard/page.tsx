@@ -1,6 +1,5 @@
 import WelcomeCard from "./_components/WecomeCard";
 import NewHiresCard from "./_components/NewHiresCard";
-import ValueCard from "./_components/ValueCard";
 import PendingRequests from "./_components/PendingRequests";
 import EmployeesOnLeave from "./_components/EmployeesOnLeave";
 import EventsAndMeetings from "./_components/EventsAndMeetings";
@@ -8,9 +7,9 @@ import ProjectAnalytics from "./_components/ProjectAnalytics";
 import Project from "./_components/Project";
 import { Suspense } from "react";
 import WelcomeCardSkeleton from "./_skeletons/WelcomeCardSkeleton";
-import CheckedIn from "./_components/CheckedIn";
-import AbsentMatrics from "./_components/AbsentMatrics";
 import NewHireSkeleton from "./_skeletons/NewHireSkeleton";
+import EmployeesOnLeaveSkeleton from "./_skeletons/EmployeesOnLeaveSkeleton";
+import EmployeeStatus from "./_components/EmployeeStatus";
 
 type GridCardsProps = {
   searchParams: {
@@ -25,12 +24,7 @@ export default function GridCards({ searchParams }: GridCardsProps) {
           <WelcomeCard />
         </Suspense>
       </div>
-      <div className="col-span-2 mb-4">
-        <CheckedIn />
-      </div>
-      <div className="col-span-2 mb-4">
-        <AbsentMatrics />
-      </div>
+      <EmployeeStatus />
       <div className="col-span-4 mb-4">
         <Suspense fallback={<NewHireSkeleton />}>
           <NewHiresCard />
@@ -40,7 +34,9 @@ export default function GridCards({ searchParams }: GridCardsProps) {
         <PendingRequests />
       </div>
       <div className="col-span-8 mb-4">
-        <EmployeesOnLeave />
+        <Suspense fallback={<EmployeesOnLeaveSkeleton />}>
+          <EmployeesOnLeave />
+        </Suspense>
       </div>
       <div className="col-span-3 mb-4">
         <EventsAndMeetings />

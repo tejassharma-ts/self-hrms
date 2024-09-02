@@ -38,3 +38,20 @@ export async function delay(duration: number) {
 export function getFullName(firstName: string, lastName: string) {
   return [firstName, lastName].join(" ");
 }
+
+export function getFullbackName(firstName: string, lastName: string) {
+  return [firstName[0], lastName[0]].join(" ");
+}
+
+export function formatISODate(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  };
+
+  return date.toLocaleDateString(undefined, options);
+}
+
