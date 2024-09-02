@@ -7,12 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
 import { employeeListCell, employeeListData } from "../constant";
 import { Icons } from "@/components/Icons";
 
@@ -20,9 +15,7 @@ export default function EmployeeList() {
   return (
     <div>
       <Table>
-        <TableCaption>
-          A list of employees as per requested filter.
-        </TableCaption>
+        <TableCaption>A list of employees as per requested filter.</TableCaption>
         <TableHeader>
           <TableRow>
             {employeeListCell.map((cell, idx) => (
@@ -44,10 +37,7 @@ export default function EmployeeList() {
               <TableCell className="capitalize">{col.status}</TableCell>
               <TableCell>
                 <Select defaultValue={col.status}>
-                  <SelectTrigger
-                    noChev
-                    className="border-none p-0 bg-transparent h-auto w-auto"
-                  >
+                  <SelectTrigger noChev className="h-auto w-auto border-none bg-transparent p-0">
                     <Icons.option className="size-4" />
                   </SelectTrigger>
                   <SelectContent>
