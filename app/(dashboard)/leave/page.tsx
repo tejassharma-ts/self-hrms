@@ -10,7 +10,6 @@ type EmployeeRequestListPageProps = {
 export default async function EmployeeRequestListPage({
   searchParams,
 }: EmployeeRequestListPageProps) {
-  // TODO: fetch all the neccessary data
   return (
     <TabsWrapper
       activeTab={searchParams.tab || "leave-request"}
