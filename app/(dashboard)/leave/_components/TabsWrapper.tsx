@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import CustomCalendar from "../../_components/CustomCalender";
+import CustomCalendar from "./CustomCalender";
 import { Icons } from "@/components/Icons";
 
 type Filter = "approved" | "denied" | "pending";
