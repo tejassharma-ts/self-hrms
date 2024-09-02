@@ -1,41 +1,44 @@
-import { delay } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { PlusCircle, X } from "lucide-react";
-import ScheduleMeeting from "../_modals/ScheduleMeeting";
 import AddNewEvent from "../_modals/AddNewEvent";
+import { api } from "@/api/api";
+import { Meeting } from "@/types/dashboard";
+import { formatISODate, formatISOToTime } from "@/lib/utils";
 
-// Mock data for events and meetings
-const events = [
-  { title: "Team Meeting", subtitle: "Weekly Sync", time: "10:00 AM" },
-  { title: "Client Presentation", subtitle: "Project X", time: "2:00 PM" },
-  { title: "Lunch with Colleagues", subtitle: "Team Building", time: "12:30 PM" },
-  { title: "Product Demo", subtitle: "New Features", time: "4:00 PM" },
-  { title: "1-on-1 with Manager", subtitle: "Performance Review", time: "11:00 AM" },
-  { title: "Workshop", subtitle: "Agile Methodologies", time: "3:00 PM" },
-  { title: "Networking Event", subtitle: "Industry Meetup", time: "6:00 PM" },
-];
+async function getAllMeetings() {
+  try {
+    const res = await api.get<Meeting[]>("/api/employees-app/event-meetings/");
+    return res.data;
+  } catch (err) {
+    console.log("err", err);
+  }
+}
 
 export default async function EventsAndMeetings() {
-  // fetch all the events and  meetings
-  // await delay(2000);
+  const meetings = await getAllMeetings();
+  if (!meetings) {
+    return (
+      <div className="h-[407px] w-full max-w-md">
+        <h1>Opps</h1>
+      </div>
+    );
+  }
 
   return (
     <>
-      <Card className="w-full h-[407px] max-w-md">
+      <Card className="h-[407px] w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Events and Meetings</CardTitle>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[230px] pr-4">
-            {events.map((event, index) => (
+            {meetings.map((meeting, index) => (
               <div key={index} className="mb-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-sm font-medium">{event.title}</h3>
-                  <p className="text-xs text-muted-foreground">{event.subtitle}</p>
+                  <h3 className="text-sm font-medium">{meeting.title}</h3>
+                  <p className="text-xs text-muted-foreground">{meeting.description}</p>
                 </div>
-                <span className="text-xs font-medium">{event.time}</span>
+                <span className="text-xs font-medium">{formatISOToTime(meeting.date)}</span>
               </div>
             ))}
           </ScrollArea>

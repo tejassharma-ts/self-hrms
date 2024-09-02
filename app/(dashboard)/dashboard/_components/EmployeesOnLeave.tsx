@@ -1,73 +1,22 @@
-import { delay, getFullName } from "@/lib/utils";
+import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/api/api";
-import { LeavesDataApi } from "@/types/dashboard";
+import { LeaveRequest } from "@/types/dashboard";
 import { getFullbackName } from "@/lib/utils";
 import { formatISODate } from "@/lib/utils";
 
-const employees = [
-  {
-    name: "Esthera Jackson",
-    role: "Designer",
-    duration: "4 days",
-    leaveType: "Sick Leave",
-    leaveEnd: "14/06/21",
-    time: "Full Day",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    name: "John Doe",
-    role: "Developer",
-    duration: "2 days",
-    leaveType: "Vacation",
-    leaveEnd: "12/06/21",
-    time: "Half Day",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    name: "Jane Smith",
-    role: "Project Manager",
-    duration: "3 days",
-    leaveType: "Personal Leave",
-    leaveEnd: "16/06/21",
-    time: "Full Day",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-  },
-  // {
-  //   name: "Michael Brown",
-  //   role: "QA Engineer",
-  //   duration: "1 day",
-  //   leaveType: "Sick Leave",
-  //   leaveEnd: "11/06/21",
-  //   time: "Full Day",
-  //   avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-  // },
-  // Add more employee data here if needed
-];
+type EmployeesOnLeaveProps = {
+  leavesRequest: LeaveRequest[];
+};
 
-async function getAllEmployeeLeave() {
-  try {
-    const res = await api.get<LeavesDataApi>("/api/companies-app/company/leaves/");
-    return res.data;
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-export default async function EmployeesOnLeave() {
-  const employeeAtLeave = await getAllEmployeeLeave();
-  if (!employeeAtLeave) {
-    return <h1>Opps can't fetch the data</h1>;
-  }
+export default async function EmployeesOnLeave({ leavesRequest }: EmployeesOnLeaveProps) {
   return (
     <div className="h-[300px] rounded-lg bg-white p-6 shadow-md">
       <div className="mb-4 flex items-center justify-between">
@@ -90,7 +39,7 @@ export default async function EmployeesOnLeave() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {employeeAtLeave.leaves_request.map((request) => (
+              {leavesRequest.map((request) => (
                 <TableRow key={request.id}>
                   <TableCell className="py-2.5 font-medium">
                     <div className="flex items-center">

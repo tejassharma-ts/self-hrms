@@ -1,0 +1,35 @@
+import PendingRequests from "./PendingRequests";
+import EmployeesOnLeave from "./EmployeesOnLeave";
+import { api } from "@/api/api";
+import { LeavesDataApi } from "@/types/dashboard";
+
+async function getAllEmployeeLeave() {
+  try {
+    const res = await api.get<LeavesDataApi>("/api/companies-app/company/leaves/");
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+export default async function RequestWithEmployeeLeave() {
+  const res = await getAllEmployeeLeave();
+  if (!res) {
+    return (
+      <>
+        <div className="col-span-3 mb-4">Oops failed to fetch</div>
+        <div className="col-span-8 mb-4">Oops failed to fetch</div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <div className="col-span-3 mb-4">
+        <PendingRequests leaveRequestCount={res.leaves_request_count} />
+      </div>
+      <div className="col-span-8 mb-4">
+        <EmployeesOnLeave leavesRequest={res.leaves_request} />
+      </div>
+    </>
+  );
+}

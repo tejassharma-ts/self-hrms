@@ -29,4 +29,4 @@ export const createApi = ({ baseURL }: ApiConfig): AxiosInstance => {
 };
 
 // http://localhost:8000
-export const api = createApi({ baseURL: process.env.NEXT_SERVER_URL! });
+export const api = createApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });

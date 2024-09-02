@@ -9,7 +9,7 @@ type Data = {
   uv: number;
 }[];
 
-const BarChartComponent = ({ data }: { data: Data }) => {
+const BarChartComponent = ({ data }: { data: any }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace } = useRouter();
@@ -17,7 +17,7 @@ const BarChartComponent = ({ data }: { data: Data }) => {
   // TODO: give the correct type
   function handleBarClick(data: any) {
     const params = new URLSearchParams(searchParams);
-    params.set("project", data.name);
+    params.set("project", data.project_name);
     replace(`${pathname}?${params.toString()}`);
   }
 
@@ -28,8 +28,7 @@ const BarChartComponent = ({ data }: { data: Data }) => {
         height: 300,
         backgroundColor: "#1F231F",
         borderRadius: "10px",
-      }}
-    >
+      }}>
       <ResponsiveContainer>
         <BarChart
           data={data}
@@ -38,17 +37,20 @@ const BarChartComponent = ({ data }: { data: Data }) => {
             right: 30,
             left: 20,
             bottom: 5,
-          }}
-        >
+          }}>
           <XAxis
-            dataKey="name"
+            className="text-xs"
+            // dataKey="project_name"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "white" }}
+            tick={{
+              fill: "white",
+              textAnchor: "end", // Aligns the text properly after rotation
+            }}
           />
           <YAxis axisLine={false} tickLine={false} tick={{ fill: "white" }} />
           <Bar
-            dataKey="uv"
+            dataKey="completion_percentage"
             fill="white"
             radius={[5, 5, 0, 0]}
             barSize={10}
@@ -62,4 +64,3 @@ const BarChartComponent = ({ data }: { data: Data }) => {
 };
 
 export default BarChartComponent;
-
