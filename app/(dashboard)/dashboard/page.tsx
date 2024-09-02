@@ -10,6 +10,7 @@ import { Suspense } from "react";
 import WelcomeCardSkeleton from "./_skeletons/WelcomeCardSkeleton";
 import CheckedIn from "./_components/CheckedIn";
 import AbsentMatrics from "./_components/AbsentMatrics";
+import NewHireSkeleton from "./_skeletons/NewHireSkeleton";
 
 type GridCardsProps = {
   searchParams: {
@@ -31,7 +32,9 @@ export default function GridCards({ searchParams }: GridCardsProps) {
         <AbsentMatrics />
       </div>
       <div className="col-span-4 mb-4">
-        <NewHiresCard />
+        <Suspense fallback={<NewHireSkeleton />}>
+          <NewHiresCard />
+        </Suspense>
       </div>
       <div className="col-span-3 mb-4">
         <PendingRequests />
