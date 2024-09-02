@@ -37,7 +37,6 @@ export function Calendarcomponent() {
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("sssssssss")
     // toast({
     //   title: "You submitted the following values:",
     //   description: (
@@ -46,7 +45,16 @@ export function Calendarcomponent() {
     //     </pre>
     //   ),
     // })
-  }
+    console.log("qwertyuio", data)
+    try {
+      // const { data } = await apiCaller.post(`Endpoint`,);
+
+    }
+    catch (error) {
+
+    }
+  };
+
 
   return (
     <Form {...form}>
@@ -55,8 +63,7 @@ export function Calendarcomponent() {
           control={form.control}
           name="dob"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
+            <FormItem className="flex flex-col items-center w-full">
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -93,7 +100,10 @@ export function Calendarcomponent() {
             </FormItem>
           )}
         />
-        {/* <Button type="submit">Submit</Button> */}
+        <div className="flex justify-center ">
+          <Button className="bg-[#14AE5C] text-white w-fit " type="submit">Add Holiday</Button>
+        </div>
+
       </form>
     </Form>
   )
