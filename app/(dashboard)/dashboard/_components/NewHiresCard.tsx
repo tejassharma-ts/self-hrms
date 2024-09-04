@@ -1,16 +1,19 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { api } from "@/api/api";
+import { apiServer, getAuthHeader } from "@/lib/server/api";
 import { NewHire } from "@/types/dashboard";
 import { delay, getFullName } from "@/lib/utils";
 
 async function getNewHire() {
   try {
-    const res = await api.get<NewHire[]>("/api/companies-app/company/newly-hired/");
+    const res = await apiServer.get<NewHire[]>(
+      "/api/companies-app/company/newly-hired/",
+      getAuthHeader(),
+    );
     return res.data;
   } catch (err) {
-    console.log("err", err);
+    // console.log("err", err);
   }
 }
 

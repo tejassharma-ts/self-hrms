@@ -1,13 +1,16 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddNewEvent from "../_modals/AddNewEvent";
-import { api } from "@/api/api";
+import { apiServer, getAuthHeader } from "@/lib/server/api";
 import { Meeting } from "@/types/dashboard";
-import { formatISODate, formatISOToTime } from "@/lib/utils";
+import { formatISOToTime } from "@/lib/utils";
 
 async function getAllMeetings() {
   try {
-    const res = await api.get<Meeting[]>("/api/employees-app/event-meetings/");
+    const res = await apiServer.get<Meeting[]>(
+      "/api/employees-app/event-meetings/",
+      getAuthHeader(),
+    );
     return res.data;
   } catch (err) {
     console.log("err", err);

@@ -77,7 +77,7 @@ export default function Sidebar({ className, isCollapsed, setIsCollapsed }: Side
           onClick={() => setIsCollapsed((prev) => !prev)}
           size="icon"
           variant="outline"
-          className="absolute -right-4 top-1/2 z-50 hidden rounded-full md:inline-flex bg-white">
+          className="absolute -right-4 top-1/2 z-50 hidden rounded-full bg-white md:inline-flex">
           <IconChevronsLeft className={`h-4 w-4 stroke-[1.5] ${isCollapsed ? "rotate-180" : ""}`} />
         </Button>
       </Layout>

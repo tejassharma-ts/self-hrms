@@ -5,7 +5,7 @@ export default function ProjectAnalyticsSkeleton() {
   return (
     <Card className="oveflow-hidden h-[407px] w-full max-w-3xl">
       <Skeleton className="h-[300px] w-full" />
-      <Skeleton className="h-[40px] w-[80px] rounded-full" />
+      <Skeleton className="h-[40px] w-[150px] rounded-full mx-auto mt-8" />
     </Card>
   );
 }

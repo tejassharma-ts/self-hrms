@@ -1,13 +1,17 @@
-import { api } from "@/api/api";
+import { apiServer } from "@/lib/server/api";
 import { AttendanceDataApi } from "@/types/dashboard";
 import ValueCard from "./ValueCard";
+import { getAuthHeader } from "@/lib/server/api";
 
 async function getEmployeeAttendence() {
   try {
-    const res = await api.get<AttendanceDataApi>("/api/companies-app/company/attendance/");
+    const res = await apiServer.get<AttendanceDataApi>(
+      "/api/companies-app/company/attendance/",
+      getAuthHeader(),
+    );
     return res.data;
   } catch (err) {
-    console.log("err", err);
+    // console.log("What the hell", err);
   }
 }
 export default async function EmployeeStatus() {

@@ -1,24 +1,15 @@
 "use client";
 
+import useProjectStore from "@/model/project";
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-type Data = {
-  name: string;
-  uv: number;
-}[];
 
 const BarChartComponent = ({ data }: { data: any }) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const { setActiveProject } = useProjectStore();
 
-  // TODO: give the correct type
-  function handleBarClick(data: any) {
-    const params = new URLSearchParams(searchParams);
-    params.set("project", data.project_name);
-    replace(`${pathname}?${params.toString()}`);
+  // TODO: give correct type
+  function onBarClick(project: any) {
+    setActiveProject(project.id);
   }
 
   return (
@@ -26,7 +17,8 @@ const BarChartComponent = ({ data }: { data: any }) => {
       style={{
         width: "100%",
         height: 300,
-        backgroundColor: "#1F231F",
+        // backgroundColor: "#1F231F",
+        backgroundColor: "#000000",
         borderRadius: "10px",
       }}>
       <ResponsiveContainer>
@@ -55,7 +47,7 @@ const BarChartComponent = ({ data }: { data: any }) => {
             radius={[5, 5, 0, 0]}
             barSize={10}
             className="cursor-pointer"
-            onClick={handleBarClick}
+            onClick={onBarClick}
           />
         </BarChart>
       </ResponsiveContainer>

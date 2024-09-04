@@ -1,10 +1,9 @@
+import { Suspense } from "react";
 import WelcomeCard from "./_components/WecomeCard";
 import NewHiresCard from "./_components/NewHiresCard";
 import EventsAndMeetings from "./_components/EventsAndMeetings";
 import ProjectAnalytics from "./_components/ProjectAnalytics";
 import Project from "./_components/Project";
-import { Suspense } from "react";
-import WelcomeCardSkeleton from "./_skeletons/WelcomeCardSkeleton";
 import NewHireSkeleton from "./_skeletons/NewHireSkeleton";
 import EmployeeStatus from "./_components/EmployeeStatus";
 import EmployeeStatusSkeleton from "./_skeletons/EmployeeStatusSkeleton";
@@ -12,18 +11,11 @@ import RequestWithEmployeeLeave from "./_components/RequestWithEmployeeLeave";
 import RequestWithEmployeeLeaveSkeleton from "./_skeletons/RequestWithEmployeeLeaveSkeleton";
 import ProjectAnalyticsSkeleton from "./_skeletons/ProjectAnalytics";
 
-type GridCardsProps = {
-  searchParams: {
-    projectName: string;
-  };
-};
-export default function GridCards({ searchParams }: GridCardsProps) {
+export default function GridCards() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-11">
       <div className="col-span-3 mb-4">
-        <Suspense fallback={<WelcomeCardSkeleton />}>
-          <WelcomeCard />
-        </Suspense>
+        <WelcomeCard />
       </div>
       <Suspense fallback={<EmployeeStatusSkeleton />}>
         <EmployeeStatus />
@@ -45,7 +37,7 @@ export default function GridCards({ searchParams }: GridCardsProps) {
         </Suspense>
       </div>
       <div className="col-span-3 mb-4">
-        <Project name={searchParams.projectName || "frame-jar"} />
+        <Project />
       </div>
     </div>
   );

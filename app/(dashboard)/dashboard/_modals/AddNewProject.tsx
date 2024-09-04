@@ -132,7 +132,7 @@ export default function AddNewProject() {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button variant="outline">
           <Icons.add className="mr-2 size-4" />
           Add new Project

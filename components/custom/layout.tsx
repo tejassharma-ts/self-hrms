@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import useLoaderStore from "@/model/loader";
 
 const LayoutContext = React.createContext<{
   fixed: boolean;
@@ -12,11 +13,20 @@ interface LayoutProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const Layout = ({ className, fixed = false, ...props }: LayoutProps) => {
+  const { isLoading } = useLoaderStore();
+
   return (
     <LayoutContext.Provider value={{ fixed }}>
       <div
         data-layout="layout"
-        className={cn("h-full overflow-auto", fixed && "flex flex-col", className)}
+        className={cn(
+          "h-full overflow-hidden",
+          fixed && "flex flex-col",
+          {
+            "overflow-auto": !isLoading,
+          },
+          className,
+        )}
         {...props}
       />
     </LayoutContext.Provider>

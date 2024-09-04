@@ -77,3 +77,24 @@ export type Meeting = {
   created_at: string;
   updated_at: string;
 };
+
+type AssignedEmployee = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_picture: string;
+};
+
+export type Project = {
+  id: string;
+  company: string;
+  project_name: string;
+  description: string;
+  start_date: string;
+  end_date: string;
+  status: "Ongoing" | "Completed";
+  assigned_employees: AssignedEmployee[];
+  created_at: string;
+  updated_at: string;
+  completion_percentage: string;
+};

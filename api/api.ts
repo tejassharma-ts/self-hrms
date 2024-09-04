@@ -5,28 +5,47 @@ interface ApiConfig {
 }
 
 // just for now
-const TOKEN =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzQwNTcxMzA5LCJpYXQiOjE3MjQ4MDMzMDksImp0aSI6IjhiYjE2N2QyZGNjYjRjNWFhN2VlNTQxYmY3MjQwNmU2IiwidXNlcl9pZCI6IjUzZGIzMTc5LTJjMGUtNDBiMS04ODU2LWRiODcyZTAzYjJkMSJ9.LgxJk6lADe-4WcG59TR-zY0__ytisATkRsike_7ccFg";
 export const createApi = ({ baseURL }: ApiConfig): AxiosInstance => {
   const api = axios.create({
     baseURL: baseURL,
-    headers: {
-      Authorization: `Bearer ${TOKEN}`,
-    },
+    withCredentials: true,
+    // headers: {
+    //   Authorization: `Bearer ${TOKEN}`,
+    // },
   });
 
   // TODO: make this interceptors work
-  api.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      return error;
-    },
-  );
+  // api.interceptors.response.use(
+  //   (response) => {
+  //     return response;
+  //   },
+  //   (error) => {
+  //     return error;
+  //   },
+  // );
 
   return api;
 };
 
+const createPublicApi = ({ baseURL }: ApiConfig): AxiosInstance => {
+  const apiPublic = axios.create({
+    withCredentials: true,
+    baseURL: baseURL,
+  });
+
+  // TODO: make this interceptors work
+  // apiPublic.interceptors.response.use(
+  //   (response) => {
+  //     return response;
+  //   },
+  //   (error) => {
+  //     return error;
+  //   },
+  // );
+
+  return apiPublic;
+};
+
 // http://localhost:8000
 export const api = createApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });
+export const apiPublic = createPublicApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });
