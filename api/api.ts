@@ -10,6 +10,7 @@ const TOKEN =
 export const createApi = ({ baseURL }: ApiConfig): AxiosInstance => {
   const api = axios.create({
     baseURL: baseURL,
+    withCredentials: true,
     headers: {
       Authorization: `Bearer ${TOKEN}`,
     },
