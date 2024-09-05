@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -42,16 +43,15 @@ export default function Project() {
     }
   }, [activeProject]);
 
-  if (isLoading) {
-    return <Icons.loader />;
-  }
-
   if (!project) {
     return <h1>Please select a project</h1>;
   }
 
   return (
-    <Card className="relative h-[407px] w-full max-w-sm p-4">
+    <Card
+      className={cn("relative h-[407px] w-full max-w-sm p-4 overflow-hidden", {
+        // "before:absolute before:inset-0 before:bg-white": !isLoading,
+      })}>
       {isLoading && (
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <Icons.loader />

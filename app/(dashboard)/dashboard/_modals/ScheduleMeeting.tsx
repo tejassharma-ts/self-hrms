@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { CalendarIcon, Clock, X } from "lucide-react";
+import { CalendarIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,7 +20,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, min } from "date-fns";
 import { api } from "@/api/api";
 import {
   Select,
@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Icons } from "@/components/Icons";
+import { useRouter } from "next/navigation";
 
 // Mock data for teams
 const teams = [
@@ -40,22 +42,27 @@ const teams = [
 ];
 
 const eventSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  link: z.string(),
-  date: z.date(),
-  team: z.array(z.string()),
-  status: z.enum(["Ongoing", "Completed"]),
+  title: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+  add_link: z.string().url({ message: "Please enter a valid URL for the link." }),
+  date: z.date({ invalid_type_error: "Please enter a valid date." }),
+  team: z.string().array().nonempty({ message: "Team member name cannot be empty." }),
+  status: z.enum(["Ongoing", "Completed"], {
+    errorMap: () => ({ message: "Status must be either 'Ongoing' or 'Completed'." }),
+  }),
 });
 
 export default function ScheduleMeeting() {
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
   const form = useForm<z.infer<typeof eventSchema>>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: "",
       description: "",
-      link: "",
+      add_link: "",
       date: new Date(),
+      // TODO: remove hard coded team
       team: ["f0d7f832-84a5-4163-b554-5052e6e0927e"],
       status: "Ongoing",
     },
@@ -75,14 +82,17 @@ export default function ScheduleMeeting() {
 
   async function onSubmit(values: z.infer<typeof eventSchema>) {
     try {
+      setIsLoading(true);
       const res = await api.post("/api/employees-app/event-meetings/", values);
       console.log(res);
+      router.refresh();
     } catch (err) {
       console.log("err", err);
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  console.log(form.formState.errors);
   return (
     <div className="mx-auto mt-4 w-full">
       <div className="flex flex-col space-y-8">
@@ -116,7 +126,7 @@ export default function ScheduleMeeting() {
             />
             <FormField
               control={form.control}
-              name="link"
+              name="add_link"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Add link</FormLabel>
@@ -154,7 +164,8 @@ export default function ScheduleMeeting() {
                             mode="single"
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                            // disabled={(date) => date <= new Date() || date < new Date("1900-01-01")}
+                            disabled={(date) => date < new Date("1900-01-01")}
                             initialFocus
                           />
                         </PopoverContent>
@@ -164,15 +175,6 @@ export default function ScheduleMeeting() {
                   )}
                 />
               </div>
-              {/* <div className="space-y-2"> */}
-              {/*   <Label htmlFor="time" className="text-sm font-medium"> */}
-              {/*     Time */}
-              {/*   </Label> */}
-              {/*   <div className="relative"> */}
-              {/*     <Input id="time" type="time" className="pl-10" /> */}
-              {/*     <Clock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" /> */}
-              {/*   </div> */}
-              {/* </div> */}
             </div>
             <div className="space-y-2">
               <Label htmlFor="team" className="text-sm font-medium">
@@ -236,7 +238,7 @@ export default function ScheduleMeeting() {
               )}
             />
             <Button type="submit" className="w-full rounded-full">
-              Create Event
+              {isLoading ? <Icons.loader /> : "Create Event"}
             </Button>
           </form>
         </Form>
