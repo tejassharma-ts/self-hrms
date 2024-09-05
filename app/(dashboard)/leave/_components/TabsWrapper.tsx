@@ -3,7 +3,6 @@
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import EmployeeList from "./EmployeeList";
 import EmployeeLeave from "./EmployeeLeave";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
@@ -17,13 +16,15 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import CustomCalendar from "./CustomCalender";
 import { Icons } from "@/components/Icons";
+import { LeaveRequest } from "@/types/dashboard";
+import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
 
 type Filter = "approved" | "denied" | "pending";
 type Department = "hr" | "design";
 
 type TabsWrapperProps = {
   activeTab: "leave-request" | "on-leave" | "calender";
-  leaveRequestData: any;
+  leaveRequestData: LeaveRequest | null;
   leaveBalanceData: any;
   employeeAvailabilityData: any;
   calendarData: any;
@@ -41,7 +42,7 @@ export function TabsWrapper({
   activeTab,
   activeFilter,
   activeDepartment,
-  // leaveRequestData,
+  leaveRequestData,
   // leaveBalanceData,
   // employeeAvailabilityData,
   // calendarData,
@@ -49,7 +50,7 @@ export function TabsWrapper({
   const [options, setOptions] = useState<Options>({ activeTab, activeFilter, activeDepartment });
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const { replace, /* refresh */ } = useRouter();
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams);
@@ -57,6 +58,9 @@ export function TabsWrapper({
     params.set("filter", options.activeFilter);
     params.set("department", options.activeDepartment);
     replace(`${pathname}?${params.toString()}`);
+
+    // if need to clear router cache, if we want to hit the server to get latest data when tabs changes
+    // refresh();
   }, [options]);
 
   return (
@@ -130,7 +134,7 @@ export function TabsWrapper({
           </CardHeader>
           <CardContent>
             <TabsContent value="leave-request">
-              <EmployeeList />
+              <EmployeeLeaveRequest leaveRequest={leaveRequestData} />
             </TabsContent>
             <TabsContent value="on-leave">
               <EmployeeLeave />

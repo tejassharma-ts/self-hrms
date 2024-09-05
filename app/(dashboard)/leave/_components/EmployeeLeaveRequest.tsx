@@ -8,10 +8,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger } from "@/components/ui/select";
-import { employeeListCell, employeeListData } from "../constant";
+import { employeeListCell } from "../constant";
 import { Icons } from "@/components/Icons";
+import { LeaveRequest } from "@/types/dashboard";
+import { getFullName } from "@/lib/utils";
 
-export default function EmployeeList() {
+type EmployeeLeaveRequestProps = {
+  leaveRequest: LeaveRequest[];
+};
+export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequestProps) {
+  if (!leaveRequest) {
+    return <h1>Opps</h1>;
+  }
   return (
     <div>
       <Table>
@@ -26,14 +34,16 @@ export default function EmployeeList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {employeeListData.map((col, idx) => (
+          {leaveRequest.map((col, idx) => (
             <TableRow key={idx}>
-              <TableCell className="font-medium">{col.name}</TableCell>
-              <TableCell>{col.department}</TableCell>
-              <TableCell>{col.leave}</TableCell>
-              <TableCell>{col.dateRequested}</TableCell>
-              <TableCell>{col.reasonOfLeave}</TableCell>
-              <TableCell>{col.duration}</TableCell>
+              <TableCell className="font-medium">
+                {getFullName(col.employee.first_name, col.employee.last_name)}
+              </TableCell>
+              <TableCell>{col.employee.department}</TableCell>
+              <TableCell>{col.leave_type}</TableCell>
+              <TableCell>{col.start_date}</TableCell>
+              <TableCell>{col.reason}</TableCell>
+              <TableCell>_</TableCell>
               <TableCell className="capitalize">{col.status}</TableCell>
               <TableCell>
                 <Select defaultValue={col.status}>

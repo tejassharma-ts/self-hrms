@@ -14,14 +14,12 @@ export const createApi = ({ baseURL }: ApiConfig): AxiosInstance => {
   return api;
 };
 
-export function getAuthHeader() {
+export function getAuthCookies() {
   return {
-    headers: {
-      Cookie: cookies()
-        .getAll()
-        .map(({ name, value }) => `${name}=${value}`)
-        .join("; "),
-    },
+    Cookie: cookies()
+      .getAll()
+      .map(({ name, value }) => `${name}=${value}`)
+      .join("; "),
   };
 }
 
