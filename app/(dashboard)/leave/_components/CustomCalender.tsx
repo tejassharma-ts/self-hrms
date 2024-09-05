@@ -178,7 +178,7 @@ export default function CustomCalendar() {
           const formattedDate = date.toLocaleString("sv-SE").split(" ")[0];
           const event = events.find((event) => event.date === formattedDate);
 
-          const isHoliday = event ? event.date === formattedDate : false;
+          const isHoliday = event && event.date === formattedDate;
           return (
             <div
               key={day}
