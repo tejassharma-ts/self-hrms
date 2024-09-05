@@ -12,21 +12,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
 import { SignupFormSchema } from "@/validations/auth";
 import { apiPublic } from "@/api/api";
-import { toast } from "@/hooks/use-toast";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 interface UserSignupFromProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -42,7 +35,6 @@ export default function UserSignupForm({ className, ...props }: UserSignupFromPr
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
       email: "varsha7022001@gmail.com",
-      // role: "company",
     },
   });
 
@@ -59,11 +51,11 @@ export default function UserSignupForm({ className, ...props }: UserSignupFromPr
       console.log(res);
     } catch (err) {
       console.log(err);
-      // toast({
-      //   title: "Authentication",
-      //   description: "Something went wrong please try again later.",
-      //   variant: "destructive",
-      // });
+      toast({
+        title: "Authentication",
+        description: "Something went wrong please try again later.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -87,27 +79,6 @@ export default function UserSignupForm({ className, ...props }: UserSignupFromPr
                 </FormItem>
               )}
             />
-            {/* <FormField */}
-            {/*   control={form.control} */}
-            {/*   name="role" */}
-            {/*   render={({ field }) => ( */}
-            {/*     <FormItem> */}
-            {/*       <FormLabel>Role</FormLabel> */}
-            {/*       <Select onValueChange={field.onChange} defaultValue={field.value}> */}
-            {/*         <FormControl> */}
-            {/*           <SelectTrigger> */}
-            {/*             <SelectValue placeholder="Select a verified email to display" /> */}
-            {/*           </SelectTrigger> */}
-            {/*         </FormControl> */}
-            {/*         <SelectContent> */}
-            {/*           <SelectItem value="company">Company</SelectItem> */}
-            {/*           <SelectItem value="employee">Employee</SelectItem> */}
-            {/*         </SelectContent> */}
-            {/*       </Select> */}
-            {/*       <FormMessage /> */}
-            {/*     </FormItem> */}
-            {/*   )} */}
-            {/* /> */}
             <Button disabled={isLoading} className="mt-2">
               {isLoading ? <Icons.loader /> : "Signup"}
             </Button>

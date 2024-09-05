@@ -1,6 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import Logo from "@/components/logo";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import UserSigninForm from "./_components/UserSigninForm";
 import UserSignupForm from "./_components/UserSignupForm";
 import { InputOTPForm } from "./_components/OTPVerifyForm";

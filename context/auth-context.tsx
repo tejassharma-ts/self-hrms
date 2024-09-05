@@ -1,8 +1,9 @@
 "use client";
+
 import { getAuthCookie, getSessionUserFromCookie } from "@/lib/client/auth";
 import { CompanyAccount, UserAccount } from "@/types/auth";
 import useAuthStore from "@/model/auth";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { api } from "@/api/api";
 
@@ -21,7 +22,6 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
@@ -31,15 +31,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const logoutCleanup = () => {
     setAuthUser(null);
   };
-
-  // const loadUserData = () => {
-  //   const user = getAuthUserFromCookie();
-  //   if (!user) {
-  //     console.log("Can't get the token from the cookie in AuthProvider");
-  //     return;
-  //   }
-  //   setAuthUser(user);
-  // };
 
   async function loadUserDataFromServer() {
     try {
@@ -92,12 +83,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   useEffect(() => {
     loadUserDataFromServer();
   }, []);
-
-  // Fires on page load
-  // useEffect(() => {
-  // const userData = getAuthUserFromCookie();
-  // setAuthUser(userData);
-  // }, [pathname]);
 
   return (
     <AuthContext.Provider value={{ authUser, logoutCleanup, isLoading, setIsLoading, authCompany }}>

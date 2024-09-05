@@ -34,7 +34,6 @@ export default function UserSigninForm({ className, ...props }: UserSigninFromPr
   const form = useForm({
     resolver: zodResolver(SigninFormSchema),
     defaultValues: {
-      // email: "varsha7022001@gmail.com",
       email: "tejassharma2021@outlook.com",
     },
   });
@@ -59,19 +58,6 @@ export default function UserSigninForm({ className, ...props }: UserSigninFromPr
     }
   }
 
-  // async function onForgotPassword() {
-  //   if (isLoading) return;
-  //   const res = SigninFormSchema.safeParse({ email: form.getValues("email") });
-  //   if (!res.success || !res.data) {
-  //     toast({
-  //       title: "Forgot password",
-  //       description: "Please provided a valid email address",
-  //       variant: "destructive",
-  //     });
-  //   }
-  //   replace(`/auth?forgot_password=${res.data?.email}`);
-  // }
-
   return (
     <div className={cn("grid gap-6", className)} {...props}>
       <Form {...form}>
@@ -87,9 +73,6 @@ export default function UserSigninForm({ className, ...props }: UserSigninFromPr
                     <Input placeholder="name@example.com" {...field} />
                   </FormControl>
                   <FormMessage />
-                  {/* <FormDescription className="!mt-4 cursor-pointer underline underline-offset-4"> */}
-                  {/*   <span onClick={onForgotPassword}>Forgot password ?</span> */}
-                  {/* </FormDescription> */}
                 </FormItem>
               )}
             />
