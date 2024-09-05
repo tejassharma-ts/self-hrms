@@ -6,15 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatTodaysDate() {
-  const days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-  ];
+  const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = [
     "January",
     "February",
@@ -41,4 +33,35 @@ export function formatTodaysDate() {
 
 export async function delay(duration: number) {
   return new Promise((res) => setTimeout(res, duration));
+}
+
+export function getFullName(firstName: string, lastName: string) {
+  return [firstName, lastName].join(" ");
+}
+
+export function getFullbackName(firstName: string, lastName: string) {
+  return [firstName[0], lastName[0]].join(" ");
+}
+
+export function formatISODate(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  const options: Intl.DateTimeFormatOptions = {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  };
+
+  return date.toLocaleDateString(undefined, options);
+}
+
+export function formatISOToTime(isoDate: string): string {
+  const date = new Date(isoDate);
+
+  const options: Intl.DateTimeFormatOptions = {
+    hour: "2-digit",
+    minute: "2-digit",
+  };
+
+  return date.toLocaleTimeString(undefined, options);
 }

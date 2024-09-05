@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
-import MainLayout from "@/components/custom/main-layout";
 
 const fontMain = localFont({
   src: "../assets/Inter-VariableFont_slnt,wght.ttf",
@@ -21,7 +21,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${fontMain.variable} antialiased`}>
       <body>
-        <MainLayout>{children}</MainLayout>
+        {children}
+        <Toaster />
       </body>
     </html>
   );

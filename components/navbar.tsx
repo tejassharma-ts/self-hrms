@@ -9,8 +9,29 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Separator } from "@/components/ui/separator";
+import useAuthStore from "@/model/auth";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 export default function Navbar() {
+  const { logout } = useAuthStore();
+  const router = useRouter();
+
+  async function onLogout() {
+    try {
+      await logout();
+      toast({
+        description: "You are logged out successfully",
+      });
+      return router.push("/auth");
+    } catch (err) {
+      console.log("This is error", err);
+      toast({
+        description: "Something went wrong. Please try again later!",
+        variant: "destructive",
+      });
+    }
+  }
   return (
     <nav className="sticky top-0 z-50 flex w-full items-center justify-end bg-slate-50">
       <div className="flex items-center space-x-4">
@@ -33,7 +54,7 @@ export default function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem onClick={onLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

@@ -1,24 +1,15 @@
 "use client";
 
+import useProjectStore from "@/model/project";
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-type Data = {
-  name: string;
-  uv: number;
-}[];
+const BarChartComponent = ({ data }: { data: any }) => {
+  const { setActiveProject } = useProjectStore();
 
-const BarChartComponent = ({ data }: { data: Data }) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { replace } = useRouter();
-
-  // TODO: give the correct type
-  function handleBarClick(data: any) {
-    const params = new URLSearchParams(searchParams);
-    params.set("project", data.name);
-    replace(`${pathname}?${params.toString()}`);
+  // TODO: give correct type
+  function onBarClick(project: any) {
+    setActiveProject(project.id);
   }
 
   return (
@@ -26,10 +17,10 @@ const BarChartComponent = ({ data }: { data: Data }) => {
       style={{
         width: "100%",
         height: 300,
-        backgroundColor: "#1F231F",
+        // backgroundColor: "#1F231F",
+        backgroundColor: "#000000",
         borderRadius: "10px",
-      }}
-    >
+      }}>
       <ResponsiveContainer>
         <BarChart
           data={data}
@@ -38,22 +29,25 @@ const BarChartComponent = ({ data }: { data: Data }) => {
             right: 30,
             left: 20,
             bottom: 5,
-          }}
-        >
+          }}>
           <XAxis
-            dataKey="name"
+            className="text-xs"
+            // dataKey="project_name"
             axisLine={false}
             tickLine={false}
-            tick={{ fill: "white" }}
+            tick={{
+              fill: "white",
+              textAnchor: "end", // Aligns the text properly after rotation
+            }}
           />
           <YAxis axisLine={false} tickLine={false} tick={{ fill: "white" }} />
           <Bar
-            dataKey="uv"
+            dataKey="completion_percentage"
             fill="white"
             radius={[5, 5, 0, 0]}
             barSize={10}
             className="cursor-pointer"
-            onClick={handleBarClick}
+            onClick={onBarClick}
           />
         </BarChart>
       </ResponsiveContainer>
@@ -62,4 +56,3 @@ const BarChartComponent = ({ data }: { data: Data }) => {
 };
 
 export default BarChartComponent;
-

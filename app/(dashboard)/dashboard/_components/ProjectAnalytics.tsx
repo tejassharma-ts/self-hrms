@@ -1,29 +1,31 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import BarChartComponent from "./BarChartComponent";
-import { delay } from "@/lib/utils";
 import AddNewProject from "../_modals/AddNewProject";
+import { apiServer, getAuthHeader } from "@/lib/server/api";
+// import { cookies } from "next/headers";
 
-const data = [
-  { name: "A", uv: 40 },
-  { name: "B", uv: 32 },
-  { name: "C", uv: 63 },
-  { name: "D", uv: 32 },
-  { name: "E", uv: 52 },
-  { name: "F", uv: 23 },
-  { name: "G", uv: 34 },
-  { name: "H", uv: 32 },
-  { name: "I", uv: 48 },
-  { name: "J", uv: 100 },
-];
+async function getProjects() {
+  try {
+    // const cookieStore = cookies();
+    // TODO: remove hard coded data
+    const res = await apiServer.get(
+      "/api/project_management/projects/create/?company=f619fb18-cbbb-411b-a55c-ea85320cd2fd",
+      getAuthHeader(),
+    );
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
 
 export default async function ProjectAnalytics() {
-  // fetch the chat data
+  const projects = await getProjects();
 
   return (
     <>
-      <Card className="w-full h-[407px] max-w-3xl">
+      <Card className="h-[407px] w-full max-w-3xl">
         <CardContent className="p-6">
-          <BarChartComponent data={data} />
+          <BarChartComponent data={projects} />
         </CardContent>
         <CardFooter className="flex justify-center">
           <AddNewProject />

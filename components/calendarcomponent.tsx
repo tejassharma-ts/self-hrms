@@ -1,19 +1,15 @@
 "use client"
-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
 import { cn } from "@/lib/utils"
-// import { toast } from "@/components/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -24,10 +20,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
+import { api } from '@/api/api'
 
 const FormSchema = z.object({
   dob: z.date({
-    required_error: "A date of birth is required.",
+    required_error: "date is required.",
   }),
 })
 
@@ -36,17 +33,21 @@ export function Calendarcomponent() {
     resolver: zodResolver(FormSchema),
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("sssssssss")
-    // toast({
-    //   title: "You submitted the following values:",
-    //   description: (
-    //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-    //       <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-    //     </pre>
-    //   ),
-    // })
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    try {
+      const postData = {
+        name: "Just A Check",
+        date: format(data.dob, "yyyy-MM-dd"),
+        description: "Checking"
+
+      }
+      const response = await api.post(`api/attendance_app/holidays/`, [postData])
+      console.log("Response:", response.data)
+    } catch (error) {
+      console.error("Error:", error)
+    }
   }
+
 
   return (
     <Form {...form}>
@@ -55,8 +56,7 @@ export function Calendarcomponent() {
           control={form.control}
           name="dob"
           render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date of birth</FormLabel>
+            <FormItem className="flex flex-col items-center w-full">
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -93,7 +93,9 @@ export function Calendarcomponent() {
             </FormItem>
           )}
         />
-        {/* <Button type="submit">Submit</Button> */}
+        <div className="flex justify-center">
+          <Button className="bg-[#14AE5C] text-white w-fit" type="submit">Add Holiday</Button>
+        </div>
       </form>
     </Form>
   )

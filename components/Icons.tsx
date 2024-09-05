@@ -11,7 +11,12 @@ import {
   LayoutGrid,
   ChevronRight,
   ChevronLeft,
+  Loader,
 } from "lucide-react";
+
+function CustomLoader() {
+  return <Loader className="size-6 animate-spin" />;
+}
 
 export const Icons = {
   option: EllipsisVertical,
@@ -26,4 +31,5 @@ export const Icons = {
   rupee: IndianRupee,
   setting: Settings,
   grid: LayoutGrid,
+  loader: CustomLoader,
 };

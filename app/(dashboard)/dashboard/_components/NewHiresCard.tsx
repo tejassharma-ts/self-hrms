@@ -1,24 +1,32 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { delay } from "@/lib/utils"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { apiServer, getAuthHeader } from "@/lib/server/api";
+import { NewHire } from "@/types/dashboard";
+import { delay, getFullName } from "@/lib/utils";
 
-const jobSeekers = [
-  { id: 1, name: "Alice Johnson", role: "Frontend Developer" },
-  { id: 2, name: "Bob Smith", role: "UX Designer" },
-  { id: 3, name: "Charlie Brown", role: "Backend Engineer" },
-  { id: 4, name: "Diana Ross", role: "Product Manager" },
-  { id: 5, name: "Ethan Hunt", role: "DevOps Engineer" },
-  { id: 6, name: "Fiona Apple", role: "Data Scientist" },
-  { id: 7, name: "George Clooney", role: "UI Designer" },
-  { id: 8, name: "Hannah Montana", role: "Full Stack Developer" },
-]
+async function getNewHire() {
+  try {
+    const res = await apiServer.get<NewHire[]>(
+      "/api/companies-app/company/newly-hired/",
+      getAuthHeader(),
+    );
+    return res.data;
+  } catch (err) {
+    // console.log("err", err);
+  }
+}
 
 export default async function NewHiresCard() {
-  // fetch new hires employee
-  // await delay(2000);
+  await delay(3000);
+  const newHires = await getNewHire();
+
+  if (!newHires) {
+    return <h1>Opps failed to fetch data</h1>;
+  }
+
   return (
-    <Card className="w-full h-48 max-w-md mx-auto">
+    <Card className="mx-auto h-48 w-full max-w-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 px-4">
         <CardTitle className="text-[21px] font-bold">New Hires</CardTitle>
         <Button variant="ghost" className="text-[11px]">
@@ -26,14 +34,16 @@ export default async function NewHiresCard() {
         </Button>
       </CardHeader>
       <CardContent>
-        <ScrollArea className=" h-28 w-full pr-4">
-          {jobSeekers.map((seeker) => (
-            <div key={seeker.id} className="flex items-center justify-between mb-4 last:mb-0">
-              <div>
-                <h3 className="font-semibold">{seeker.name}</h3>
-                <p className="text-sm text-gray-500">{seeker.role}</p>
+        <ScrollArea className="h-28 w-full pr-4">
+          {newHires.map((seeker) => (
+            <div key={seeker.id} className="mb-4 flex items-center justify-between last:mb-0">
+              <div className="flex flex-col space-y-0.5">
+                <h3 className="font-semibold">
+                  {getFullName(seeker.first_name, seeker.last_name)}
+                </h3>
+                <p className="text-sm text-gray-500">{seeker.position}</p>
               </div>
-              <Button variant="outline" size="sm" className="px-5 h-7">
+              <Button variant="outline" size="sm" className="h-7 px-5">
                 Send
               </Button>
             </div>
@@ -41,5 +51,5 @@ export default async function NewHiresCard() {
         </ScrollArea>
       </CardContent>
     </Card>
-  )
+  );
 }
