@@ -17,10 +17,13 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import CustomCalendar from "./CustomCalender";
 import { Icons } from "@/components/Icons";
+import BulkManageRequest from "../_modals/BulkManageRequest";
 
 type Filter = "approved" | "denied" | "pending";
 type Department = "hr" | "design";
-
+interface BulkManageRequestProps {
+  onClick: () => void; // Define onClick type in props
+}
 type TabsWrapperProps = {
   activeTab: "leave-request" | "on-leave" | "calender";
   leaveRequestData: any;
@@ -76,6 +79,7 @@ export function TabsWrapper({
               <TabsTrigger value="on-leave">On Leave</TabsTrigger>
               <TabsTrigger value="calender">Calender</TabsTrigger>
             </TabsList>
+
             <div className="absolute right-0 top-4">
               {activeTab === "leave-request" && (
                 <Select
@@ -92,11 +96,52 @@ export function TabsWrapper({
                     )}>
                     <SelectValue placeholder="Filter" />
                   </SelectTrigger>
+
+
                   <SelectContent>
                     <SelectItem value="approved">Approved</SelectItem>
                     <SelectItem value="denied">Denied</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                   </SelectContent>
+                </Select>
+              )}
+              {activeTab === "on-leave" && (
+                <Select
+                  value={options.activeDepartment}
+                  onValueChange={(value: Department) =>
+                    setOptions((pre) => ({ ...pre, activeDepartment: value }))
+                  }>
+                  <SelectTrigger
+                    className={cn(
+                      buttonVariants({
+                        variant: "default",
+                        className: "w-auto",
+                      }),
+                    )}>
+                    <SelectValue placeholder="Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hr">Hr</SelectItem>
+                    <SelectItem value="design">Design</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+              {activeTab === "calender" && (
+                <Button variant="outline">
+                  <Icons.add size={14} className="mr-2" />
+                  Add Holiday
+                </Button>
+              )}
+            </div>
+            <div className="absolute right-40 top-4">
+              {activeTab === "leave-request" && (
+                <Select
+                  value={options.activeFilter}
+                  onValueChange={(value: Filter) =>
+                    setOptions((pre) => ({ ...pre, activeFilter: value }))
+                  }>
+
+                  <BulkManageRequest />
                 </Select>
               )}
               {activeTab === "on-leave" && (
