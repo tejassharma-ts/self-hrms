@@ -2,21 +2,25 @@ import { TabsWrapper } from "./_components/TabsWrapper";
 import { apiServer, getAuthCookies } from "@/lib/server/api";
 import { LeavesDataApi } from "@/types/dashboard";
 
-type Filter = "approved" | "denied" | "pending";
-type EmployeeRequestListPageProps = {
-  searchParams: {
-    tab: "leave-request" | "on-leave" | "calender";
-    filter: Filter;
-    department: "hr" | "design";
-  };
+type SearchParams = {
+  tab: "leave-request" | "on-leave" | "calender";
+  status: Status;
+  department: Department;
+  leaveType: LeaveType;
 };
 
-async function getLeaveRequests({ filter }: { filter: Filter }) {
+type EmployeeRequestListPageProps = {
+  searchParams: SearchParams;
+};
+
+async function getLeaveRequests(searchParams: SearchParams) {
   try {
-    // getAuthHeader(),
     const res = await apiServer.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
       headers: getAuthCookies(),
-      params: { department: filter },
+      params: {
+        status: searchParams.status || null,
+        departments: searchParams.department || null,
+      },
     });
     return res.data;
   } catch (err) {
@@ -24,30 +28,21 @@ async function getLeaveRequests({ filter }: { filter: Filter }) {
   }
 }
 
-// async function getOnLeave() {
-//   try {
-//   } catch(err) {
-//   }
-// }
-
 export default async function EmployeeRequestListPage({
   searchParams,
 }: EmployeeRequestListPageProps) {
-  let leaveRequestData;
-  let onLeaveData;
-  if (searchParams.tab === "leave-request") {
-    leaveRequestData = await getLeaveRequests(searchParams.filter);
-  } else if (searchParams.tab === "on-leave") {
-    // onLeaveData = await getOnLeave();
+  let leaveData;
+  if (searchParams.tab !== "calender") {
+    leaveData = await getLeaveRequests(searchParams);
   }
 
   return (
     <TabsWrapper
       activeTab={searchParams.tab || "leave-request"}
-      activeFilter={searchParams.filter || "approved"}
-      activeDepartment={searchParams.department || "hr"}
-      leaveRequestData={leaveRequestData?.leaves_request}
-      leaveBalanceData={null}
+      activeFilter={searchParams.status || "approved"}
+      leaveRequestData={leaveData || null}
+      onLeaveData={leaveData || null}
+      // leaveBalanceData={null}
       employeeAvailabilityData={null}
       calendarData={null}
     />

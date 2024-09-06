@@ -8,8 +8,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { employeeListCellLeave, employeeLeaveData } from "../constant";
+import { LeaveRequest } from "@/types/dashboard";
 
-export default function EmployeeLeave() {
+type EmployeeLeaveProps = {
+  onLeaveList: LeaveRequest[] | null;
+};
+
+export default function EmployeeLeave({ onLeaveList }: EmployeeLeaveProps) {
   return (
     <div>
       <Table>

@@ -1,67 +1,36 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import EmployeeLeave from "./EmployeeLeave";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import CustomCalendar from "./CustomCalender";
 import { Icons } from "@/components/Icons";
-import { LeaveRequest } from "@/types/dashboard";
+import { LeavesDataApi } from "@/types/dashboard";
 import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
 
 type Filter = "approved" | "denied" | "pending";
-type Department = "hr" | "design";
 
 type TabsWrapperProps = {
   activeTab: "leave-request" | "on-leave" | "calender";
-  leaveRequestData: LeaveRequest | null;
-  leaveBalanceData: any;
+  leaveRequestData: LeavesDataApi | null;
+  onLeaveData: LeavesDataApi | null;
   employeeAvailabilityData: any;
   calendarData: any;
   activeFilter: Filter;
-  activeDepartment: Department;
 };
 
 type Options = {
   activeTab: string;
   activeFilter: Filter;
-  activeDepartment: Department;
 };
 
 export function TabsWrapper({
   activeTab,
   activeFilter,
-  activeDepartment,
   leaveRequestData,
-  // leaveBalanceData,
-  // employeeAvailabilityData,
-  // calendarData,
 }: TabsWrapperProps) {
-  const [options, setOptions] = useState<Options>({ activeTab, activeFilter, activeDepartment });
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { replace, /* refresh */ } = useRouter();
-
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    params.set("tab", options.activeTab);
-    params.set("filter", options.activeFilter);
-    params.set("department", options.activeDepartment);
-    replace(`${pathname}?${params.toString()}`);
-
-    // if need to clear router cache, if we want to hit the server to get latest data when tabs changes
-    // refresh();
-  }, [options]);
+  const [options, setOptions] = useState<Options>({ activeTab, activeFilter });
 
   return (
     <>
@@ -76,54 +45,10 @@ export function TabsWrapper({
           <CardHeader className="relative px-0">
             <TabsList className="self-start">
               <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
-              {/* <TabsTrigger value="leave-balance">Leave Balance</TabsTrigger> */}
               <TabsTrigger value="on-leave">On Leave</TabsTrigger>
               <TabsTrigger value="calender">Calender</TabsTrigger>
             </TabsList>
             <div className="absolute right-0 top-4">
-              {activeTab === "leave-request" && (
-                <Select
-                  value={options.activeFilter}
-                  onValueChange={(value: Filter) =>
-                    setOptions((pre) => ({ ...pre, activeFilter: value }))
-                  }>
-                  <SelectTrigger
-                    className={cn(
-                      buttonVariants({
-                        variant: "default",
-                        className: "w-auto",
-                      }),
-                    )}>
-                    <SelectValue placeholder="Filter" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="denied">Denied</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
-              {activeTab === "on-leave" && (
-                <Select
-                  value={options.activeDepartment}
-                  onValueChange={(value: Department) =>
-                    setOptions((pre) => ({ ...pre, activeDepartment: value }))
-                  }>
-                  <SelectTrigger
-                    className={cn(
-                      buttonVariants({
-                        variant: "default",
-                        className: "w-auto",
-                      }),
-                    )}>
-                    <SelectValue placeholder="Department" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="hr">Hr</SelectItem>
-                    <SelectItem value="design">Design</SelectItem>
-                  </SelectContent>
-                </Select>
-              )}
               {activeTab === "calender" && (
                 <Button variant="outline">
                   <Icons.add size={14} className="mr-2" />
@@ -134,10 +59,18 @@ export function TabsWrapper({
           </CardHeader>
           <CardContent>
             <TabsContent value="leave-request">
-              <EmployeeLeaveRequest leaveRequest={leaveRequestData} />
+              <EmployeeLeaveRequest
+                leaveRequest={
+                  leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
+                }
+              />
             </TabsContent>
             <TabsContent value="on-leave">
-              <EmployeeLeave />
+              <EmployeeLeaveRequest
+                leaveRequest={
+                  leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
+                }
+              />
             </TabsContent>
             <TabsContent value="calender">
               <CustomCalendar />
