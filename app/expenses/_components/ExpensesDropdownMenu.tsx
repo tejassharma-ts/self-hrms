@@ -37,17 +37,6 @@ export const ExpensesDropdownMenu = ({
             {values.map((value: string) => (
               <SelectItem value={value}>{value}</SelectItem>
             ))}
-            {/*<SelectItem value="February">February</SelectItem>*/}
-            {/*<SelectItem value="March">March</SelectItem>*/}
-            {/*<SelectItem value="April">April</SelectItem>*/}
-            {/*<SelectItem value="May">May</SelectItem>*/}
-            {/*<SelectItem value="June">June</SelectItem>*/}
-            {/*<SelectItem value="July">July</SelectItem>*/}
-            {/*<SelectItem value="August">August</SelectItem>*/}
-            {/*<SelectItem value="September">September</SelectItem>*/}
-            {/*<SelectItem value="October">October</SelectItem>*/}
-            {/*<SelectItem value="November">November</SelectItem>*/}
-            {/*<SelectItem value="December">December</SelectItem>*/}
           </SelectGroup>
         </SelectContent>
       </Select>
