@@ -8,6 +8,7 @@ import CustomCalendar from "./CustomCalender";
 import { Icons } from "@/components/Icons";
 import { LeavesDataApi } from "@/types/dashboard";
 import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
+import BulkManageRequest from "../_modals/BulkManageRequest";
 
 type Filter = "approved" | "denied" | "pending";
 
@@ -25,11 +26,7 @@ type Options = {
   activeFilter: Filter;
 };
 
-export function TabsWrapper({
-  activeTab,
-  activeFilter,
-  leaveRequestData,
-}: TabsWrapperProps) {
+export function TabsWrapper({ activeTab, activeFilter, leaveRequestData }: TabsWrapperProps) {
   const [options, setOptions] = useState<Options>({ activeTab, activeFilter });
 
   return (
@@ -49,6 +46,15 @@ export function TabsWrapper({
               <TabsTrigger value="calender">Calender</TabsTrigger>
             </TabsList>
             <div className="absolute right-0 top-4">
+              {activeTab === "calender" && (
+                <Button variant="outline">
+                  <Icons.add size={14} className="mr-2" />
+                  Add Holiday
+                </Button>
+              )}
+            </div>
+            <div className="absolute right-40 top-4">
+              <BulkManageRequest />
               {activeTab === "calender" && (
                 <Button variant="outline">
                   <Icons.add size={14} className="mr-2" />
