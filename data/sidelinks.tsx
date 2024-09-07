@@ -77,7 +77,7 @@ export const sidelinks: SideLink[] = [
   },
   {
     title: "Expenses",
-    href: "#",
+    href: "/expenses",
     icon: <Icons.wallet size={18} />,
   },
   {

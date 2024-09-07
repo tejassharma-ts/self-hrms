@@ -20,12 +20,12 @@ interface CircularProgressBarProps {
 }
 
 interface Profile {
+    id: string;
     name: string;
-    role: string;
     department: string;
     monthlyPercentage: number;
     yearlyPercentage: number;
-    image: string;
+    profile_picture: string | null;
 }
 
 interface ProfileCarouselProps {
@@ -60,7 +60,7 @@ interface ProfileCardProps extends Profile {
     onClick: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ name, role, monthlyPercentage, yearlyPercentage, image, isSelected, onClick }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPercentage, yearlyPercentage, profile_picture, isSelected, onClick }) => {
     return (
         <Card
             className={`w-48 shadow-lg rounded-lg overflow-hidden mx-1 cursor-pointer ${isSelected ? 'bg-[#2B2928] text-white' : 'bg-white text-black'}`}
@@ -68,11 +68,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, role, monthlyPercentage
         >
             <CardHeader className="flex flex-col items-center p-3">
                 <Avatar className="w-14 h-14">
-                    <AvatarImage src={image} alt={name} />
+                    <AvatarImage src={profile_picture || ''} alt={name} />
                     <AvatarFallback>{name ? name.split(' ').map(n => n.charAt(0)).join('') : ''}</AvatarFallback>
                 </Avatar>
                 <h2 className="mt-1 text-sm font-semibold">{name}</h2>
-                <p className="text-[10px] text-gray-500">{role}</p>
+                <p className="text-[10px] text-gray-500">{department}</p>
             </CardHeader>
             <CardContent className="p-3">
                 <div className="flex justify-between">
@@ -94,14 +94,13 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedPro
     const [department, setDepartment] = useState('all');
     const [api, setApi] = React.useState<CarouselApi>();
 
-    const { filteredProfiles, uniqueRoles, uniqueDepartments } = useMemo(() => {
+    const { filteredProfiles, uniqueDepartments } = useMemo(() => {
         const filtered = profiles.filter(profile => 
-            (filter === 'all' || profile.role === filter) &&
+            (filter === 'all' || profile.department === filter) &&
             (department === 'all' || profile.department === department)
         );
-        const roles = Array.from(new Set(profiles.map(p => p.role)));
         const departments = Array.from(new Set(profiles.map(p => p.department)));
-        return { filteredProfiles: filtered, uniqueRoles: roles, uniqueDepartments: departments };
+        return { filteredProfiles: filtered, uniqueDepartments: departments };
     }, [profiles, filter, department]);
 
     if (!profiles || profiles.length === 0) {
@@ -120,17 +119,6 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedPro
                         <SelectValue placeholder="Filter" />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">All Roles</SelectItem>
-                        {uniqueRoles.map(role => (
-                            <SelectItem key={role} value={role}>{role}</SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-                <Select onValueChange={setDepartment}>
-                    <SelectTrigger className="rounded-full bg-black text-white w-fit gap-2">
-                        <SelectValue placeholder="Department" />
-                    </SelectTrigger>
-                    <SelectContent>
                         <SelectItem value="all">All Departments</SelectItem>
                         {uniqueDepartments.map(dept => (
                             <SelectItem key={dept} value={dept}>{dept}</SelectItem>
@@ -145,7 +133,7 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedPro
                             <CarouselItem key={index} className="sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
                                 <ProfileCard
                                     {...profile}
-                                    isSelected={selectedProfile?.name === profile.name}
+                                    isSelected={selectedProfile?.id === profile.id}
                                     onClick={() => setSelectedProfile(profile)}
                                 />
                             </CarouselItem>
