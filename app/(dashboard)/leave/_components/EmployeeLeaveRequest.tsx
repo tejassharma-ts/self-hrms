@@ -13,6 +13,7 @@ import useSelectItems from "@/hooks/use-select-items";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import MultiSelector from "./MultiSelector";
 import LeaveRequestOption from "./LeaveAction";
+import DateRangeSelect from "./DateRangeSelect";
 
 type EmployeeLeaveRequestProps = {
   leaveRequest: LeaveRequest[] | null;
@@ -96,7 +97,9 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                 onSearch={onLeaveTypeChange}
               />
             </TableHead>
-            <TableHead>Date Requested</TableHead>
+            <TableHead>
+              <DateRangeSelect />
+            </TableHead>
             <TableHead>Reason of leave</TableHead>
             <TableHead>Duration</TableHead>
             <TableHead className="capitalize">
