@@ -142,7 +142,8 @@ export default function LeaveRequestOption({
             onSelect={() => setShowPreview(true)}>
             Review
           </DropdownMenuItem>
-          {!isRejected && !isApproved ? (
+
+          {!isApproved && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -152,7 +153,9 @@ export default function LeaveRequestOption({
                 Approve
               </DropdownMenuItem>
             </>
-          ) : (
+          )}
+
+          {!isRejected && (
             <>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -269,15 +272,17 @@ export default function LeaveRequestOption({
             </CardContent>
           </Card>
           <AlertDialogFooter className="flex">
-            <Button
-              onClick={async () => {
-                await onApproveLeave();
-                setShowPreview(false);
-              }}>
-              {isApproveLoading && <Icons.loader className="mr-2" />}
-              Approve Leave
-            </Button>
-            {leaveRequest.status !== "Pending" && (
+            {!isApproved && (
+              <Button
+                onClick={async () => {
+                  await onApproveLeave();
+                  setShowPreview(false);
+                }}>
+                {isApproveLoading && <Icons.loader className="mr-2" />}
+                Approve Leave
+              </Button>
+            )}
+            {!isRejected && (
               <Button
                 variant="destructive"
                 onClick={() => {

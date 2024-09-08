@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -14,6 +15,17 @@ import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import MultiSelector from "./MultiSelector";
 import LeaveRequestOption from "./LeaveAction";
 import DateRangeSelect from "./DateRangeSelect";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Icons } from "@/components/Icons";
 
 type EmployeeLeaveRequestProps = {
   leaveRequest: LeaveRequest[] | null;
@@ -22,9 +34,10 @@ type EmployeeLeaveRequestProps = {
 // TODO: fetch data from server
 const departments = ["Tech", "Management", "Marketing"];
 const leaveType = ["Sick leave", "Casual leave"];
-const status = ["Approved", "Rejected", "Pending"];
 
 export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequestProps) {
+  const [status, setStatus] = useState("");
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace, refresh } = useRouter();
@@ -41,12 +54,6 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
     selectedItems: selectedLeaveType,
   } = useSelectItems(leaveType);
 
-  const {
-    handleSelectChange: handleStatusChange,
-    isOptionSelected: isStatusSelected,
-    selectedItems: selectedStatus,
-  } = useSelectItems(status);
-
   function onSearchDepartment() {
     const params = new URLSearchParams(searchParams);
     params.set("department", selectedDepartments.join(","));
@@ -61,11 +68,13 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
     refresh();
   }
 
-  function onStatusChange() {
+  function onStatusChange(status: string) {
+    console.log(status);
     const params = new URLSearchParams(searchParams);
-    params.set("status", selectedStatus.join(","));
+    params.set("status", status);
     replace(`${pathname}?${params.toString()}`);
     refresh();
+    setStatus(status);
   }
 
   if (!leaveRequest) {
@@ -73,72 +82,84 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
   }
 
   return (
-    <div>
-      <Table>
-        <TableCaption>A list of employees as per requested filter.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="capitalize">Name</TableHead>
-            <TableHead className="capitalize">
-              <MultiSelector
-                label="department"
-                values={departments}
-                handleSelectChange={handleDepartmentChange}
-                isOptionSelected={isDepartmentSelected}
-                onSearch={onSearchDepartment}
-              />
-            </TableHead>
-            <TableHead className="capitalize">
-              <MultiSelector
-                label="Leave type"
-                values={leaveType}
-                handleSelectChange={handleLeaveTypeChange}
-                isOptionSelected={isLeaveTypeSelected}
-                onSearch={onLeaveTypeChange}
-              />
-            </TableHead>
-            <TableHead>
-              <DateRangeSelect />
-            </TableHead>
-            <TableHead>Reason of leave</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead className="capitalize">
-              <MultiSelector
-                label="Status"
-                values={status}
-                handleSelectChange={handleStatusChange}
-                isOptionSelected={isStatusSelected}
-                onSearch={onStatusChange}
-              />
-            </TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leaveRequest.map((col, idx) => (
-            <TableRow key={idx}>
-              <TableCell className="font-medium">
+    <Table>
+      <TableCaption>A list of employees as per requested filter.</TableCaption>
+      <TableHeader>
+        <TableRow className="hover:bg-transparent">
+          <TableHead>Name</TableHead>
+          <TableHead>
+            <MultiSelector
+              label="department"
+              values={departments}
+              handleSelectChange={handleDepartmentChange}
+              isOptionSelected={isDepartmentSelected}
+              onSearch={onSearchDepartment}
+            />
+          </TableHead>
+          <TableHead className="capitalize">
+            <MultiSelector
+              label="Leave type"
+              values={leaveType}
+              handleSelectChange={handleLeaveTypeChange}
+              isOptionSelected={isLeaveTypeSelected}
+              onSearch={onLeaveTypeChange}
+            />
+          </TableHead>
+          <TableHead>
+            <DateRangeSelect />
+          </TableHead>
+          <TableHead>Reason of leave</TableHead>
+          <TableHead>Duration</TableHead>
+          <TableHead>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <span>Status</span>
+                  <Icons.listFilter size={16} />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <DropdownMenuLabel>Leave status</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuRadioGroup value={status} onValueChange={onStatusChange}>
+                  <DropdownMenuRadioItem value="approved">Approved</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="rejected">Rejected</DropdownMenuRadioItem>
+                  <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </TableHead>
+          <TableHead>Action</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {leaveRequest.map((col, idx) => (
+          <TableRow key={idx}>
+            <TableCell>
+              <span className="line-clamp-1 text-ellipsis font-medium">
                 {getFullName(col.employee.first_name, col.employee.last_name)}
-              </TableCell>
-              <TableCell>{col.employee.department}</TableCell>
-              <TableCell>{col.leave_type}</TableCell>
-              <TableCell>{col.start_date}</TableCell>
-              <TableCell>{col.reason}</TableCell>
-              <TableCell>_</TableCell>
-              <TableCell className="capitalize">{col.status}</TableCell>
-              <TableCell>
-                <LeaveRequestOption
-                  leaveRequest={col}
-                  employeeName={getFullName(col.employee.first_name, col.employee.last_name)}
-                  leaveId={col.id}
-                  isRejected={col.status === "Rejected"}
-                  isApproved={col.status === "Approved"}
-                />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+              </span>
+            </TableCell>
+            <TableCell>{col.employee.department}</TableCell>
+            <TableCell>{col.leave_type}</TableCell>
+            <TableCell>{col.start_date}</TableCell>
+            <TableCell>
+              <span className="line-clamp-1 text-ellipsis">{col.reason}</span>
+            </TableCell>
+            <TableCell>-</TableCell>
+            <TableCell className="capitalize">{col.status}</TableCell>
+            <TableCell>
+              <LeaveRequestOption
+                leaveRequest={col}
+                employeeName={getFullName(col.employee.first_name, col.employee.last_name)}
+                leaveId={col.id}
+                isRejected={col.status === "Rejected"}
+                isApproved={col.status === "Approved"}
+              />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }

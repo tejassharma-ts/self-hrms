@@ -9,25 +9,37 @@ import { Icons } from "@/components/Icons";
 import { LeavesDataApi } from "@/types/dashboard";
 import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
 import BulkManageRequest from "../_modals/BulkManageRequest";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
-type Filter = "approved" | "denied" | "pending";
+type ActiveTab = "leave-request" | "on-leave" | "calender";
 
 type TabsWrapperProps = {
-  activeTab: "leave-request" | "on-leave" | "calender";
+  activeTab: ActiveTab;
   leaveRequestData: LeavesDataApi | null;
   onLeaveData: LeavesDataApi | null;
   employeeAvailabilityData: any;
   calendarData: any;
-  activeFilter: Filter;
 };
 
-type Options = {
-  activeTab: string;
-  activeFilter: Filter;
-};
+export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
+  const [currentTab, setCurrentTab] = useState<ActiveTab>(activeTab);
 
-export function TabsWrapper({ activeTab, activeFilter, leaveRequestData }: TabsWrapperProps) {
-  const [options, setOptions] = useState<Options>({ activeTab, activeFilter });
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace, refresh } = useRouter();
+
+  function onTabChange(tab: string) {
+    const params = new URLSearchParams(searchParams);
+    if (tab === "on-leave") {
+      params.set("status", "approved");
+    } else {
+      params.set("status", "");
+    }
+    params.set("tab", tab);
+    replace(`${pathname}?${params.toString()}`);
+    refresh();
+    setCurrentTab(tab as ActiveTab);
+  }
 
   return (
     <>
@@ -35,10 +47,7 @@ export function TabsWrapper({ activeTab, activeFilter, leaveRequestData }: TabsW
         <h1 className="text-2xl font-bold tracking-tight">Employee Request List</h1>
       </div>
       <Card>
-        <Tabs
-          value={options.activeTab}
-          onValueChange={(value) => setOptions((pre) => ({ ...pre, activeTab: value }))}
-          defaultValue={options.activeFilter}>
+        <Tabs value={currentTab} onValueChange={onTabChange} defaultValue={currentTab}>
           <CardHeader className="relative px-0">
             <TabsList className="self-start">
               <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
@@ -63,7 +72,7 @@ export function TabsWrapper({ activeTab, activeFilter, leaveRequestData }: TabsW
               )}
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0">
             <TabsContent value="leave-request">
               <EmployeeLeaveRequest
                 leaveRequest={

@@ -39,10 +39,8 @@ export default async function EmployeeRequestListPage({
   return (
     <TabsWrapper
       activeTab={searchParams.tab || "leave-request"}
-      activeFilter={searchParams.status || "approved"}
       leaveRequestData={leaveData || null}
       onLeaveData={leaveData || null}
-      // leaveBalanceData={null}
       employeeAvailabilityData={null}
       calendarData={null}
     />
