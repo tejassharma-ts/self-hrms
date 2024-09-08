@@ -44,11 +44,16 @@ import { formatISODate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 type LeaveRequestOptionProps = {
-  leaveRequest: LeaveRequest;
-  employeeName: string;
-  leaveId: string;
-  isRejected: boolean;
-  isApproved: boolean;
+  leaveRequest?: LeaveRequest;
+  employeeName?: string;
+  leaveId?: string;
+  isRejected?: boolean;
+  isApproved?: boolean;
+  bulkAction?: boolean;
+  selectedLeaveIDs?: string[];
+  setShowBulkAction?: (value: boolean) => void;
+  clearSelectedLeaves?: () => void;
+  hideDropDown?: boolean;
 };
 
 const FormSchema = z.object({
@@ -68,6 +73,11 @@ export default function LeaveRequestOption({
   leaveId,
   isRejected,
   isApproved,
+  bulkAction = false,
+  selectedLeaveIDs,
+  setShowBulkAction,
+  clearSelectedLeaves,
+  hideDropDown = false,
 }: LeaveRequestOptionProps) {
   const router = useRouter();
   const [showApprove, setShowApprove] = useState(false);
@@ -87,12 +97,16 @@ export default function LeaveRequestOption({
       setIsApproveLoading(true);
       await api.post("/api/companies-app/leave/approve/", {
         status: "Approved",
-        leave_ids: [leaveId],
+        leave_ids: selectedLeaveIDs?.length ? selectedLeaveIDs : [leaveId],
       });
       toast({
         description: "Ths application has been approved",
       });
       router.refresh();
+
+      // if (clearSelectedLeaves) {
+      //   clearSelectedLeaves();
+      // }
     } catch (err) {
       toast({
         description: "Something went wrong. Please try again later!",
@@ -107,7 +121,7 @@ export default function LeaveRequestOption({
     try {
       setIsRejectedLoading(true);
       await api.post("/api/companies-app/leave/approve/", {
-        leave_ids: [leaveId],
+        leave_ids: selectedLeaveIDs?.length ? selectedLeaveIDs : [leaveId],
         status: "Rejected",
         rejection_reason: formData.reason,
       });
@@ -115,6 +129,10 @@ export default function LeaveRequestOption({
         description: "Ths application has been rejected",
       });
       router.refresh();
+
+      // if (clearSelectedLeaves) {
+      //   clearSelectedLeaves();
+      // }
     } catch (err) {
       toast({
         description: "Something went wrong. Please try again later!",
@@ -126,47 +144,52 @@ export default function LeaveRequestOption({
       if (showPreview) {
         setShowPreview(false);
       }
+      if (setShowBulkAction) {
+        setShowBulkAction(false);
+      }
     }
   }
 
   return (
     <>
-      <DropdownMenu>
-        <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted">
-          <Icons.option size={18} />
-          <span className="sr-only">Open</span>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuItem
-            className="flex cursor-pointer items-center"
-            onSelect={() => setShowPreview(true)}>
-            Review
-          </DropdownMenuItem>
+      {!hideDropDown && (
+        <DropdownMenu>
+          <DropdownMenuTrigger className="flex h-8 w-8 items-center justify-center rounded-md border transition-colors hover:bg-muted">
+            <Icons.option size={18} />
+            <span className="sr-only">Open</span>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              className="flex cursor-pointer items-center"
+              onSelect={() => setShowPreview(true)}>
+              Review
+            </DropdownMenuItem>
 
-          {!isApproved && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() => {
-                  setShowApprove(true);
-                }}>
-                Approve
-              </DropdownMenuItem>
-            </>
-          )}
+            {!isApproved && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setShowApprove(true);
+                  }}>
+                  Approve
+                </DropdownMenuItem>
+              </>
+            )}
 
-          {!isRejected && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="flex cursor-pointer items-center text-destructive focus:text-destructive"
-                onSelect={() => setShowReject(true)}>
-                Reject
-              </DropdownMenuItem>
-            </>
-          )}
-        </DropdownMenuContent>
-      </DropdownMenu>
+            {!isRejected && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  className="flex cursor-pointer items-center text-destructive focus:text-destructive"
+                  onSelect={() => setShowReject(true)}>
+                  Reject
+                </DropdownMenuItem>
+              </>
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       <AlertDialog open={showApprove} onOpenChange={setShowApprove}>
         <AlertDialogContent>
@@ -179,9 +202,9 @@ export default function LeaveRequestOption({
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={(e) => {
+              onClick={async (e) => {
                 e.preventDefault();
-                onApproveLeave();
+                await onApproveLeave();
                 setShowApprove(false);
               }}
               // className="bg-primary focus:ring-red-600">
@@ -233,7 +256,15 @@ export default function LeaveRequestOption({
         </AlertDialogContent>
       </AlertDialog>
 
-      <AlertDialog open={showPreview} onOpenChange={setShowPreview}>
+      <AlertDialog
+        open={showPreview || bulkAction}
+        onOpenChange={(value) => {
+          if (setShowBulkAction) {
+            setShowBulkAction(value);
+          } else {
+            setShowPreview(value);
+          }
+        }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle className="text-center">
@@ -244,38 +275,43 @@ export default function LeaveRequestOption({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <Card className="border-none shadow-none">
-            <CardContent className="space-y-4 text-sm">
-              <div className="flex justify-between">
-                <p className="font-medium">Name</p>
-                <p>{leaveRequest.employee.first_name}</p>
-              </div>
-              <div className="flex justify-between">
-                <p className="font-medium">Department</p>
-                <p>{leaveRequest.employee.department}</p>
-              </div>
-              <div className="flex justify-between">
-                <p className="font-medium">Leave Type</p>
-                <p>{leaveRequest.leave_type}</p>
-              </div>
-              <div className="flex justify-between">
-                <p className="font-medium">Date Requested</p>
-                <p>{formatISODate(leaveRequest.start_date)}</p>
-              </div>
-              <div className="flex justify-between">
-                <p className="font-medium">Duration</p>
-                <p>-</p>
-              </div>
-              <div className="flex flex-col justify-between space-y-1">
-                <p className="font-medium">Reason for Leave:</p>
-                <p>{leaveRequest.reason}</p>
-              </div>
-            </CardContent>
+            {leaveRequest && (
+              <CardContent className="space-y-4 text-sm">
+                <div className="flex justify-between">
+                  <p className="font-medium">Name</p>
+                  <p>{leaveRequest.employee.first_name}</p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="font-medium">Department</p>
+                  <p>{leaveRequest.employee.department}</p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="font-medium">Leave Type</p>
+                  <p>{leaveRequest.leave_type}</p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="font-medium">Date Requested</p>
+                  <p>{formatISODate(leaveRequest.start_date)}</p>
+                </div>
+                <div className="flex justify-between">
+                  <p className="font-medium">Duration</p>
+                  <p>-</p>
+                </div>
+                <div className="flex flex-col justify-between space-y-1">
+                  <p className="font-medium">Reason for Leave:</p>
+                  <p>{leaveRequest.reason}</p>
+                </div>
+              </CardContent>
+            )}
           </Card>
           <AlertDialogFooter className="flex">
             {!isApproved && (
               <Button
                 onClick={async () => {
                   await onApproveLeave();
+                  if (setShowBulkAction) {
+                    setShowBulkAction(false);
+                  }
                   setShowPreview(false);
                 }}>
                 {isApproveLoading && <Icons.loader className="mr-2" />}

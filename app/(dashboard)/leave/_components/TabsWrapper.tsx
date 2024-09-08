@@ -52,7 +52,7 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
               <TabsTrigger value="calender">Calender</TabsTrigger>
             </TabsList>
           </CardHeader>
-          <CardContent className="p-0">
+          <CardContent className="relative p-0">
             <TabsContent value="leave-request">
               <EmployeeLeaveRequest
                 leaveRequest={

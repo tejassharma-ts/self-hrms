@@ -15,5 +15,9 @@ export default function useSelectItems(values: string[] = []) {
     return selectedItems.includes(value);
   }
 
-  return { selectedItems, handleSelectChange, isOptionSelected };
+  function clearSelectedItems() {
+    setSelectedItems([]);
+  }
+
+  return { selectedItems, handleSelectChange, isOptionSelected, clearSelectedItems };
 }
