@@ -7,6 +7,7 @@ type SearchParams = {
   status: Status;
   department: Department;
   leaveType: LeaveType;
+  date: string | null;
 };
 
 type EmployeeRequestListPageProps = {
@@ -20,6 +21,7 @@ async function getLeaveRequests(searchParams: SearchParams) {
       params: {
         status: searchParams.status || null,
         departments: searchParams.department || null,
+        date_range: searchParams.date || null,
       },
     });
     return res.data;
