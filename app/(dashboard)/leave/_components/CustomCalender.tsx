@@ -15,14 +15,34 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { Calendarcomponent } from "@/components/calendarcomponent";
+// import { Calendarcomponent } from "@/components/calendarcomponent";
 import { api } from "@/api/api";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { date, z } from "zod";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { toast } from "@/hooks/use-toast";
 
 type EventsDataApi = {
   [key: string]: {
-    date: Date;
+    date: string;
     description: string;
     name: string;
   }[];
@@ -34,10 +54,32 @@ type Event = {
   name: string;
 };
 
+const eventSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100, "Name should not exceed 100 characters"),
+  date: z.date({
+    required_error: "A date of birth is required.",
+  }),
+  description: z
+    .string()
+    .min(10, "Description should be at least 10 characters")
+    .max(500, "Description should not exceed 500 characters"),
+});
+
 export default function CustomCalendar() {
   const [selectedMonth, setSelectedMonth] = useState(0);
   const [selectedYear, setSelectedYear] = useState(2024);
   const [events, setEvents] = useState<Event[] | []>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
+
+  const form = useForm<z.infer<typeof eventSchema>>({
+    resolver: zodResolver(eventSchema),
+    defaultValues: {
+      name: "",
+      description: "",
+      date: new Date(),
+    },
+  });
 
   const months = [
     "January",
@@ -62,9 +104,12 @@ export default function CustomCalendar() {
 
   async function fetchData() {
     try {
-      const res = await api.get<EventsDataApi>(
-        `api/attendance_app/get-holidays/?year=${selectedYear}&month=${selectedMonth + 1}`,
-      );
+      const res = await api.get<EventsDataApi>("api/attendance_app/get-holidays/", {
+        params: {
+          year: selectedYear,
+          month: selectedMonth + 1,
+        },
+      });
       let activeMonth = Object.keys(res.data)[0] as string;
       setEvents(res.data[activeMonth] ? res.data[activeMonth] : []);
     } catch (error) {
@@ -72,55 +117,147 @@ export default function CustomCalendar() {
     }
   }
 
-  const handlePrevious = () => {
+  async function onAddHoliday(values: z.infer<typeof eventSchema>) {
+    try {
+      setIsLoading(true);
+      const formattedDate = format(new Date(values.date), "yyyy-MM-dd");
+      // TODO: may be we need a funtionality to add multiple holidays
+      const holidays = [
+        {
+          ...values,
+          date: formattedDate,
+        },
+      ];
+      await api.post("/api/attendance_app/holidays/", holidays);
+      toast({
+        description: "Holiday has been added successfully",
+      });
+      setIsHolidayModalOpen(false);
+    } catch (err) {
+      toast({
+        description: "Failed to add holiday. Please try again later!",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function handlePrevious() {
     if (selectedMonth === 0) {
       setSelectedMonth(11);
       setSelectedYear(selectedYear - 1);
     } else {
       setSelectedMonth(selectedMonth - 1);
     }
-  };
+  }
 
-  const handleNext = () => {
+  function handleNext() {
     if (selectedMonth === 11) {
       setSelectedMonth(0);
       setSelectedYear(selectedYear + 1);
     } else {
       setSelectedMonth(selectedMonth + 1);
     }
-  };
+  }
 
-  const getDaysInMonth = (month: number, year: number) => {
+  function getDaysInMonth(month: number, year: number) {
     return new Date(year, month + 1, 0).getDate();
-  };
+  }
 
   const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
 
   return (
     <div>
-      <div className="mb-4">
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button className="rounded-full border bg-white text-black hover:bg-white">
-              + Add Holidays
+      <div className="flex">
+        <Dialog open={isHolidayModalOpen} onOpenChange={setIsHolidayModalOpen}>
+          <DialogTrigger asChild className="ml-auto">
+            <Button variant="outline" className="space-x-2">
+              <Icons.add size={13} />
+              <span>Add Holidays</span>
             </Button>
           </DialogTrigger>
 
           <DialogContent className="bg-white">
             <DialogHeader>
-              <DialogTitle className="flex justify-center">Add Holiday</DialogTitle>
-              <DialogDescription>
-                <div className="">
-                  <p className="text-xl font-semibold text-black">Occasion</p>
-                  <Input className="mt-2" placeholder="Enter Reason" />
-                </div>
-              </DialogDescription>
+              <DialogTitle className="flex justify-center">Holiday Submission Form</DialogTitle>
             </DialogHeader>
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex gap-5 bg-white">
-                <Calendarcomponent />
-              </div>
-            </div>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onAddHoliday)} className="flex flex-col space-y-4">
+                <FormField
+                  control={form.control}
+                  name="name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Nawroz" {...field} />
+                      </FormControl>
+                      <FormDescription>Add name of the hoilday</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Persian New Year, celebrated as the first day of spring"
+                          className="resize-none"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormDescription>Add description</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                      <FormLabel>Date of holiday</FormLabel>
+                      <Popover modal>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={"outline"}
+                              className={cn(
+                                "pl-3 text-left font-normal",
+                                !field.value && "text-muted-foreground",
+                              )}>
+                              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) => date <= new Date() || date < new Date("1900-01-01")}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <DialogFooter>
+                  <Button disabled={isLoading} type="submit" className="flex-1 space-x-2">
+                    {isLoading && <Icons.loader />}
+                    <span>Add holiday</span>
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
           </DialogContent>
         </Dialog>
       </div>

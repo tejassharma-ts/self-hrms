@@ -1,14 +1,11 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { useState } from "react";
 import CustomCalendar from "./CustomCalender";
-import { Icons } from "@/components/Icons";
 import { LeavesDataApi } from "@/types/dashboard";
 import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
-import BulkManageRequest from "../_modals/BulkManageRequest";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 
 type ActiveTab = "leave-request" | "on-leave" | "calender";
@@ -54,23 +51,6 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
               <TabsTrigger value="on-leave">On Leave</TabsTrigger>
               <TabsTrigger value="calender">Calender</TabsTrigger>
             </TabsList>
-            <div className="absolute right-0 top-4">
-              {activeTab === "calender" && (
-                <Button variant="outline">
-                  <Icons.add size={14} className="mr-2" />
-                  Add Holiday
-                </Button>
-              )}
-            </div>
-            <div className="absolute right-40 top-4">
-              <BulkManageRequest />
-              {activeTab === "calender" && (
-                <Button variant="outline">
-                  <Icons.add size={14} className="mr-2" />
-                  Add Holiday
-                </Button>
-              )}
-            </div>
           </CardHeader>
           <CardContent className="p-0">
             <TabsContent value="leave-request">
