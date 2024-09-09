@@ -15,8 +15,8 @@ export const MeetingDetailsTab = (): React.ReactNode => {
         </TabsList>
         <EachTab
           tab={"Meetings"}
-          height={"32"}
-          hoverHeight={"52"}
+          height={8}
+          hoverHeight={13}
           cardTitle={"Meeting with Design Team"}
           buttonName={"Add Meeting"}
           CardContent={
@@ -36,8 +36,8 @@ export const MeetingDetailsTab = (): React.ReactNode => {
           }
         />
         <EachTab
-          height={"24"}
-          hoverHeight={"36"}
+          height={6}
+          hoverHeight={9}
           tab={"Announcements"}
           cardTitle={"Welcome Announcements for new employees"}
           buttonName={"Create Announcement"}

@@ -10,26 +10,16 @@ import {
 import { cn } from "@/lib/utils";
 
 interface ExpensesDropdownMenuProps {
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
   placeholder: string;
   values: string[];
 }
 
-export const ExpensesDropdownMenu = ({
-  isOpen,
-  setIsOpen,
-  placeholder,
-  values,
-}: ExpensesDropdownMenuProps): React.ReactNode => {
+export const PayrollDropdownMenu = ({ placeholder, values }: ExpensesDropdownMenuProps) => {
   return (
     <>
-      <Select onOpenChange={(open) => setIsOpen(open)}>
+      <Select>
         <SelectTrigger
-          className={cn(
-            "h-8 w-28 rounded-full border border-black text-center transition-colors duration-200",
-            isOpen ? "bg-black text-white" : "bg-white text-black",
-          )}>
+          className={cn("h-10 max-w-32 border-none text-3xl font-semibold text-gray-500")}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>

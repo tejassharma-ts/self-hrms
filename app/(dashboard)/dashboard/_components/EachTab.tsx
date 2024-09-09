@@ -12,8 +12,8 @@ import { Button } from "@/components/ui/button";
 import { TabsContent } from "@/components/ui/tabs";
 
 interface EachTabProps {
-  height: string;
-  hoverHeight: string;
+  height: number;
+  hoverHeight: number;
   tab: string;
   cardTitle: string;
   buttonName: string;
@@ -57,9 +57,11 @@ export const EachTab = ({
         <Card
           key={index}
           className={cn(
-            `group relative my-4 transition-all duration-300 ease-in-out hover:min-h-${hoverHeight}`,
-            expandedCard === index ? `min-h-${hoverHeight}` : `min-h-${height}`,
+            `group relative my-4 transition-all duration-300 ease-in-out hover:min-h-[${hoverHeight}rem]`,
           )}
+          style={{
+            minHeight: expandedCard === index ? `${hoverHeight}rem` : `${height}rem`,
+          }}
           onMouseEnter={() => handleMouseEnter(index)}
           onMouseLeave={() => handleMouseLeave(index)}>
           <CardHeader className="flex flex-row items-center justify-between">
