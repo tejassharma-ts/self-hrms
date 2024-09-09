@@ -9,6 +9,7 @@ interface Profile {
     yearlyPercentage: number;
     profile_picture: string;
     department: string;
+    today_status:string
 }
 
 interface Employee {

@@ -52,7 +52,7 @@ interface ProfileCardProps extends Profile {
     onClick: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPercentage, yearlyPercentage, profile_picture, isSelected, onClick }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPercentage, yearlyPercentage, profile_picture, isSelected, onClick, today_status }) => {
     return (
         <Card
             className={`w-48 shadow-lg rounded-lg overflow-hidden mx-1 cursor-pointer ${isSelected ? 'bg-[#2B2928] text-white' : 'bg-white text-black'}`}
@@ -74,7 +74,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPerc
             </CardContent>
             <CardFooter className="p-3 flex justify-center items-center">
                 <button className={`px-4 py-2 rounded-full hover:bg-gray-700 text-xs ${isSelected ? 'bg-[#5A5555]' : 'bg-black text-white'}`}>
-                    CHECKED IN
+                    {today_status}
                 </button>
             </CardFooter>
         </Card>

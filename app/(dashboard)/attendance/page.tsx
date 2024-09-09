@@ -6,14 +6,6 @@ import ProjectTimeline from './_components/ProjectTimeline';
 import AttendanceDashboard from './_components/AttendanceDashboard';
 import { api } from '@/api/api';
 
-interface Project {
-    id: string;
-    name: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-}
-
 interface Attendance {
     date: string;
     check_in_time: string | null;
@@ -21,19 +13,10 @@ interface Attendance {
     status: string;
 }
 
-interface Profile {
-    id: string;
-    name: string;
-    monthlyPercentage: number;
-    yearlyPercentage: number;
-    profile_picture: string;
-    department: string;
-}
 
 const Page = () => {
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
-    const [projects, setProjects] = useState<Project[]>([]);
     const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -75,7 +58,7 @@ const Page = () => {
             const fetchAttendance = async () => {
                 try {
                     const currentDate = new Date();
-                    const formattedDate = currentDate.toISOString().split('T')[0]; // This gives YYYY-MM-DD
+                    const formattedDate = currentDate.toISOString().split('T')[0];
                     
                     const response = await api.get('/api/companies-app/employee/attendance/', {
                         params: {
