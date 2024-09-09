@@ -151,16 +151,18 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
         <TableBody>
           {leaveRequest.map((col, idx) => (
             <TableRow key={idx} className={isLeaveSelected(col.id) ? "bg-muted/50" : ""}>
-              <TableCell className="flex items-center space-x-2">
-                <Checkbox
-                  checked={isLeaveSelected(col.id)}
-                  onCheckedChange={() => {
-                    handleSelectLeave(col.id);
-                  }}
-                />
-                <span className="line-clamp-1 text-ellipsis font-medium">
-                  {getFullName(col.employee.first_name, col.employee.last_name)}
-                </span>
+              <TableCell>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    checked={isLeaveSelected(col.id)}
+                    onCheckedChange={() => {
+                      handleSelectLeave(col.id);
+                    }}
+                  />
+                  <span className="line-clamp-1 text-ellipsis font-medium">
+                    {getFullName(col.employee.first_name, col.employee.last_name)}
+                  </span>
+                </div>
               </TableCell>
               <TableCell>{col.employee.department}</TableCell>
               <TableCell>{col.leave_type}</TableCell>
