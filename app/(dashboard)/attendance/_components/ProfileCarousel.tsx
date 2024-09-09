@@ -19,14 +19,6 @@ interface CircularProgressBarProps {
     label: string;
 }
 
-interface Profile {
-    id: string;
-    name: string;
-    department: string;
-    monthlyPercentage: number;
-    yearlyPercentage: number;
-    profile_picture: string | null;
-}
 
 interface ProfileCarouselProps {
     profiles: Profile[];

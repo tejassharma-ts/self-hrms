@@ -9,7 +9,7 @@ interface EachExpenseCardProps {
   isLast?: boolean;
 }
 
-export const ExpenseCard = ({ heading, money, isLast }: EachExpenseCardProps): React.ReactNode => {
+export const HeaderCard = ({ heading, money, isLast }: EachExpenseCardProps): React.ReactNode => {
   const integerPart: string = money.split(".")[0];
   const decimalPart: string = money.split(".")[1];
 
@@ -20,7 +20,7 @@ export const ExpenseCard = ({ heading, money, isLast }: EachExpenseCardProps): R
         isLast && "!border-black bg-black",
       )}>
       <CardContent className="flex h-full flex-col justify-between p-6">
-        <h2 className="text-md font-semibold text-gray-400">{heading}</h2>
+        <h2 className="text-xl font-semibold text-gray-400">{heading}</h2>
         {isLast ? (
           <div className={"flex items-center justify-between"}>
             <h2 className="mb-2 text-2xl font-bold text-white">

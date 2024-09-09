@@ -3,27 +3,29 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-const AttendanceDashboard = () => {
-  const attendanceData = [
-    { date: '28/08/2024', loginTime: '10:30 am', logOutTime: '6:30 pm', status: 'Present' },
-    { date: '28/08/2024', loginTime: '10:30 am', logOutTime: '6:30 pm', status: 'Present' },
-    { date: '28/08/2024', loginTime: '10:30 am', logOutTime: '6:30 pm', status: 'Present' },
-    { date: '28/08/2024', loginTime: '10:30 am', logOutTime: '6:30 pm', status: 'Present' },
-    { date: '28/08/2024', loginTime: '10:30 am', logOutTime: '6:30 pm', status: 'Present' },
-    { date: '29/08/2024', loginTime: '10:00 am', logOutTime: '1:00 pm', status: 'Half Day' },
-    { date: '30/08/2024', loginTime: '-', logOutTime: '-', status: 'Absent' },
-  ];
+interface Attendance {
+  date: string;
+  check_in_time: string | null;
+  check_out_time: string | null;
+  status: string;
+}
 
+interface AttendanceDashboardProps {
+  employee: Profile;
+  attendances: Attendance[];
+}
+
+const AttendanceDashboard: React.FC<AttendanceDashboardProps> = ({ employee, attendances }) => {
   return (
     <div className="p-4 rounded-lg flex-1 shadow-sm bg-white">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
           <Avatar>
-            <AvatarImage src="/api/placeholder/400/320" alt="Natalia Brown" />
-            <AvatarFallback>NB</AvatarFallback>
+            <AvatarImage src={employee.profile_picture} alt={`${employee.name}`} />
+            <AvatarFallback>{`${employee.name[0]}`}</AvatarFallback>
           </Avatar>
           <div>
-            <h2 className="text-2xl font-bold">Natalia Brown</h2>
+            <h2 className="text-2xl font-bold">{`${employee.name}`}</h2>
             <p className="text-gray-500">Design</p>
           </div>
         </div>
@@ -72,15 +74,16 @@ const AttendanceDashboard = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {attendanceData.map((row, index) => (
+          {attendances.map((row, index) => (
             <TableRow key={index}>
               <TableCell>{row.date}</TableCell>
-              <TableCell>{row.loginTime}</TableCell>
-              <TableCell>{row.logOutTime}</TableCell>
+              <TableCell>{row.check_in_time || '-'}</TableCell>
+              <TableCell>{row.check_out_time || '-'}</TableCell>
               <TableCell>
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   row.status === 'Present' ? 'bg-green-100 text-green-800' :
                   row.status === 'Half Day' ? 'bg-yellow-100 text-yellow-800' :
+                  row.status === 'On Leave' ? 'bg-blue-100 text-blue-800' :
                   'bg-red-100 text-red-800'
                 }`}>
                   {row.status}

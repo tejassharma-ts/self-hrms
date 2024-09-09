@@ -1,9 +1,9 @@
 "use client";
 
-import { getAuthCookie, getSessionUserFromCookie } from "@/lib/client/auth";
+import { getAuthCookie, getSessionUserFromCookie, /* removeAuthCookies */ } from "@/lib/client/auth";
 import { CompanyAccount, UserAccount } from "@/types/auth";
 import useAuthStore from "@/model/auth";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { api } from "@/api/api";
 
@@ -22,7 +22,7 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const router = useRouter();
+  // const router = useRouter();
   const { logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [authCompany, setAuthCompany] = useState<CompanyAccount | null>(null);
@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (err) {
       console.error(err);
-      // router.push("/auth");
     } finally {
       setIsLoading(false);
     }

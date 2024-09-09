@@ -1,9 +1,13 @@
+type Status = "approved" | "denied" | "pending";
+type Department = string[];
+type LeaveType = string[];
+
 interface Profile {
     id: string;
     name: string;
     monthlyPercentage: number;
     yearlyPercentage: number;
-    profile_picture: string | null;
+    profile_picture: string;
     department: string;
 }
 

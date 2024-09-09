@@ -14,21 +14,38 @@ interface Project {
     status: string;
 }
 
+interface Attendance {
+    date: string;
+    check_in_time: string | null;
+    check_out_time: string | null;
+    status: string;
+}
+
+interface Profile {
+    id: string;
+    name: string;
+    monthlyPercentage: number;
+    yearlyPercentage: number;
+    profile_picture: string;
+    department: string;
+}
+
 const Page = () => {
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
-    const [attendanceData, setAttendanceData] = useState<AttendanceData | null>(null);
     const [projects, setProjects] = useState<Project[]>([]);
+    const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchProfiles = async () => {
             try {
+                const currentDate = new Date();
                 const response = await api.get('/api/companies-app/attendance-percentage/', {
                     params: {
-                        month: 9,
-                        year: 2024,
+                        month: currentDate.getMonth() + 1,
+                        year: currentDate.getFullYear(),
                     }
                 });
                 
@@ -53,35 +70,44 @@ const Page = () => {
         fetchProfiles();
     }, []);
 
-
     useEffect(() => {
-        const fetchProjects = async () => {
-            try {
-                const response = await api.get('/api/project_management/projects-of-employee/', {
-                    params: {
-                        employee_id: 'f0d7f832-84a5-4163-b554-5052e6e0927e',
-                        month: 8,
-                        year: 2024,
-                    },
-                });
-                setProjects(response.data);
-                setLoading(false);
-            } catch (error) {
-                console.error('Error fetching projects:', error);
-                setError('Failed to fetch projects. Please try again later.');
-                setLoading(false);
-            }
-        };
+        if (selectedProfile) {
+            const fetchAttendance = async () => {
+                try {
+                    const currentDate = new Date();
+                    const formattedDate = currentDate.toISOString().split('T')[0]; // This gives YYYY-MM-DD
+                    
+                    const response = await api.get('/api/companies-app/employee/attendance/', {
+                        params: {
+                            employee_id: selectedProfile.id,
+                            date: formattedDate,
+                        },
+                    });
+                    const formattedAttendance = response.data.attendances.map((attendance: any) => ({
+                        date: attendance.date,
+                        check_in_time: attendance.check_in_time,
+                        check_out_time: attendance.check_out_time,
+                        status: attendance.status,
+                    }));
+                    setAttendanceData(formattedAttendance);
+                    setLoading(false);
+                } catch (error) {
+                    console.error('Error fetching attendance:', error);
+                    setError('Failed to fetch attendance. Please try again later.');
+                    setLoading(false);
+                }
+            };
 
-        fetchProjects();
-    }, []);
+            fetchAttendance();
+        }
+    }, [selectedProfile]);
 
     return (
         <div className='px-5 space-y-6'>
             <ProfileCarousel profiles={profiles} selectedProfile={selectedProfile} setSelectedProfile={setSelectedProfile} />
             {selectedProfile ?
                 <div className='flex flex-row gap-10'>
-                    <AttendanceDashboard />
+                    <AttendanceDashboard employee={selectedProfile} attendances={attendanceData} />
                     <ProjectTimeline />
                 </div>
                 :
