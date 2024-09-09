@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Table,
   TableBody,
@@ -6,18 +7,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React from "react";
-import {
-  IPayrollTableDummyData,
-  PayrollTableDummyData,
-} from "@/app/payroll/_data/PayrollTableDummyData";
 import { PayrollYearFilter } from "@/app/payroll/_components/PayrollYearFilter";
+import { Payroll } from "@/app/payroll/page";
 
-export const PayrollTable = (): React.ReactNode => {
+export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React.ReactNode => {
   return (
     <>
-      <div className={"mb-3 flex items-center justify-between gap-x-4"}>
-        <h2 className={"text-lg font-semibold"}>Payroll History</h2>
+      <div className="mb-3 flex items-center justify-between gap-x-4">
+        <h2 className="text-lg font-semibold">Payroll History</h2>
         <PayrollYearFilter />
       </div>
       <div className="rounded-md border">
@@ -33,16 +30,18 @@ export const PayrollTable = (): React.ReactNode => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {PayrollTableDummyData.map((eachPayroll: IPayrollTableDummyData) => (
-              <TableRow key={eachPayroll.month}>
-                <TableCell className="font-medium">{eachPayroll.month}</TableCell>
-                <TableCell className="font-medium">Rs {eachPayroll.bonus}</TableCell>
-                <TableCell>Rs {eachPayroll.deduction}</TableCell>
-                <TableCell>Rs {eachPayroll.payable}</TableCell>
-                <TableCell>Rs {eachPayroll.paidAmount}</TableCell>
-                <TableCell>Rs {eachPayroll.pending}</TableCell>
-              </TableRow>
-            ))}
+            {payrollData.map((eachPayroll: Payroll) => {
+              return (
+                <TableRow key={eachPayroll.pay_date}>
+                  <TableCell>{new Date(eachPayroll.pay_date).toLocaleDateString()}</TableCell>
+                  <TableCell>Rs {eachPayroll.bonus ? eachPayroll.bonus : 0}</TableCell>
+                  <TableCell>Rs {eachPayroll.total_deductions}</TableCell>
+                  <TableCell>Rs {eachPayroll.in_hand_salary}</TableCell>
+                  <TableCell>Rs {eachPayroll.in_hand_salary}</TableCell>
+                  <TableCell>Rs {eachPayroll.arrears_amount}</TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
