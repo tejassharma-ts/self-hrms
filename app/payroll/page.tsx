@@ -50,7 +50,7 @@ export type Payroll = {
   bonus?: string;
 };
 
-const PayrollPage = async ({ searchParams }: { searchParams: any }) => {
+const PayrollPage = async ({ searchParams }: { searchParams: any }): Promise<React.ReactNode> => {
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");
   const currentYear: number = new Date().getFullYear();
   const year = searchParams["year"] ? Number(searchParams["year"]) : currentYear;

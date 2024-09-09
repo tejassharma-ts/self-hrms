@@ -7,31 +7,35 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React from "react";
-import { EmployeeData } from "@/app/expenses/_data/DummyExpensesEmployeeTableData";
+import { Expenses } from "@/app/expenses/page";
 
-export const ExpensesEmployeeTable = (): React.ReactNode => {
+export const ExpensesEmployeeTable = ({
+  expensesEmployeeData,
+}: {
+  expensesEmployeeData: Expenses[];
+}): React.ReactNode => {
   return (
     <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="">EmployeeID</TableHead>
+            <TableHead>EmployeeID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Department</TableHead>
             <TableHead>Date</TableHead>
             <TableHead>Total Expense</TableHead>
-            <TableHead className="">Payable amount</TableHead>
+            <TableHead>Payable amount</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {EmployeeData.map((eachEmployee: EmployeeData) => (
-            <TableRow key={eachEmployee.employeeId}>
-              <TableCell>{eachEmployee.employeeId}</TableCell>
-              <TableCell>{eachEmployee.name}</TableCell>
-              <TableCell>{eachEmployee.department}</TableCell>
-              <TableCell>{eachEmployee.date}</TableCell>
-              <TableCell>{eachEmployee.totalExpense}</TableCell>
-              <TableCell>{eachEmployee.payableAmount}</TableCell>
+          {expensesEmployeeData.map((eachExpensesEmployeeData: Expenses) => (
+            <TableRow key={eachExpensesEmployeeData.id}>
+              <TableCell>{eachExpensesEmployeeData.id}</TableCell>
+              <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
+              <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
+              <TableCell>{eachExpensesEmployeeData.date_incurred}</TableCell>
+              <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
+              <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
             </TableRow>
           ))}
         </TableBody>
