@@ -34,7 +34,7 @@ type EmployeeLeaveRequestProps = {
 
 // TODO: fetch data from server
 const departments = ["Tech", "Management", "Marketing"];
-const leaveType = ["Sick leave", "Casual leave"];
+const leaveType = ['Sick', 'Casual', 'Annual', 'Maternity', 'Paternity'];
 
 export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequestProps) {
   const [status, setStatus] = useState("");
