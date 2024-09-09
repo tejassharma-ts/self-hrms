@@ -21,7 +21,7 @@ export const ExpensesDropdownMenu = ({
   setIsOpen,
   placeholder,
   values,
-}: ExpensesDropdownMenuProps) => {
+}: ExpensesDropdownMenuProps): React.ReactNode => {
   return (
     <>
       <Select onOpenChange={(open) => setIsOpen(open)}>
