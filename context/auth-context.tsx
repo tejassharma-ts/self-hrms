@@ -56,7 +56,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       }
     } catch (err) {
       console.error(err);
-      router.push("/auth");
     } finally {
       setIsLoading(false);
     }

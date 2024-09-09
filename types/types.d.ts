@@ -3,7 +3,7 @@ interface Profile {
     name: string;
     monthlyPercentage: number;
     yearlyPercentage: number;
-    profile_picture: string | null;
+    profile_picture: string;
     department: string;
 }
 
