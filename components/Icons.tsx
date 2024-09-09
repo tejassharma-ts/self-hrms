@@ -12,10 +12,16 @@ import {
   ChevronRight,
   ChevronLeft,
   Loader,
+  ListFilter,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
-function CustomLoader() {
-  return <Loader className="size-6 animate-spin" />;
+type CustomLoaderProps = {
+  className?: string;
+};
+
+function CustomLoader({ className }: CustomLoaderProps) {
+  return <Loader className={cn("size-5 animate-spin", className)} />;
 }
 
 export const Icons = {
@@ -32,4 +38,5 @@ export const Icons = {
   setting: Settings,
   grid: LayoutGrid,
   loader: CustomLoader,
+  listFilter: ListFilter,
 };

@@ -26,7 +26,7 @@ export type LeaveRequest = {
   start_date: string;
   end_date: string;
   reason: string;
-  status: string;
+  status: "Approved" | "Rejected" | "Pending";
   applied_at: string;
   reviewed_at: string | null;
   company: string;

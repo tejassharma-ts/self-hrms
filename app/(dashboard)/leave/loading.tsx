@@ -9,23 +9,21 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import ScreenLoader from "@/components/ScreenLoader";
 
 export default function Loading() {
+  return <ScreenLoader />;
   return (
     <Card>
-      <CardHeader className="flex justify-between flex-row">
+      <CardHeader className="flex flex-row justify-between">
         <Tabs defaultValue="leave-request">
           <TabsList>
             <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
             <TabsTrigger value="leave-balance">Leave Balance</TabsTrigger>
-            <TabsTrigger value="employee-availability">
-              Employee Availability
-            </TabsTrigger>
+            <TabsTrigger value="employee-availability">Employee Availability</TabsTrigger>
             <TabsTrigger value="calender">Calender</TabsTrigger>
           </TabsList>
-          <TabsContent value="account">
-            Make changes to your account here.
-          </TabsContent>
+          <TabsContent value="account">Make changes to your account here.</TabsContent>
           <TabsContent value="password">Change your password here.</TabsContent>
         </Tabs>
         <Select>
@@ -35,8 +33,7 @@ export default function Loading() {
                 variant: "default",
                 className: "w-auto",
               }),
-            )}
-          >
+            )}>
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
           <SelectContent>
