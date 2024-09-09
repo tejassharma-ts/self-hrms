@@ -77,12 +77,12 @@ export const sidelinks: SideLink[] = [
   },
   {
     title: "Expenses",
-    href: "#",
+    href: "/expenses",
     icon: <Icons.wallet size={18} />,
   },
   {
     title: "Payroll",
-    href: "#",
+    href: "/payroll",
     icon: <Icons.rupee size={18} />,
   },
   {
