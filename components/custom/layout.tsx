@@ -76,7 +76,7 @@ const Body = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
         ref={ref}
         data-layout="body"
         className={cn(
-          "mt-10 px-4 py-2 md:overflow-hidden md:px-8",
+          "mt-0 px-4 py-2 md:overflow-hidden md:px-8",
           contextVal && contextVal.fixed && "flex-1",
           className,
         )}

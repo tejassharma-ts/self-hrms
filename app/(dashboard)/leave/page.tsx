@@ -6,7 +6,7 @@ type SearchParams = {
   tab: "leave-request" | "on-leave" | "calender";
   status: Status;
   department: Department;
-  leaveType: LeaveType;
+  leave_type: LeaveType;
   date: string | null;
 };
 
@@ -19,6 +19,7 @@ async function getLeaveRequests(searchParams: SearchParams) {
     const res = await apiServer.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
       headers: getAuthCookies(),
       params: {
+        leave_type: searchParams.leave_type || null,
         status: searchParams.status || null,
         departments: searchParams.department || null,
         date_range: searchParams.date || null,
