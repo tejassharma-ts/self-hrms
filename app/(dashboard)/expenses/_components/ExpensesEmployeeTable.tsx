@@ -7,6 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React from "react";
+import Link from "next/link";
+import { Expenses } from "@/app/(dashboard)/expenses/page";
 
 export const ExpensesEmployeeTable = ({
   expensesEmployeeData,
@@ -29,7 +31,11 @@ export const ExpensesEmployeeTable = ({
         <TableBody>
           {expensesEmployeeData.map((eachExpensesEmployeeData: Expenses) => (
             <TableRow key={eachExpensesEmployeeData.id}>
-              <TableCell>{eachExpensesEmployeeData.id}</TableCell>
+              <TableCell>
+                <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>
+                  {eachExpensesEmployeeData.employee.id}
+                </Link>
+              </TableCell>
               <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
               <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
               <TableCell>{eachExpensesEmployeeData.date_incurred}</TableCell>
