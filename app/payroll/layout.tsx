@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { UserNav } from "@/components/UserNav";
 import { AuthProvider } from "@/context/auth-context";
 
-const ExpensesLayout = ({ children }: { children: React.ReactNode }) => {
+const ExpensesLayout = ({ children }: { children: React.ReactNode }): React.ReactNode => {
   const isAuth = isUserAuthenticated();
 
   if (!isAuth) {

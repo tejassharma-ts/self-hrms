@@ -3,8 +3,41 @@ import { ExpensesHeader } from "@/app/expenses/_components/ExpensesHeader";
 import { ExpensesMonthFilter } from "@/app/expenses/_components/ExpensesMonthFilter";
 import { ExpensesYearFilter } from "@/app/expenses/_components/ExpensesYearFilter";
 import { ExpensesEmployeeTable } from "@/app/expenses/_components/ExpensesEmployeeTable";
+import { apiServer, getAuthCookies } from "@/lib/server/api";
 
-const Page = (): React.ReactNode => {
+async function getExpenses(): Promise<Expenses[]> {
+  try {
+    const res = await apiServer.get("/api/payroll_app/expenses/", {
+      headers: getAuthCookies(),
+    });
+    return res.data;
+  } catch (err) {
+    throw new Error(`Error getExpenses: ${err}`);
+  }
+}
+
+type Employee = {
+  first_name: string;
+  last_name: string;
+  profile_picture: string;
+  department: string;
+  position: string;
+};
+
+export type Expenses = {
+  id: string;
+  employee: Employee;
+  company: string;
+  date_incurred: string;
+  amount: string;
+  description: string;
+  category: string;
+  bill: string;
+  status: string;
+};
+
+const Page = async (): Promise<React.ReactNode> => {
+  const expensesEmployeeData: Expenses[] = await getExpenses();
   return (
     <>
       <ExpensesHeader />
@@ -15,7 +48,7 @@ const Page = (): React.ReactNode => {
             <ExpensesYearFilter />
           </div>
           <div>
-            <ExpensesEmployeeTable />
+            <ExpensesEmployeeTable expensesEmployeeData={expensesEmployeeData} />
           </div>
         </div>
       </div>

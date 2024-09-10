@@ -35,7 +35,9 @@ export const ExpensesDropdownMenu = ({
         <SelectContent>
           <SelectGroup>
             {values.map((value: string) => (
-              <SelectItem value={value}>{value}</SelectItem>
+              <SelectItem key={value} value={value}>
+                {value}
+              </SelectItem>
             ))}
           </SelectGroup>
         </SelectContent>
