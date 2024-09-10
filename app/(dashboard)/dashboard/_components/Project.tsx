@@ -9,10 +9,10 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect } from "react";
 import useProjectStore from "@/model/project";
 import { Project as TProject } from "@/types/dashboard";
-import { api } from "@/api/api";
 import { toast } from "@/hooks/use-toast";
 import { formatISODate, getFullName } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
+import { apiCaller } from "@/lib/auth";
 
 export default function Project() {
   const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +23,7 @@ export default function Project() {
     async function getProjectDetail() {
       setIsLoading(true);
       try {
-        const res = await api.get<TProject>("/api/project_management/projects-details/", {
+        const res = await apiCaller.get<TProject>("/api/project_management/projects-details/", {
           params: {
             project_id: activeProject,
           },

@@ -1,8 +1,8 @@
 "use client";
 import * as React from "react";
 import { useState } from "react";
-import { ExpensesDropdownMenu } from "@/app/expenses/_components/ExpensesDropdownMenu";
-import { statusValues } from "@/app/expenses/_data/DummyExpensesStatusFilterData";
+import { ExpensesDropdownMenu } from "../_components/ExpensesDropdownMenu";
+import { statusValues } from "../_data/DummyExpensesStatusFilterData";
 
 export const ExpensesStatusFilter = (): React.ReactNode => {
   const [isOpen, setIsOpen] = useState<boolean>(false);

@@ -5,7 +5,7 @@ import { CompanyAccount, UserAccount } from "@/types/auth";
 import useAuthStore from "@/model/auth";
 // import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { api } from "@/api/api";
+import { apiCaller } from "@/lib/auth";
 
 type AuthContextProps = {
   isLoading: boolean;
@@ -48,7 +48,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         throw new Error("Authentication token is missing");
       }
 
-      api.defaults.headers.Authorization = `Bearer ${accessToken}`;
+      apiCaller.defaults.headers.Authorization = `Bearer ${accessToken}`;
       if (session.role === "company") {
         await fetchCompanyData();
       } else if (session.role === "employee") {
@@ -63,7 +63,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   async function fetchCompanyData() {
     try {
-      const res = await api.get<CompanyAccount>("/api/companies-app/company/profile/");
+      const res = await apiCaller.get<CompanyAccount>("/api/companies-app/company/profile/");
       setAuthCompany(res.data);
     } catch (err) {
       throw new Error("Failed to fetch company.");
@@ -72,7 +72,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   async function fetchUserData() {
     try {
-      const res = await api.get<UserAccount>("/api/auth/user-details/");
+      const res = await apiCaller.get<UserAccount>("/api/auth/user-details/");
       setAuthUser(res.data);
     } catch (err) {
       throw new Error("Failed to fetch user details.");

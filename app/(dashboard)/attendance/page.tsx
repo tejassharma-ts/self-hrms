@@ -4,7 +4,7 @@ import ProfileCarousel from './_components/ProfileCarousel'
 import AttendanceList from './_components/AttendanceList'
 import ProjectTimeline from './_components/ProjectTimeline';
 import AttendanceDashboard from './_components/AttendanceDashboard';
-import { api } from '@/api/api';
+import { apiCaller } from '@/lib/auth';
 
 interface Attendance {
     date: string;
@@ -25,7 +25,7 @@ const Page = () => {
         const fetchProfiles = async () => {
             try {
                 const currentDate = new Date();
-                const response = await api.get('/api/companies-app/attendance-percentage/', {
+                const response = await apiCaller.get('/api/companies-app/attendance-percentage/', {
                     params: {
                         month: currentDate.getMonth() + 1,
                         year: currentDate.getFullYear(),
@@ -60,7 +60,7 @@ const Page = () => {
                     const currentDate = new Date();
                     const formattedDate = currentDate.toISOString().split('T')[0];
                     
-                    const response = await api.get('/api/companies-app/employee/attendance/', {
+                    const response = await apiCaller.get('/api/companies-app/employee/attendance/', {
                         params: {
                             employee_id: selectedProfile.id,
                             date: formattedDate,

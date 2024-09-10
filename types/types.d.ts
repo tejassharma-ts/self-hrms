@@ -33,3 +33,16 @@ interface AttendanceData {
     department: string;
     profile_picture: string;
 }
+
+
+interface Expenses {
+  id: string;
+  employee: Employee;
+  company: string;
+  date_incurred: string;
+  amount: string;
+  description: string;
+  category: string;
+  bill: string;
+  status: string;
+};

@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Icons } from '@/components/Icons';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { api } from '@/api/api'; // Adjust this path as per your project structure
+import { apiCaller } from '@/lib/auth';
 
 interface Employee {
     name: string;
@@ -28,7 +28,7 @@ const EmployePayroll: React.FC = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await api.get("api/students/fee-structures/", {
+                const { data } = await apiCaller.get("api/students/fee-structures/", {
                     // headers: {
                     //     'Authorization': 'Bearer  ',
                     //     'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { PayrollYearDummyData } from "@/app/payroll/_data/PayrollYearDummyData";
+import { PayrollYearDummyData } from "../_data/PayrollYearDummyData";
 import {
   Select,
   SelectContent,

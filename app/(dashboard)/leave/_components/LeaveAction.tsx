@@ -22,7 +22,6 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
-import { api } from "@/api/api";
 import { toast } from "@/hooks/use-toast";
 import { buttonVariants } from "@/components/ui/button";
 
@@ -42,6 +41,7 @@ import { LeaveRequest } from "@/types/dashboard";
 import { z } from "zod";
 import { formatISODate } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { apiCaller } from "@/lib/auth";
 
 type LeaveRequestOptionProps = {
   leaveRequest?: LeaveRequest;
@@ -95,7 +95,7 @@ export default function LeaveRequestOption({
   async function onApproveLeave() {
     try {
       setIsApproveLoading(true);
-      await api.post("/api/companies-app/leave/approve/", {
+      await apiCaller.post("/api/companies-app/leave/approve/", {
         status: "Approved",
         leave_ids: selectedLeaveIDs?.length ? selectedLeaveIDs : [leaveId],
       });
@@ -120,7 +120,7 @@ export default function LeaveRequestOption({
   async function onRejectLeaveSubmit(formData: z.infer<typeof FormSchema>) {
     try {
       setIsRejectedLoading(true);
-      await api.post("/api/companies-app/leave/approve/", {
+      await apiCaller.post("/api/companies-app/leave/approve/", {
         leave_ids: selectedLeaveIDs?.length ? selectedLeaveIDs : [leaveId],
         status: "Rejected",
         rejection_reason: formData.reason,

@@ -1,14 +1,15 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import BarChartComponent from "./BarChartComponent";
 import AddNewProject from "../_modals/AddNewProject";
-import { apiServer, getAuthCookies } from "@/lib/server/api";
+import { getAuthCookies } from "@/lib/server/api";
+import { apiCaller } from "@/lib/auth";
 // import { cookies } from "next/headers";
 
 async function getProjects() {
   try {
     // const cookieStore = cookies();
     // TODO: remove hard coded data
-    const res = await apiServer.get(
+    const res = await apiCaller.get(
       "/api/project_management/projects/create/?company=f619fb18-cbbb-411b-a55c-ea85320cd2fd",
       {
         headers: getAuthCookies(),

@@ -1,13 +1,14 @@
 import React from "react";
-import { ExpensesHeader } from "@/app/expenses/_components/ExpensesHeader";
-import { ExpensesMonthFilter } from "@/app/expenses/_components/ExpensesMonthFilter";
-import { ExpensesYearFilter } from "@/app/expenses/_components/ExpensesYearFilter";
-import { ExpensesEmployeeTable } from "@/app/expenses/_components/ExpensesEmployeeTable";
-import { apiServer, getAuthCookies } from "@/lib/server/api";
+import { getAuthCookies } from "@/lib/server/api";
+import { ExpensesHeader } from "./_components/ExpensesHeader";
+import { ExpensesMonthFilter } from "./_components/ExpensesMonthFilter";
+import { ExpensesYearFilter } from "./_components/ExpensesYearFilter";
+import { ExpensesEmployeeTable } from "./_components/ExpensesEmployeeTable";
+import { apiCaller } from "@/lib/auth";
 
 async function getExpenses(): Promise<Expenses[]> {
   try {
-    const res = await apiServer.get("/api/payroll_app/expenses/", {
+    const res = await apiCaller.get("/api/payroll_app/expenses/", {
       headers: getAuthCookies(),
     });
     return res.data;
@@ -24,7 +25,7 @@ type Employee = {
   position: string;
 };
 
-export type Expenses = {
+interface Expenses {
   id: string;
   employee: Employee;
   company: string;

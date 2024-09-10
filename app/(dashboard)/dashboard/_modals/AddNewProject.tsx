@@ -41,7 +41,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
-import { api } from "@/api/api";
+import { apiCaller } from "@/lib/auth";
 
 const projectSchema = z.object({
   project_name: z.string().min(1, "Project name is required"),
@@ -121,7 +121,7 @@ export default function AddNewProject() {
   async function onSubmit(values: z.infer<typeof projectSchema>) {
     try {
       // TODO: remove hard coded value
-      const res = await api.post(
+      const res = await apiCaller.post(
         "/api/project_management/projects/create/?company=f619fb18-cbbb-411b-a55c-ea85320cd2fd",
       );
       console.log(res);

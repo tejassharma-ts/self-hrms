@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { api } from '@/api/api';
+import { apiCaller } from '@/lib/auth';
 
 interface AttendanceData {
     id: string;
@@ -17,6 +15,7 @@ interface AttendanceData {
     profile_picture: string;
 }
 
+
 const AttendanceList: React.FC = () => {
     const [attendanceData, setAttendanceData] = useState<AttendanceData[]>([]);
     const [loading, setLoading] = useState(true);
@@ -25,7 +24,7 @@ const AttendanceList: React.FC = () => {
     useEffect(() => {
         const fetchAttendanceData = async () => {
             try {
-                const response = await api.get<AttendanceData[]>('/api/companies-app/company/attendance/status/');
+                const response = await apiCaller.get<AttendanceData[]>('/api/companies-app/company/attendance/status/');
                 setAttendanceData(response.data.employees);
                 setLoading(false);
             } catch (error) {

@@ -7,7 +7,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React from "react";
-import { Expenses } from "@/app/expenses/page";
 
 export const ExpensesEmployeeTable = ({
   expensesEmployeeData,

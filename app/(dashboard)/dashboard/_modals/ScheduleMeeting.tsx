@@ -21,7 +21,6 @@ import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { format, min } from "date-fns";
-import { api } from "@/api/api";
 import {
   Select,
   SelectContent,
@@ -32,6 +31,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Icons } from "@/components/Icons";
 import { useRouter } from "next/navigation";
+import { apiCaller } from "@/lib/auth";
 
 // Mock data for teams
 const teams = [
@@ -83,7 +83,7 @@ export default function ScheduleMeeting() {
   async function onSubmit(values: z.infer<typeof eventSchema>) {
     try {
       setIsLoading(true);
-      const res = await api.post("/api/employees-app/event-meetings/", values);
+      const res = await apiCaller.post("/api/employees-app/event-meetings/", values);
       console.log(res);
       router.refresh();
     } catch (err) {

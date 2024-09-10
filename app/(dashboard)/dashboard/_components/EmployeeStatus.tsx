@@ -1,11 +1,11 @@
-import { apiServer } from "@/lib/server/api";
 import { AttendanceDataApi } from "@/types/dashboard";
 import ValueCard from "./ValueCard";
 import { getAuthCookies } from "@/lib/server/api";
+import { apiCaller } from "@/lib/auth";
 
 async function getEmployeeAttendence() {
   try {
-    const res = await apiServer.get<AttendanceDataApi>("/api/companies-app/company/attendance/", {
+    const res = await apiCaller.get<AttendanceDataApi>("/api/companies-app/company/attendance/", {
       headers: getAuthCookies(),
     });
     return res.data;

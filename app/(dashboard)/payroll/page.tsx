@@ -1,12 +1,13 @@
 import React from "react";
-import { PayrollHeader } from "@/app/payroll/_components/PayrollHeader";
-import EmployeePayroll from "@/app/payroll/_components/EmployeePayroll";
-import { PayrollTable } from "@/app/payroll/_components/PayrollTable";
-import { apiServer, getAuthCookies } from "@/lib/server/api";
+import { getAuthCookies } from "@/lib/server/api";
+import { PayrollHeader } from "./_components/PayrollHeader";
+import { PayrollTable } from "./_components/PayrollTable";
+import EmployeePayroll from "./_components/EmployeePayroll";
+import { apiCaller } from "@/lib/auth";
 
 async function getPayroll({ year }: { year: number }) {
   try {
-    const res = await apiServer.get<Payroll[]>("/api/payroll_app/payrolls/", {
+    const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
       headers: getAuthCookies(),
       params: {
         year: year,

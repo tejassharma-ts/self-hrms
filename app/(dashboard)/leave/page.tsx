@@ -1,5 +1,6 @@
+import { apiCaller } from "@/lib/auth";
 import { TabsWrapper } from "./_components/TabsWrapper";
-import { apiServer, getAuthCookies } from "@/lib/server/api";
+import { getAuthCookies } from "@/lib/server/api";
 import { LeavesDataApi } from "@/types/dashboard";
 
 type SearchParams = {
@@ -16,7 +17,7 @@ type EmployeeRequestListPageProps = {
 
 async function getLeaveRequests(searchParams: SearchParams) {
   try {
-    const res = await apiServer.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
+    const res = await apiCaller.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
       headers: getAuthCookies(),
       params: {
         leave_type: searchParams.leave_type || null,

@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 // import { Calendarcomponent } from "@/components/calendarcomponent";
-import { api } from "@/api/api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { date, z } from "zod";
@@ -39,6 +38,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
+import { apiCaller } from "@/lib/auth";
 
 type EventsDataApi = {
   [key: string]: {
@@ -104,7 +104,7 @@ export default function CustomCalendar() {
 
   async function fetchData() {
     try {
-      const res = await api.get<EventsDataApi>("api/attendance_app/get-holidays/", {
+      const res = await apiCaller.get<EventsDataApi>("api/attendance_app/get-holidays/", {
         params: {
           year: selectedYear,
           month: selectedMonth + 1,
@@ -128,7 +128,7 @@ export default function CustomCalendar() {
           date: formattedDate,
         },
       ];
-      await api.post("/api/attendance_app/holidays/", holidays);
+      await apiCaller.post("/api/attendance_app/holidays/", holidays);
       toast({
         description: "Holiday has been added successfully",
       });

@@ -1,7 +1,7 @@
 import React from "react";
-import { ExpenseCard } from "@/app/expenses/_components/ExpenseCard";
-import { EmployeePayrollHistoryCard } from "@/app/payroll/_components/EmployeePayrollHistoryCard";
-import { BonusesAndDeductionsCard } from "@/app/payroll/_components/BonusesAndDeductionsCard";
+import { EmployeePayrollHistoryCard } from "../_components/EmployeePayrollHistoryCard";
+import { BonusesAndDeductionsCard } from "../_components/BonusesAndDeductionsCard";
+import { ExpenseCard } from "../../expenses/_components/ExpenseCard";
 
 export const PayrollHeader = (): React.ReactNode => {
   return (
