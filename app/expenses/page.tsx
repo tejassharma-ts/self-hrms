@@ -38,7 +38,6 @@ export type Expenses = {
 
 const Page = async (): Promise<React.ReactNode> => {
   const expensesEmployeeData: Expenses[] = await getExpenses();
-  console.log(expensesEmployeeData);
   return (
     <>
       <ExpensesHeader />
