@@ -17,9 +17,9 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
 import { SigninFormSchema } from "@/validations/auth";
-import { apiPublic } from "@/api/api";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { publicApiCaller } from "@/lib/auth";
 
 interface UserSigninFromProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -41,7 +41,7 @@ export default function UserSigninForm({ className, ...props }: UserSigninFromPr
   async function onSubmit(formData: z.infer<typeof SigninFormSchema>) {
     try {
       setIsLoading(true);
-      await apiPublic.post("/api/auth/login/generate-otp/", formData);
+      await publicApiCaller.post("/api/auth/login/generate-otp/", formData);
 
       // OTP is successfully sent
       const params = new URLSearchParams(searchParams);

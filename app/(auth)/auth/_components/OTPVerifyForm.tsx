@@ -20,8 +20,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import useAuthStore from "@/model/auth";
-import { apiPublic } from "@/api/api";
 import { Icons } from "@/components/Icons";
+import { publicApiCaller } from "@/lib/auth";
 
 const FormSchema = z.object({
   email: z.string(),
@@ -49,7 +49,7 @@ export function InputOTPForm() {
       setIsLoading(true);
       const email = searchParams.get("email");
       if (!email) {
-        await apiPublic.post("/api/auth/verify/", {
+        await publicApiCaller.post("/api/auth/verify/", {
           email: data.email,
           code: data.otp,
         });
