@@ -15,7 +15,7 @@ type params = {
 interface getEmployeeSpendDataProps {
   employeeId: string;
   status: string;
-  month: number;
+  month: number | null;
   year: number;
 }
 
@@ -26,15 +26,17 @@ async function getEmployeeSpendData({
   year,
 }: getEmployeeSpendDataProps): Promise<Expenses[]> {
   try {
+    const updatedMonth = month === 0 ? null : month;
     const res = await apiCaller.get<Expenses[]>("/api/payroll_app/expenses-details/", {
       headers: getAuthCookies(),
       params: {
         employee_id: employeeId,
         approval_status: status,
-        month,
+        month: updatedMonth,
         year,
       },
     });
+
     return res.data;
   } catch (err) {
     throw new Error("Error getting employee spend data.");
