@@ -6,18 +6,8 @@ import { ExpensesYearFilter } from "./_components/ExpensesYearFilter";
 import { ExpensesEmployeeTable } from "./_components/ExpensesEmployeeTable";
 import { apiCaller } from "@/lib/auth";
 
-async function getExpenses(): Promise<Expenses[]> {
-  try {
-    const res = await apiCaller.get("/api/payroll_app/expenses/", {
-      headers: getAuthCookies(),
-    });
-    return res.data;
-  } catch (err) {
-    throw new Error(`Error getExpenses: ${err}`);
-  }
-}
-
-type Employee = {
+export type Employee = {
+  id: string;
   first_name: string;
   last_name: string;
   profile_picture: string;
@@ -25,7 +15,7 @@ type Employee = {
   position: string;
 };
 
-interface Expenses {
+export interface Expenses {
   id: string;
   employee: Employee;
   company: string;
@@ -35,7 +25,18 @@ interface Expenses {
   category: string;
   bill: string;
   status: string;
-};
+}
+
+async function getExpenses(): Promise<Expenses[]> {
+  try {
+    const res = await apiCaller.get<Expenses[]>("/api/payroll_app/expenses/", {
+      headers: getAuthCookies(),
+    });
+    return res.data;
+  } catch (err) {
+    throw new Error("Error getting the expenses data.");
+  }
+}
 
 const Page = async (): Promise<React.ReactNode> => {
   const expensesEmployeeData: Expenses[] = await getExpenses();
