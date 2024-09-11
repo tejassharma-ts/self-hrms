@@ -2,7 +2,7 @@ import React from "react";
 import { getAuthCookies } from "@/lib/server/api";
 import { PayrollHeader } from "./_components/PayrollHeader";
 import { PayrollTable } from "./_components/PayrollTable";
-import EmployeePayroll from "./_components/EmployeePayroll";
+import EmployeePayroll from "./_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
 
 async function getPayroll({ year }: { year: number }) {
