@@ -1,50 +1,68 @@
-"use client";
+"use client"
 import React, { useState, useEffect } from 'react';
-import { Icons } from '@/components/Icons';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import AddBonus from './AddBonus';
+import AddDeduction from './AddDeduction';
+import { Icons } from '@/components/Icons';
 import { apiCaller } from '@/lib/auth';
+import { EmployeePayrollApiResponse } from '@/types/types'
 
 interface Employee {
-    name: string;
-    title: string;
-    department: string;
-    image: string;
+    id: string;
+    employee: {
+        id: string;
+        first_name: string;
+        last_name: string;
+        profile_picture: string;
+        department: string;
+        position: string;
+    };
+    pay_date: string;
+    total_earnings: string;
+    final_salary: string;
 }
 
-const dummyEmployeeData: Employee[] = [
-    { name: 'John', title: 'Designer', department: 'Design', image: '/path/to/image2.jpg' },
-    { name: 'Jane', title: 'Programmer', department: 'Design', image: '/path/to/image3.jpg' },
-    { name: 'Orianna', title: 'Programmer', department: 'Marketing', image: '/path/to/image1.jpg' },
-    { name: 'Smith', title: 'Programmer', department: 'Marketing', image: '/path/to/image4.jpg' },
-];
-
-const designFilterOptions = ['Designer', 'Programmer'];
 
 const EmployePayroll: React.FC = () => {
     const [employeeData, setEmployeeData] = useState<Employee[]>([]);
+    const [filteredData, setFilteredData] = useState<Employee[]>([]);
     const [activeCardIndex, setActiveCardIndex] = useState<number | null>(null);
+    const [selectedDepartment, setSelectedDepartment] = useState<string>('');
+    const [departments, setDepartments] = useState<string[]>([]);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const { data } = await apiCaller.get("api/students/fee-structures/", {
-                    // headers: {
-                    //     'Authorization': 'Bearer  ',
-                    //     'Content-Type': 'application/json',
-                    // }
-                });
-                setEmployeeData(data[0].employees);
+                const { data } = await apiCaller.get<EmployeePayrollApiResponse[]>("api/payroll_app/payrolls/");
+
+                console.log('response of api:', data);
+
+                // Store the full API response
+                setEmployeeData(data);
+                setFilteredData(data);
+
+                // Extract unique departments
+                const Departments = Array.from(new Set(data.map((item: any) => item.employee.department)));
+                setDepartments(Departments);
             } catch (error) {
-                setEmployeeData(dummyEmployeeData);
+                console.error('Error fetching data:', error);
+                setEmployeeData([]);
+                setFilteredData([]);
+                setDepartments([]);
             }
         };
 
         fetchData();
     }, []);
 
-    const marketingEmployees = employeeData.filter(emp => emp.department === 'Marketing');
-    const designEmployees = employeeData.filter(emp => emp.department === 'Design');
+    useEffect(() => {
+        if (selectedDepartment === '') {
+            setFilteredData(employeeData);
+        } else {
+            setFilteredData(employeeData.filter(emp => emp.employee.department === selectedDepartment));
+        }
+    }, [selectedDepartment, employeeData]);
 
     const handleMenuClick = (index: number) => {
         setActiveCardIndex(activeCardIndex === index ? null : index);
@@ -58,85 +76,65 @@ const EmployePayroll: React.FC = () => {
                         <Button className="mb-4">Department</Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        {designFilterOptions.map(option => (
-                            <DropdownMenuItem key={option}>{option}</DropdownMenuItem>
+                        {departments.map(option => (
+                            <DropdownMenuItem
+                                key={option}
+                                onClick={() => setSelectedDepartment(option)}
+                            >
+                                {option}
+                            </DropdownMenuItem>
                         ))}
-                        <DropdownMenuItem>Clear Filter</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSelectedDepartment('')}>
+                            Clear Filter
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
 
-            <h2 className="text-xl font-semibold mb-4">Marketing</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-                {marketingEmployees.map((employee, index) => (
-                    <div key={index} className="relative bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
-                        <img
-                            src={employee.image}
-                            alt={employee.name}
-                            className="w-24 h-24 rounded-full object-cover"
-                        />
-                        <h3 className="mt-4 text-lg font-medium">{employee.name}</h3>
-                        <p className="text-gray-500">{employee.title}</p>
+            <h2 className="text-xl font-semibold mb-4">{selectedDepartment || 'All Departments'}</h2>
 
-                        <Button className="mt-4 py-2 px-6 bg-black text-white rounded-full text-sm">
-                            Payroll History
-                        </Button>
-
-                        <div className="absolute top-2 right-2">
-                            <Icons.option
-                                className="cursor-pointer text-gray-600"
-                                onClick={() => handleMenuClick(index)}
-                                size={20}
+            {filteredData.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+                    {filteredData.map((employee, index) => (
+                        <div key={index} className="relative bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
+                            <img
+                                src={employee.employee.profile_picture || '/path/to/default-image.jpg'}
+                                alt={employee.employee.first_name}
+                                className="w-24 h-24 rounded-full object-cover"
                             />
-                        </div>
+                            <h3 className="mt-4 text-lg font-medium">{`${employee.employee.first_name} ${employee.employee.last_name}`}</h3>
+                            <p className="text-gray-500">{employee.employee.position}</p>
 
-                        {activeCardIndex === index && (
-                            <div className="absolute top-8 right-8 bg-white border rounded-lg shadow-lg p-2">
-                                <ul>
-                                    <li className="py-1 px-4 hover:bg-gray-100 cursor-pointer">Add Bonus</li>
-                                    <li className="py-1 px-4 hover:bg-gray-100 cursor-pointer text-gray-400">Add Deduction</li>
-                                </ul>
+                            <Button className="mt-4 py-2 px-6 bg-black text-white rounded-full text-sm">
+                                Payroll History
+                            </Button>
+
+                            <div className="absolute top-2 right-2">
+                                <Icons.option
+                                    className="cursor-pointer text-gray-600"
+                                    onClick={() => handleMenuClick(index)}
+                                    size={20}
+                                />
                             </div>
-                        )}
-                    </div>
-                ))}
-            </div>
 
-            <h2 className="text-xl font-semibold mb-4">Design</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {designEmployees.map((employee, index) => (
-                    <div key={index} className="relative bg-white shadow-md rounded-lg p-4 flex flex-col items-center">
-                        <img
-                            src={employee.image}
-                            alt={employee.name}
-                            className="w-24 h-24 rounded-full object-cover"
-                        />
-                        <h3 className="mt-4 text-lg font-medium">{employee.name}</h3>
-                        <p className="text-gray-500">{employee.title}</p>
-
-                        <Button className="mt-4 py-2 px-6 bg-black text-white rounded-full text-sm">
-                            Payroll History
-                        </Button>
-
-                        <div className="absolute top-2 right-2">
-                            <Icons.option
-                                className="cursor-pointer text-gray-600"
-                                onClick={() => handleMenuClick(index + marketingEmployees.length)}
-                                size={20}
-                            />
+                            {activeCardIndex === index && (
+                                <div className="absolute top-8 right-8 bg-white border rounded-lg shadow-lg p-2">
+                                    <ul>
+                                        <li className="py-1 px-4 hover:bg-gray-100 cursor-pointer">
+                                            <AddBonus employeeID={employee.employee.id} />
+                                        </li>
+                                        <li className="py-1 px-4 hover:bg-gray-100 cursor-pointer text-gray-400">
+                                            <AddDeduction employeeID={employee.employee.id} />
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                         </div>
-
-                        {activeCardIndex === index + marketingEmployees.length && (
-                            <div className="absolute top-8 right-8 bg-white border rounded-lg shadow-lg p-2">
-                                <ul>
-                                    <li className="py-1 px-4 hover:bg-gray-100 cursor-pointer">Add Bonus</li>
-                                    <li className="py-1 px-4 hover:bg-gray-100 cursor-pointer text-gray-400">Add Deduction</li>
-                                </ul>
-                            </div>
-                        )}
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            ) : (
+                <p className="text-center text-gray-500">No data available</p>
+            )}
         </div>
     );
 };
