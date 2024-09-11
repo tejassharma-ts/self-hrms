@@ -24,6 +24,14 @@ type CustomLoaderProps = {
   className?: string;
 };
 
+function CenterLoader() {
+  return (
+    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+      <CustomLoader />
+    </span>
+  );
+}
+
 function CustomLoader({ className }: CustomLoaderProps) {
   return <Loader className={cn("size-5 animate-spin", className)} />;
 }
@@ -47,4 +55,5 @@ export const Icons = {
   calendar: Calendar,
   tableContent: TableOfContents,
   history: History,
+  loaderCenter: CenterLoader,
 };

@@ -21,17 +21,33 @@ interface Employee {
   profile_picture: string;
 }
 
+// In attendance page
+interface EmployeeProfile {
+  id: string;
+  name: string;
+  profile_picture: string;
+  department: string;
+  monthly_percentage: number;
+  yearly_percentage: number;
+  today_status: string;
+  today_check_in_time: string;
+  today_check_out_time: string;
+}
+
 interface AttendanceData {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    position: string;
-    status: string;
-    check_in_time: string | null;
-    check_out_time: string | null;
-    department: string;
-    profile_picture: string;
+  employees: {
+    id: string,
+    first_name: string,
+    last_name: string,
+    email: string,
+    position: string,
+    status: string,
+    check_in_time: string | null,
+    check_out_time: string | null,
+    department: string,
+    profile_picture: string,
+  }[],
+  total_employee: number;
 }
 
 
