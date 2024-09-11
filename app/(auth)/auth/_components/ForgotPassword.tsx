@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
 import { SigninFormSchema } from "@/validations/auth";
 import { toast } from "@/hooks/use-toast";
-import { api } from "@/api/api";
+import { apiCaller } from "@/lib/auth";
 
 interface ForgotPasswordProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -38,7 +38,7 @@ export default function ForgotPassword({ className, email, ...props }: ForgotPas
   async function onSubmit(formData: z.infer<typeof SigninFormSchema>) {
     try {
       setIsLoading(true);
-      await api.post("/api/auth/forgot-password/", formData);
+      await apiCaller.post("/api/auth/forgot-password/", formData);
       toast({
         description: "Reset link has been sent to your email",
       });

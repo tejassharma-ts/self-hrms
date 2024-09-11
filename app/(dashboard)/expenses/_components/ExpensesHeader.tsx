@@ -1,7 +1,7 @@
 import React from "react";
 
-import { ExpensesStatusFilter } from "@/app/expenses/_components/ExpensesStatusFilter";
-import { ExpenseCard } from "@/app/expenses/_components/ExpenseCard";
+import { ExpensesStatusFilter } from "../_components/ExpensesStatusFilter";
+import { ExpenseCard } from "../_components/ExpenseCard";
 
 export const ExpensesHeader = (): React.ReactNode => {
   return (

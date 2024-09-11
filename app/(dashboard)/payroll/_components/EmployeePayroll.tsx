@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Employee {
   name: string;
@@ -31,8 +31,8 @@ const employeeData: Employee[] = [
 
 const designFilterOptions = ["Designer", "Programmer"];
 const EmployeePayroll: React.FC = () => {
+  const pathName = usePathname();
   const [activeCardIndex, setActiveCardIndex] = useState<number | null>(null);
-
   const marketingEmployees = employeeData.filter((emp) => emp.department === "Marketing");
   const designEmployees = employeeData.filter((emp) => emp.department === "Design");
 
@@ -41,7 +41,7 @@ const EmployeePayroll: React.FC = () => {
   };
   const router = useRouter();
   const handleBackClick = () => {
-    router.push("/payroll");
+    router.replace(`${pathName}`);
   };
 
   return (

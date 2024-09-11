@@ -1,11 +1,12 @@
 import PendingRequests from "./PendingRequests";
 import EmployeesOnLeave from "./EmployeesOnLeave";
-import { apiServer, getAuthCookies } from "@/lib/server/api";
+import { getAuthCookies } from "@/lib/server/api";
 import { LeavesDataApi } from "@/types/dashboard";
+import { apiCaller } from "@/lib/auth";
 
 async function getAllEmployeeLeave() {
   try {
-    const res = await apiServer.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
+    const res = await apiCaller.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
       headers: getAuthCookies(),
     });
     return res.data;

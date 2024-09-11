@@ -2,7 +2,7 @@
 
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CustomCalendar from "./CustomCalender";
 import { LeavesDataApi } from "@/types/dashboard";
 import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
@@ -20,6 +20,10 @@ type TabsWrapperProps = {
 
 export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
   const [currentTab, setCurrentTab] = useState<ActiveTab>(activeTab);
+
+  useEffect(() => {
+    setCurrentTab(activeTab);
+  }, [activeTab]);
 
   const pathname = usePathname();
   const searchParams = useSearchParams();

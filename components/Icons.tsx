@@ -13,6 +13,10 @@ import {
   ChevronLeft,
   Loader,
   ListFilter,
+  UserRoundPen,
+  Calendar,
+  TableOfContents,
+  History,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -39,4 +43,8 @@ export const Icons = {
   grid: LayoutGrid,
   loader: CustomLoader,
   listFilter: ListFilter,
+  leaveRequest: UserRoundPen,
+  calendar: Calendar,
+  tableContent: TableOfContents,
+  history: History,
 };

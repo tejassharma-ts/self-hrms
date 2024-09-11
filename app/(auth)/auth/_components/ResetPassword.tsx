@@ -17,8 +17,8 @@ import { cn } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
 import { ResetPasswordSchema } from "@/validations/auth";
 import { toast } from "@/hooks/use-toast";
-import { api } from "@/api/api";
 import { PasswordInput } from "./PasswordInput";
+import { apiCaller } from "@/lib/auth";
 
 interface ResetPasswordProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -40,7 +40,7 @@ export default function ResetPassword({ className, uid, token, ...props }: Reset
   async function onSubmit(formData: z.infer<typeof ResetPasswordSchema>) {
     try {
       setIsLoading(true);
-      await api.post("/api/auth/forgot-password/", formData);
+      await apiCaller.post("/api/auth/forgot-password/", formData);
       toast({
         description: "Reset link has been sent to your email",
       });

@@ -1,13 +1,14 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { apiServer, getAuthCookies } from "@/lib/server/api";
+import { getAuthCookies } from "@/lib/server/api";
 import { NewHire } from "@/types/dashboard";
 import { getFullName } from "@/lib/utils";
+import { apiCaller } from "@/lib/auth";
 
 async function getNewHire() {
   try {
-    const res = await apiServer.get<NewHire[]>("/api/companies-app/company/newly-hired/", {
+    const res = await apiCaller.get<NewHire[]>("/api/companies-app/company/newly-hired/", {
       headers: getAuthCookies(),
     });
     return res.data;

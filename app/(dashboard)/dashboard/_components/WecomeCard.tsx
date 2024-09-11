@@ -7,8 +7,8 @@ import { formatTodaysDate, getFullName } from "@/lib/utils";
 import { useClientAuth } from "@/context/auth-context";
 import WelcomeCardSkeleton from "../_skeletons/WelcomeCardSkeleton";
 import { toast } from "@/hooks/use-toast";
-import { api } from "@/api/api";
 import { useEffect } from "react";
+import { apiCaller } from "@/lib/auth";
 
 export default function WelcomeCard() {
   const { authCompany, authUser, isLoading } = useClientAuth();
@@ -37,7 +37,7 @@ export default function WelcomeCard() {
   async function onAttendanceHandle() {
     try {
       if (attendanceStatus === "Not Checked In") {
-        await api.post("/api/attendance_app/attendance/", {
+        await apiCaller.post("/api/attendance_app/attendance/", {
           status: "Present",
         });
         toast({
@@ -46,8 +46,8 @@ export default function WelcomeCard() {
         });
         setAttendanceStatus("Checked In");
       } else if (attendanceStatus === "Checked In") {
-        const res = await api.get("/api/attendance_app/attendance/");
-        await api.patch("/api/attendance_app/attendance/", null, {
+        const res = await apiCaller.get("/api/attendance_app/attendance/");
+        await apiCaller.patch("/api/attendance_app/attendance/", null, {
           params: {
             attendance_id: res.data.id,
           },

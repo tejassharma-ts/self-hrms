@@ -66,7 +66,7 @@ function NavLink({ title, icon, label, href, closeNav, subLink = false }: NavLin
           size: "sm",
         }),
         "h-12 justify-start text-wrap px-6 rounded-full",
-        subLink && "h-10 w-full border-l border-l-slate-500 px-2",
+        subLink && "h-10 w-full px-2",
       )}
       aria-current={checkActiveNav(href) ? "page" : undefined}>
       <div className="mr-2">{icon}</div>

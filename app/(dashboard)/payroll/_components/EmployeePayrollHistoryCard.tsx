@@ -3,7 +3,7 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 interface IPayrollHeaderCardProps {
   heading: string;
@@ -11,9 +11,10 @@ interface IPayrollHeaderCardProps {
 
 export const EmployeePayrollHistoryCard = ({ heading }: IPayrollHeaderCardProps) => {
   const router = useRouter();
+  const pathName = usePathname();
 
   const handleViewClick = () => {
-    router.push("/payroll?payroll-history");
+    router.replace(`${pathName}?payroll-history`);
   };
 
   return (

@@ -1,32 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { api } from '@/api/api';
+import { apiCaller } from '@/lib/auth';
 
 interface AttendanceData {
-    id: string;
-    first_name: string;
-    last_name: string;
-    email: string;
-    position: string;
-    status: string;
-    check_in_time: string | null;
-    check_out_time: string | null;
-    department: string;
-    profile_picture: string;
+  employees: {
+    id: string,
+    first_name: string,
+    last_name: string,
+    email: string,
+    position: string,
+    status: string,
+    check_in_time: string | null,
+    check_out_time: string | null,
+    department: string,
+    profile_picture: string,
+  }[],
+  total_employee: number;
 }
 
+
 const AttendanceList: React.FC = () => {
-    const [attendanceData, setAttendanceData] = useState<AttendanceData[]>([]);
+    const [attendanceData, setAttendanceData] = useState<AttendanceData | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchAttendanceData = async () => {
             try {
-                const response = await api.get<AttendanceData[]>('/api/companies-app/company/attendance/status/');
-                setAttendanceData(response.data.employees);
+                const response = await apiCaller.get<AttendanceData>('/api/companies-app/company/attendance/status/');
+                setAttendanceData(response.data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching attendance data:', error);
@@ -57,7 +59,7 @@ const AttendanceList: React.FC = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {attendanceData.map((employee) => (
+                    {attendanceData?.employees.map(employee => (
                         <TableRow key={employee.id}>
                             <TableCell>{employee.id}</TableCell>
                             <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>

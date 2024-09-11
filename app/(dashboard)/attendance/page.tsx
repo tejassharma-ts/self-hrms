@@ -4,15 +4,7 @@ import ProfileCarousel from './_components/ProfileCarousel'
 import AttendanceList from './_components/AttendanceList'
 import ProjectTimeline from './_components/ProjectTimeline';
 import AttendanceDashboard from './_components/AttendanceDashboard';
-import { api } from '@/api/api';
-
-interface Project {
-    id: string;
-    name: string;
-    startDate: string;
-    endDate: string;
-    status: string;
-}
+import { apiCaller } from '@/lib/auth';
 
 interface Attendance {
     date: string;
@@ -21,19 +13,10 @@ interface Attendance {
     status: string;
 }
 
-interface Profile {
-    id: string;
-    name: string;
-    monthlyPercentage: number;
-    yearlyPercentage: number;
-    profile_picture: string;
-    department: string;
-}
 
 const Page = () => {
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
-    const [projects, setProjects] = useState<Project[]>([]);
     const [attendanceData, setAttendanceData] = useState<Attendance[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -42,7 +25,7 @@ const Page = () => {
         const fetchProfiles = async () => {
             try {
                 const currentDate = new Date();
-                const response = await api.get('/api/companies-app/attendance-percentage/', {
+                const response = await apiCaller.get('/api/companies-app/attendance-percentage/', {
                     params: {
                         month: currentDate.getMonth() + 1,
                         year: currentDate.getFullYear(),
@@ -75,9 +58,9 @@ const Page = () => {
             const fetchAttendance = async () => {
                 try {
                     const currentDate = new Date();
-                    const formattedDate = currentDate.toISOString().split('T')[0]; // This gives YYYY-MM-DD
+                    const formattedDate = currentDate.toISOString().split('T')[0];
                     
-                    const response = await api.get('/api/companies-app/employee/attendance/', {
+                    const response = await apiCaller.get('/api/companies-app/employee/attendance/', {
                         params: {
                             employee_id: selectedProfile.id,
                             date: formattedDate,

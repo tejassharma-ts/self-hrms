@@ -1,5 +1,5 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import UserSigninForm from "./_components/UserSigninForm";
 import UserSignupForm from "./_components/UserSignupForm";
 import { InputOTPForm } from "./_components/OTPVerifyForm";
@@ -26,12 +26,10 @@ export default function AuthPage({ searchParams }: AuthPageProps) {
     }
     return (
       <Tabs defaultValue="signin">
-        <CardHeader>
-          <TabsList className="child:flex-1 flex w-full p-0">
-            <TabsTrigger value="signin">Sign in</TabsTrigger>
-            <TabsTrigger value="signup">Sign up</TabsTrigger>
-          </TabsList>
-        </CardHeader>
+        <TabsList className="child:flex-1 flex w-full p-0">
+          <TabsTrigger value="signin">Sign in</TabsTrigger>
+          <TabsTrigger value="signup">Sign up</TabsTrigger>
+        </TabsList>
         <TabsContent value="signin">
           <UserSigninForm />
         </TabsContent>
@@ -43,7 +41,7 @@ export default function AuthPage({ searchParams }: AuthPageProps) {
   };
 
   return (
-    <Card className="mx-auto mt-20 max-w-lg shadow-md">
+    <Card className="mx-auto mt-20 max-w-lg shadow-md min-h-[200px]">
       <CardContent>{aptForm()}</CardContent>
     </Card>
   );
