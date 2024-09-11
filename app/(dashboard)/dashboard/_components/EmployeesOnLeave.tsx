@@ -11,6 +11,8 @@ import {
 import { LeaveRequest } from "@/types/dashboard";
 import { getFullbackName } from "@/lib/utils";
 import { formatISODate } from "@/lib/utils";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
 type EmployeesOnLeaveProps = {
   leavesRequest: LeaveRequest[];
@@ -21,9 +23,9 @@ export default async function EmployeesOnLeave({ leavesRequest }: EmployeesOnLea
     <div className="h-[300px] rounded-lg bg-white p-6 shadow-md">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold">Employees On Leave</h2>
-        <a href="#" className="text-sm text-black">
+        <Link href="/leave" className={buttonVariants({ variant: "ghost", size: "sm" })}>
           View more
-        </a>
+        </Link>
       </div>
       <div className="overflow-x-auto">
         <div className="max-h-56">
