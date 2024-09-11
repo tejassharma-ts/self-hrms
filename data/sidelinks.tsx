@@ -19,59 +19,33 @@ export const sidelinks: SideLink[] = [
   },
   {
     title: "My Team",
-    label: "9",
     href: "/orders",
     icon: <Icons.people size={18} />,
-    sub: [
-      {
-        title: "Something",
-        href: "#",
-        icon: <></>,
-      },
-      {
-        title: "Something",
-        href: "#",
-        icon: <></>,
-      },
-    ],
   },
   {
     title: "Attendence",
-    href: "",
+    href: "/attendance",
     icon: <Icons.finger size={18} />,
-    sub: [
-      {
-        title: "Something",
-        href: "#",
-        icon: <></>,
-      },
-      {
-        title: "Something",
-        href: "#",
-        icon: <></>,
-      },
-    ],
   },
   {
     title: "Leave",
-    label: "3",
     href: "/leave",
     icon: <Icons.absent size={18} />,
     sub: [
       {
         title: "Leave Request",
         href: "/leave?tab=leave-request",
-        icon: <></>,
+        icon: <Icons.leaveRequest size={18} />,
       },
       {
         title: "On Leave",
         href: "/leave?tab=on-leave",
-        icon: <></>,
+        icon: <Icons.absent size={18} />,
       },
       {
         title: "Calendar",
-        href: "/leave?tab=calendar",
-        icon: <></>,
+        href: "/leave?tab=calender",
+        icon: <Icons.calendar size={18} />,
       },
     ],
   },
@@ -84,6 +58,23 @@ export const sidelinks: SideLink[] = [
     title: "Payroll",
     href: "/payroll",
     icon: <Icons.rupee size={18} />,
+    sub: [
+      {
+        title: "Overview",
+        href: "/payroll/overview",
+        icon: <Icons.tableContent size={18} />,
+      },
+      {
+        title: "History",
+        href: "/payroll/history",
+        icon: <Icons.history size={18} />,
+      },
+      {
+        title: "Payroll Settings",
+        href: "/payroll/settings",
+        icon: <Icons.setting size={18} />,
+      },
+    ],
   },
   {
     title: "Settings",

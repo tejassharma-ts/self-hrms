@@ -4,7 +4,6 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -20,8 +19,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import useAuthStore from "@/model/auth";
-import { Icons } from "@/components/Icons";
 import { publicApiCaller } from "@/lib/auth";
+import { Icons } from "@/components/Icons";
+import Countdown from "react-countdown";
 
 const FormSchema = z.object({
   email: z.string(),
@@ -30,6 +30,7 @@ const FormSchema = z.object({
   }),
 });
 
+const maxOtpResendAttempts = 2;
 export function InputOTPForm() {
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,8 +42,11 @@ export function InputOTPForm() {
       otp: "",
     },
   });
+  const [isTimerComplete, setIsTimerComplete] = useState(false);
+  const [date, setDate] = useState(Date.now() + 120000);
   const router = useRouter();
   const { login } = useAuthStore();
+  const [otpResendCount, setOtpResendCount] = useState(0);
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
@@ -73,6 +77,50 @@ export function InputOTPForm() {
     }
   }
 
+  async function resendOTP() {
+    if (otpResendCount >= maxOtpResendAttempts) {
+      return toast({
+        title: "Resend Limit Reached",
+        description: `You can only resend the OTP ${maxOtpResendAttempts} times.`,
+        variant: "destructive",
+      });
+    }
+    try {
+      let email = form.getValues("email");
+      await publicApiCaller.post("/api/auth/login/generate-otp/", {
+        email,
+      });
+      toast({
+        title: "Authentication",
+        description: `OTP has been send to ${email}`,
+      });
+
+      setIsTimerComplete(false);
+      setDate(Date.now() + 120000);
+      setOtpResendCount(otpResendCount + 1);
+    } catch (err) {
+      toast({
+        title: "Authentication",
+        description: "Something went wrong please try again later.",
+        variant: "destructive",
+      });
+    }
+  }
+
+  function rendererTimer({
+    minutes,
+    seconds,
+    completed,
+  }: {
+    // TODO: give  proper typings
+    minutes: any;
+    seconds: any;
+    completed: any;
+  }) {
+    if (completed) setIsTimerComplete(true);
+    return <span>{`${minutes}:${seconds.toString().padStart(2, "0")}`}</span>;
+  }
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col space-y-6">
@@ -97,10 +145,18 @@ export function InputOTPForm() {
               <FormDescription className="text-center">
                 Please check your email <br />
                 <span className="font-medium">{searchParams.get("email")}</span>
-                <br />{" "}
+                <br />
                 <Link href="/auth" className="mt-2 block underline underline-offset-4">
                   Email not correct?
                 </Link>
+                <span className="mt-4 block">
+                  {!isTimerComplete && <Countdown date={date} renderer={rendererTimer} />}
+                  {isTimerComplete && (
+                    <Button variant="ghost" size="sm" onClick={resendOTP} type="button">
+                      Resend OTP
+                    </Button>
+                  )}
+                </span>
               </FormDescription>
               <FormMessage />
             </FormItem>
