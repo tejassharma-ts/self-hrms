@@ -11,7 +11,7 @@ interface Attendance {
 }
 
 interface AttendanceDashboardProps {
-  employee: Profile;
+  employee: EmployeeProfile;
   attendances: Attendance[];
 }
 

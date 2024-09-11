@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { monitorEventLoopDelay } from 'perf_hooks';
 
 interface CircularProgressBarProps {
     percentage: number;
@@ -21,9 +22,9 @@ interface CircularProgressBarProps {
 
 
 interface ProfileCarouselProps {
-    profiles: Profile[];
-    selectedProfile: Profile | null;
-    setSelectedProfile: React.Dispatch<React.SetStateAction<Profile | null>>;
+    profiles: EmployeeProfile[];
+    selectedProfile: EmployeeProfile | null;
+    setSelectedProfile: React.Dispatch<React.SetStateAction<EmployeeProfile | null>>;
 }
 
 const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ percentage, label }) => {
@@ -47,12 +48,12 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ percentage, l
     );
 };
 
-interface ProfileCardProps extends Profile {
+interface ProfileCardProps extends EmployeeProfile {
     isSelected: boolean;
     onClick: () => void;
 }
 
-const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPercentage, yearlyPercentage, profile_picture, isSelected, onClick, today_status }) => {
+const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthly_percentage, yearly_percentage, profile_picture, isSelected, onClick, today_status }) => {
     return (
         <Card
             className={`w-48 shadow-lg rounded-lg overflow-hidden mx-1 cursor-pointer ${isSelected ? 'bg-[#2B2928] text-white' : 'bg-white text-black'}`}
@@ -68,8 +69,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPerc
             </CardHeader>
             <CardContent className="p-3">
                 <div className="flex justify-between">
-                    <CircularProgressBar percentage={monthlyPercentage} label="Monthly" />
-                    <CircularProgressBar percentage={yearlyPercentage} label="Yearly" />
+                    <CircularProgressBar percentage={monthly_percentage} label="Monthly" />
+                    <CircularProgressBar percentage={yearly_percentage} label="Yearly" />
                 </div>
             </CardContent>
             <CardFooter className="p-3 flex justify-center items-center">
@@ -84,7 +85,6 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ name, department, monthlyPerc
 const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedProfile, setSelectedProfile }) => {
     const [filter, setFilter] = useState('all');
     const [department, setDepartment] = useState('all');
-    const [api, setApi] = React.useState<CarouselApi>();
 
     const { filteredProfiles, uniqueDepartments } = useMemo(() => {
         const filtered = profiles.filter(profile => 
@@ -103,8 +103,15 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedPro
         );
     }
 
+  function onSelectProfile(profile: EmployeeProfile) {
+    if (selectedProfile && selectedProfile.id === profile.id) {
+      return setSelectedProfile(null);
+    }
+    setSelectedProfile(profile);
+  }
+
     return (
-        <div className="mx-auto">
+        <div className="">
             <div className="flex gap-4 mb-4">
                 <Select onValueChange={setFilter}>
                     <SelectTrigger className="rounded-full bg-black text-white w-fit gap-2">
@@ -119,14 +126,14 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({ profiles, selectedPro
                 </Select>
             </div>
             <div className="relative">
-                <Carousel className="w-full" setApi={setApi}>
+                <Carousel className="w-full">
                     <CarouselContent>
                         {filteredProfiles.map((profile, index) => (
                             <CarouselItem key={index} className="sm:basis-1/3 md:basis-1/4 lg:basis-1/5">
                                 <ProfileCard
                                     {...profile}
                                     isSelected={selectedProfile?.id === profile.id}
-                                    onClick={() => setSelectedProfile(profile)}
+                                    onClick={() => onSelectProfile(profile)}
                                 />
                             </CarouselItem>
                         ))}
