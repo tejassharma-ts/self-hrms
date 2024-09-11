@@ -24,7 +24,7 @@ export const sidelinks: SideLink[] = [
   },
   {
     title: "Attendence",
-    href: "",
+    href: "/attendance",
     icon: <Icons.finger size={18} />,
   },
   {

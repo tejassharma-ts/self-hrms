@@ -26,7 +26,7 @@ export default async function EmployeesOnLeave({ leavesRequest }: EmployeesOnLea
         </a>
       </div>
       <div className="overflow-x-auto">
-        <div className="max-h-56 overflow-hidden">
+        <div className="max-h-56">
           <Table>
             <TableHeader>
               <TableRow>

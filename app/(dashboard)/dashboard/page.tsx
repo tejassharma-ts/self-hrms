@@ -10,7 +10,7 @@ import EmployeeStatusSkeleton from "./_skeletons/EmployeeStatusSkeleton";
 import RequestWithEmployeeLeave from "./_components/RequestWithEmployeeLeave";
 import RequestWithEmployeeLeaveSkeleton from "./_skeletons/RequestWithEmployeeLeaveSkeleton";
 import ProjectAnalyticsSkeleton from "./_skeletons/ProjectAnalytics";
-import MeetingCard from "@/app/(dashboard)/dashboard/_components/MeetingCard";
+// import MeetingCard from "@/app/(dashboard)/dashboard/_components/MeetingCard";
 
 export default function GridCards() {
   return (
@@ -40,7 +40,7 @@ export default function GridCards() {
       <div className="col-span-3 mb-4">
         <Project />
       </div>
-      <MeetingCard />
+      {/* <MeetingCard /> */}
     </div>
   );
 }
