@@ -10,18 +10,32 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 export const PayrollYearFilter = (): React.ReactNode => {
   const router = useRouter();
-  const placeholder: number = 2024;
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const handleValueSelect = (value: string) => {
-    router.push(`/payroll/?year=${value}`);
+  const handleValueChange = (value: string): void => {
+    const current = new URLSearchParams(Array.from(searchParams.entries()));
+
+    if (value !== "") {
+      current.set("year", value);
+    } else {
+      current.delete("year");
+    }
+
+    const search = current.toString();
+    const query = search ? `?${search}` : "";
+
+    router.push(`${pathname}${query}`);
   };
 
+  const placeholder: number = 2024;
+
   return (
-    <Select onValueChange={handleValueSelect}>
+    <Select onValueChange={handleValueChange}>
       <SelectTrigger
         className={cn("h-10 max-w-32 border-none text-3xl font-semibold text-gray-500")}>
         <SelectValue placeholder={placeholder} />
