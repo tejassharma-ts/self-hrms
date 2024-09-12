@@ -2,6 +2,7 @@ import { apiCaller } from "@/lib/auth";
 import { TabsWrapper } from "./_components/TabsWrapper";
 import { getAuthCookies } from "@/lib/server/api";
 import { LeavesDataApi } from "@/types/dashboard";
+import { Status, Department, LeaveType } from "@/types/types";
 
 type SearchParams = {
   tab: "leave-request" | "on-leave" | "calender";
