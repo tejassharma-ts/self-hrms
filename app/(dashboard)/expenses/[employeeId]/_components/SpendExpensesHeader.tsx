@@ -1,12 +1,12 @@
 import React from "react";
 import { SpendExpensesStatusFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesStatusFilter";
-import { Expenses } from "@/app/(dashboard)/expenses/page";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Expense } from "@/app/(dashboard)/expenses/[employeeId]/page";
 
 interface SpendExpensesHeaderProps {
-  employeeSpendData: Expenses[];
+  employeeSpendData: Expense[];
   employeeId: string;
 }
 
@@ -14,6 +14,7 @@ export const SpendExpensesHeader = ({
   employeeSpendData,
   employeeId,
 }: SpendExpensesHeaderProps): React.ReactNode => {
+  console.log(employeeSpendData);
   return (
     <>
       <div className={"mb-10 flex justify-between"}>

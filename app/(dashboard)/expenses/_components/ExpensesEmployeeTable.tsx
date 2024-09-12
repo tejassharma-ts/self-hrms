@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import Link from "next/link";
-import { Expenses } from "@/app/(dashboard)/expenses/page";
+import { Expenses } from "@/types/types";
 
 export const ExpensesEmployeeTable = ({
   expensesEmployeeData,
 }: {
-  expensesEmployeeData: Expenses[];
+  expensesEmployeeData: Expenses;
 }): React.ReactNode => {
   return (
     <div className="rounded-md border">
@@ -29,7 +29,7 @@ export const ExpensesEmployeeTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {expensesEmployeeData.map((eachExpensesEmployeeData: Expenses) => (
+          {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
             <TableRow key={eachExpensesEmployeeData.id}>
               <TableCell>
                 <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>

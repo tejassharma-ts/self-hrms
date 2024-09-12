@@ -12,15 +12,6 @@ interface Profile {
   today_status: string;
 }
 
-interface Employee {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  position: string;
-  profile_picture: string;
-}
-
 interface AttendanceData {
   id: string;
   first_name: string;
@@ -34,7 +25,17 @@ interface AttendanceData {
   profile_picture: string;
 }
 
-interface Expenses {
+interface Employee {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_picture: string;
+  department: string;
+  position: string;
+  email: string;
+}
+
+interface expense {
   id: string;
   employee: Employee;
   company: string;
@@ -44,6 +45,12 @@ interface Expenses {
   category: string;
   bill: string;
   status: string;
+}
+
+interface Expenses {
+  pending_total: number;
+  approved_total: number;
+  expenses: expense[];
 }
 
 export interface BonusData {
