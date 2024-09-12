@@ -24,6 +24,7 @@ async function getExpenses({ status, month, year }: getExpensesProps): Promise<E
         year,
       },
     });
+    console.log(res.data);
     return res.data;
   } catch (err) {
     throw new Error("Error getting the expenses data.");
