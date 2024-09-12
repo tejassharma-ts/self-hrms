@@ -2,9 +2,13 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 type PendingRequestsProps = {
   leaveRequestCount: number;
+  expenseRequestCount: number;
 };
 
-export default async function PendingRequests({ leaveRequestCount }: PendingRequestsProps) {
+export default async function PendingRequests({
+  leaveRequestCount,
+  expenseRequestCount,
+}: PendingRequestsProps) {
   return (
     <Card className="h-[300px] w-full max-w-md">
       <CardHeader>
@@ -12,7 +16,7 @@ export default async function PendingRequests({ leaveRequestCount }: PendingRequ
       </CardHeader>
       <CardContent className="space-y-4">
         <RequestItem label="Leave Requests" value={leaveRequestCount} />
-        <RequestItem label="Expense Requests" value={15} />
+        <RequestItem label="Expense Requests" value={expenseRequestCount} />
       </CardContent>
     </Card>
   );
