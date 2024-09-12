@@ -5,6 +5,7 @@ import { ExpensesMonthFilter } from "./_components/ExpensesMonthFilter";
 import { ExpensesYearFilter } from "./_components/ExpensesYearFilter";
 import { ExpensesEmployeeTable } from "./_components/ExpensesEmployeeTable";
 import { apiCaller } from "@/lib/auth";
+import { getMonthNumber } from "@/lib/utils";
 
 export type Employee = {
   id: string;
@@ -27,10 +28,21 @@ export interface Expenses {
   status: string;
 }
 
-async function getExpenses(): Promise<Expenses[]> {
+interface getExpensesProps {
+  status: string;
+  month: number | null;
+  year: number;
+}
+
+async function getExpenses({ status, month, year }: getExpensesProps): Promise<Expenses[]> {
   try {
-    const res = await apiCaller.get<Expenses[]>("/api/payroll_app/expenses/", {
+    const res = await apiCaller.get<Expenses[]>(`/api/payroll_app/expenses/`, {
       headers: getAuthCookies(),
+      params: {
+        status,
+        month,
+        year,
+      },
     });
     return res.data;
   } catch (err) {
@@ -38,8 +50,18 @@ async function getExpenses(): Promise<Expenses[]> {
   }
 }
 
-const Page = async (): Promise<React.ReactNode> => {
-  const expensesEmployeeData: Expenses[] = await getExpenses();
+const Page = async ({ searchParams }: { searchParams: any }): Promise<React.ReactNode> => {
+  const status = searchParams.status;
+  const month = searchParams.month;
+  const monthNumber = getMonthNumber(month);
+  const year = searchParams.year;
+
+  const updatedMonth = monthNumber === 0 ? null : monthNumber;
+  const expensesEmployeeData: Expenses[] = await getExpenses({
+    status,
+    month: updatedMonth,
+    year,
+  });
   return (
     <>
       <ExpensesHeader />
