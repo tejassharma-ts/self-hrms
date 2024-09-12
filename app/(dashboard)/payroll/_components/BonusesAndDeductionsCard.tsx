@@ -32,6 +32,7 @@ export const BonusesAndDeductionsCard = ({ heading }: IBonusesAndDeductionsCardP
         </div>
         <div className={"flex items-center justify-between"}>
           <Pricing heading={"Total Bonus"} price={287} />
+          <p className={"h-full bg-gray-200 px-[0.8px]"}></p>
           <Pricing heading={"Total Deductions"} price={100} />
         </div>
       </CardContent>

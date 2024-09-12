@@ -9,6 +9,9 @@ import {
 import React from "react";
 import { CircleCheck, CircleX, Clock7, EllipsisVertical } from "lucide-react";
 import { Expenses } from "@/app/(dashboard)/expenses/page";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { ApprovedExpensesDialogue } from "@/app/(dashboard)/expenses/_components/ApprovedExpensesDialogue";
+import { DeclinedExpensesDialogue } from "@/app/(dashboard)/expenses/_components/DeclinedExpensesDialogue";
 
 export const SpendExpensesTable = ({
   spendExpensesData,
@@ -43,7 +46,16 @@ export const SpendExpensesTable = ({
                 </span>
               </TableCell>
               <TableCell>
-                <EllipsisVertical />
+                <Dialog>
+                  <DialogTrigger>
+                    <EllipsisVertical />
+                  </DialogTrigger>
+                  {eachExpensesEmployeeData.status === "approved" ? (
+                    <ApprovedExpensesDialogue eachExpensesEmployeeData={eachExpensesEmployeeData} />
+                  ) : (
+                    <DeclinedExpensesDialogue />
+                  )}
+                </Dialog>
               </TableCell>
             </TableRow>
           ))}

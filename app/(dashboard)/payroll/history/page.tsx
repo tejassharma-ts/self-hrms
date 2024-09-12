@@ -1,25 +1,12 @@
 import React from "react";
 import { getAuthCookies } from "@/lib/server/api";
-import { PayrollHeader } from "./_components/PayrollHeader";
-import { PayrollTable } from "./_components/PayrollTable";
-import EmployeePayroll from "./_components/EmployePayroll";
+import { PayrollHeader } from "../_components/PayrollHeader";
+import { PayrollTable } from "../_components/PayrollTable";
+import EmployeePayroll from "../_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
 
-async function getPayroll({ year }: { year: number }) {
-  try {
-    const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
-      headers: getAuthCookies(),
-      params: {
-        year: year,
-      },
-    });
-    return res.data;
-  } catch (err) {
-    throw new Error(`Error getPayroll: ${err}`);
-  }
-}
-
 export type Employee = {
+  id: string;
   first_name: string;
   last_name: string;
   profile_picture: string;
@@ -50,6 +37,20 @@ export type Payroll = {
   salary_structure: string;
   bonus?: string;
 };
+
+async function getPayroll({ year }: { year: number }) {
+  try {
+    const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
+      headers: getAuthCookies(),
+      params: {
+        year: year,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    throw new Error(`Error getPayroll: ${err}`);
+  }
+}
 
 const PayrollPage = async ({ searchParams }: { searchParams: any }): Promise<React.ReactNode> => {
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");

@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PayrollYearFilter } from "../_components/PayrollYearFilter";
-import { Payroll } from "../page";
+import { Payroll } from "../history/page";
 
 export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React.ReactNode => {
   return (
