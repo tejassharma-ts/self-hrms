@@ -3,14 +3,26 @@ import { SpendExpensesTable } from "@/app/(dashboard)/expenses/[employeeId]/_com
 import { SpendExpensesHeader } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesHeader";
 import { apiCaller } from "@/lib/auth";
 import { getAuthCookies } from "@/lib/server/api";
-import { Expenses } from "@/app/(dashboard)/expenses/page";
 import { SpendExpensesYearFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesYearFilter";
 import { SpendExpensesMonthFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesMonthFilter";
 import { getMonthNumber } from "@/lib/utils";
+import { Employee } from "@/types/types";
 
 type params = {
   employeeId: string;
 };
+
+export interface Expense {
+  id: string;
+  employee: Employee;
+  company: string;
+  date_incurred: string;
+  amount: string;
+  description: string;
+  category: string;
+  bill: string;
+  status: "pending" | "approved" | "rejected";
+}
 
 interface getEmployeeSpendDataProps {
   employeeId: string;
@@ -24,10 +36,10 @@ async function getEmployeeSpendData({
   status,
   month,
   year,
-}: getEmployeeSpendDataProps): Promise<Expenses[]> {
+}: getEmployeeSpendDataProps): Promise<Expense[]> {
   try {
     const updatedMonth = month === 0 ? null : month;
-    const res = await apiCaller.get<Expenses[]>("/api/payroll_app/expenses-details/", {
+    const res = await apiCaller.get<Expense[]>("/api/payroll_app/expenses-details/", {
       headers: getAuthCookies(),
       params: {
         employee_id: employeeId,
@@ -36,7 +48,7 @@ async function getEmployeeSpendData({
         year,
       },
     });
-
+    console.log(res.data);
     return res.data;
   } catch (err) {
     throw new Error("Error getting employee spend data.");
@@ -55,7 +67,7 @@ const EmployeePage = async ({
   const monthNumber = getMonthNumber(month);
   const year = searchParams.year;
   const employeeId = params.employeeId;
-  const employeeSpendData: Expenses[] = await getEmployeeSpendData({
+  const employeeSpendData: Expense[] = await getEmployeeSpendData({
     employeeId,
     status,
     month: monthNumber,

@@ -12,15 +12,29 @@ interface Profile {
   today_status: string;
 }
 
-interface Employee {
+interface AttendanceData {
   id: string;
   first_name: string;
   last_name: string;
   email: string;
   position: string;
+  status: string;
+  check_in_time: string | null;
+  check_out_time: string | null;
+  department: string;
   profile_picture: string;
 }
 
+<<<<<<< Akshat
+interface Employee {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_picture: string;
+  department: string;
+  position: string;
+  email: string;
+=======
 // In attendance page
 interface EmployeeProfile {
   id: string;
@@ -48,9 +62,10 @@ interface AttendanceData {
     profile_picture: string,
   }[],
   total_employee: number;
+>>>>>>> development
 }
 
-interface Expenses {
+interface expense {
   id: string;
   employee: Employee;
   company: string;
@@ -60,6 +75,12 @@ interface Expenses {
   category: string;
   bill: string;
   status: string;
+}
+
+interface Expenses {
+  pending_total: number;
+  approved_total: number;
+  expenses: expense[];
 }
 
 export interface BonusData {
