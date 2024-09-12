@@ -12,23 +12,27 @@ type ProfilesProps = {
   attendances?: AttendanceData;
 };
 
+const currentMonth = new Date().getMonth() + 1;
+const currentYear = new Date().getFullYear();
 export default function Profiles({ profiles, attendances }: ProfilesProps) {
   const [selectedProfile, setSelectedProfile] = useState<EmployeeProfile | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [employeeAttendance, setEmployeeAttendance] = useState();
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth + "");
+  const [selectedYear, setSelectedYear] = useState(currentYear + "");
+  const [selectedStatus, setSelectedStatus] = useState("Present");
 
   useEffect(() => {
     if (selectedProfile) {
       const fetchAttendance = async () => {
         try {
           setIsLoading(true);
-          const currentDate = new Date();
-          const formattedDate = currentDate.toISOString().split("T")[0];
-
           const response = await apiCaller.get("/api/companies-app/employee/attendance/", {
             params: {
               employee_id: selectedProfile.id,
-              date: formattedDate,
+              month: selectedMonth || null,
+              year: selectedYear,
+              status: selectedStatus,
             },
           });
           const formattedAttendance = response.data.attendances.map((attendance: any) => ({
@@ -46,13 +50,24 @@ export default function Profiles({ profiles, attendances }: ProfilesProps) {
 
       fetchAttendance();
     }
-  }, [selectedProfile]);
+  }, [selectedProfile, selectedMonth, selectedYear, selectedStatus]);
 
   function render() {
     if (isLoading) {
       return <Icons.loaderCenter />;
     } else if (employeeAttendance && selectedProfile) {
-      return <AttendanceDashboard employee={selectedProfile} attendances={employeeAttendance} />;
+      return (
+        <AttendanceDashboard
+          employee={selectedProfile}
+          attendances={employeeAttendance}
+          selectedMonth={selectedMonth}
+          setSelectedMonth={setSelectedMonth}
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          selectedStatus={selectedStatus}
+          setSelectedStatus={setSelectedStatus}
+        />
+      );
     }
     return <AttendanceList attendances={attendances} />;
   }
