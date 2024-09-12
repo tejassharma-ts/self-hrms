@@ -52,19 +52,28 @@ async function getPayroll({ year }: { year: number }) {
   }
 }
 
-const PayrollPage = async ({ searchParams }: { searchParams: any }): Promise<React.ReactNode> => {
-
+const PayrollHistoryPage = async ({
+  searchParams,
+}: {
+  searchParams: any;
+}): Promise<React.ReactNode> => {
+  const year = searchParams.year;
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");
-  const currentYear = new Date().getFullYear();
-  const year = searchParams["year"] ? Number(searchParams["year"]) : currentYear;
   const payrollData: Payroll[] = await getPayroll({ year });
-
   return (
     <div className={"container w-full"}>
       <PayrollHeader />
-      {!showPayrollHistory ? <PayrollTable payrollData={payrollData} /> : <EmployeePayroll />}
+      {!showPayrollHistory ? (
+        <div>
+          <PayrollTable payrollData={payrollData} />
+        </div>
+      ) : (
+        <div>
+          <EmployeePayroll />
+        </div>
+      )}
     </div>
   );
 };
 
-export default PayrollPage;
+export default PayrollHistoryPage;
