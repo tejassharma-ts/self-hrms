@@ -16,6 +16,11 @@ export type Employee = {
 
 export type Payroll = {
   id: string;
+  hra: string;
+  conveyance: string;
+  allowances: string;
+  special_allowance: string;
+  days_in_month: number;
   employee: Employee;
   pay_date: string;
   days_worked: number;
