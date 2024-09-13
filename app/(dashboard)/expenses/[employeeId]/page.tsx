@@ -48,7 +48,6 @@ async function getEmployeeSpendData({
         year,
       },
     });
-    console.log(res.data);
     return res.data;
   } catch (err) {
     throw new Error("Error getting employee spend data.");
