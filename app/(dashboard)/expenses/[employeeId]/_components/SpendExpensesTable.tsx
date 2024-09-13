@@ -19,7 +19,6 @@ export const SpendExpensesTable = ({
 }: {
   spendExpensesData: Expense[];
 }): React.ReactNode => {
-  console.log(spendExpensesData);
   return (
     <div className="rounded-md border">
       <Table>
