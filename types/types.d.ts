@@ -12,30 +12,45 @@ interface Profile {
   today_status: string;
 }
 
-interface AttendanceData {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  position: string;
-  status: string;
-  check_in_time: string | null;
-  check_out_time: string | null;
-  department: string;
-  profile_picture: string;
-}
-
 interface Employee {
   id: string;
   first_name: string;
   last_name: string;
-  profile_picture: string;
-  department: string;
-  position: string;
   email: string;
+  position: string;
+  profile_picture: string;
 }
 
-interface expense {
+// In attendance page
+interface EmployeeProfile {
+  id: string;
+  name: string;
+  profile_picture: string;
+  department: string;
+  monthly_percentage: number;
+  yearly_percentage: number;
+  today_status: string;
+  today_check_in_time: string;
+  today_check_out_time: string;
+}
+
+interface AttendanceData {
+  employees: {
+    id: string,
+    first_name: string,
+    last_name: string,
+    email: string,
+    position: string,
+    status: string,
+    check_in_time: string | null,
+    check_out_time: string | null,
+    department: string,
+    profile_picture: string,
+  }[],
+  total_employee: number;
+}
+
+interface Expenses {
   id: string;
   employee: Employee;
   company: string;
@@ -45,12 +60,6 @@ interface expense {
   category: string;
   bill: string;
   status: string;
-}
-
-interface Expenses {
-  pending_total: number;
-  approved_total: number;
-  expenses: expense[];
 }
 
 export interface BonusData {
