@@ -8,6 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Payroll } from "@/app/(dashboard)/payroll/history/page";
+import PaySlip from "./PaySlip";
 
 const tableHeadValues: string[] = [
   "Name",
@@ -106,6 +107,7 @@ export const PayrollOverviewTable = ({
           ))}
         </TableBody>
       </Table>
+      {/* <PaySlip /> */}
     </div>
   );
 };
