@@ -1,8 +1,7 @@
 "use client";
-import React, { useRef, useEffect, useState } from "react";
-// import jsPDF from "jspdf";
-// import html2canvas from "html2canvas";
-import { Table, TableHeader, TableBody, TableRow, TableCell, TableHead } from "@/components/ui/table";
+import React, { useRef, useState, useEffect } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import { apiCaller } from "@/lib/auth";
 
 interface PayrollData {
@@ -26,15 +25,17 @@ interface PayrollData {
     conveyance: string;
     days_worked: string;
     basic_salary: string;
-
+    salary_structure: string;
 }
 
 const PaySlip: React.FC = () => {
     const payslipRef = useRef<HTMLDivElement | null>(null);
     const [payrollData, setPayrollData] = useState<PayrollData | null>(null);
+    const [slipSent, setSlipSent] = useState<boolean>(false);
 
     useEffect(() => {
-        apiCaller.get("api/payroll_app/payrolls/")
+        // Fetch payroll data
+        apiCaller.get("/api/payroll_app/payrolls/")
             .then((response) => {
                 setPayrollData(response.data[0]);
             })
@@ -43,32 +44,56 @@ const PaySlip: React.FC = () => {
             });
     }, []);
 
-    // const handleDownload = () => {
-    //     const element = payslipRef.current;
-    //     if (element) {
-    //         html2canvas(element, { scale: 2 }).then((canvas) => {
-    //             const imgData = canvas.toDataURL("image/jpeg", 1.0);
-    //             const pdf = new jsPDF("p", "mm", "a4");
-    //             const imgWidth = 210;
-    //             const pageHeight = 295;
-    //             const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    //             let heightLeft = imgHeight;
-    //             let position = 0;
+    const generatePDFAndPost = () => {
+        if (payslipRef.current && payrollData) {
+            const element = payslipRef.current;
 
-    //             pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-    //             heightLeft -= pageHeight;
+            html2canvas(element, { scale: 2 }).then((canvas) => {
+                const imgData = canvas.toDataURL("image/jpeg", 1.0);
+                const pdf = new jsPDF("p", "mm", "a4");
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
 
-    //             while (heightLeft >= 0) {
-    //                 position = heightLeft - imgHeight;
-    //                 pdf.addPage();
-    //                 pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-    //                 heightLeft -= pageHeight;
-    //             }
+                pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
 
-    //             pdf.save("payslip.pdf");
-    //         });
-    //     }
-    // };
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                const pdfBlob = pdf.output("blob");
+
+                const formData = new FormData();
+                formData.append('employee', payrollData.employee.id);
+                formData.append('salary_structure', payrollData.salary_structure);
+                formData.append('slip_sent_status', slipSent ? 'true' : 'false');
+                formData.append('slip', pdfBlob, 'payroll-slip.pdf');
+
+                // Convert FormData entries to an array before iterating
+                const formDataEntries = Array.from(formData.entries());
+                formDataEntries.forEach(([key, value]) => {
+                    console.log(`${key}: ${value}`);
+                });
+
+                apiCaller.post("api/payroll_app/create-salary-slip/", formData)
+                    .then((response) => {
+                        console.log("PDF posted successfully:", response.data);
+                    })
+                    .catch((error) => {
+                        console.error("Error posting PDF:", error);
+                    });
+            });
+        } else {
+            alert("Slip not sent. Condition not met or no data available.");
+        }
+    };
+
 
     if (!payrollData) {
         return <p>Loading...</p>;
@@ -118,7 +143,7 @@ const PaySlip: React.FC = () => {
                         <h3 className="font-bold text-lg">Rs {payrollData.in_hand_salary}</h3>
                         <p className="text-gray-500">Employee Net Pay</p>
                         <div className="flex justify-between mt-4">
-                            <p className="text-sm">Paid Days:{payrollData.days_worked}</p>
+                            <p className="text-sm">Paid Days: {payrollData.days_worked}</p>
                             <p className="text-sm">LOP Days: 0</p>
                         </div>
                     </div>
@@ -127,89 +152,75 @@ const PaySlip: React.FC = () => {
                 <hr className="my-4" />
 
                 <div className="mt-6">
-                    <Table className="table-auto w-full border-collapse">
-                        <TableHeader>
-                            <TableRow className="bg-gray-200">
-                                <TableHead className="bg-black text-white">Earnings</TableHead>
-                                <TableHead className="bg-black text-white">Amount</TableHead>
-                                <TableHead className="bg-black text-white">Deductions</TableHead>
-                                <TableHead className="bg-black text-white">Amount</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="border px-4 py-2">Basic Salary</TableCell>
-                                <TableCell className="border px-4 py-2">Rs {payrollData.basic_salary}</TableCell>
-                                <TableCell className="border px-4 py-2">EPF Contribution</TableCell>
-                                <TableCell className="border px-4 py-2">Rs {payrollData.pf_contribution}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="border px-4 py-2">HRA</TableCell>
-                                <TableCell className="border px-4 py-2">Rs {payrollData.hra}</TableCell>
-                                <TableCell className="border px-4 py-2">Insurance</TableCell>
-                                <TableCell className="border px-4 py-2">Rs -</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="border px-4 py-2">Special Allowance</TableCell>
-                                <TableCell className="border px-4 py-2">Rs {payrollData.special_allowance}</TableCell>
-                                <TableCell className="border px-4 py-2">TDS</TableCell>
-                                <TableCell className="border px-4 py-2">Rs -</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="border px-4 py-2">Conveyance</TableCell>
-                                <TableCell className="border px-4 py-2">Rs{payrollData.conveyance}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
+                    <table className="table-auto w-full border-collapse">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="bg-black text-white">Earnings</th>
+                                <th className="bg-black text-white">Amount</th>
+                                <th className="bg-black text-white">Deductions</th>
+                                <th className="bg-black text-white">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="border px-4 py-2">Basic Salary</td>
+                                <td className="border px-4 py-2">Rs {payrollData.basic_salary}</td>
+                                <td className="border px-4 py-2">EPF Contribution</td>
+                                <td className="border px-4 py-2">Rs {payrollData.pf_contribution}</td>
+                            </tr>
+                            <tr>
+                                <td className="border px-4 py-2">HRA</td>
+                                <td className="border px-4 py-2">Rs {payrollData.hra}</td>
+                                <td className="border px-4 py-2">Insurance</td>
+                                <td className="border px-4 py-2">Rs -</td>
+                            </tr>
+                            <tr>
+                                <td className="border px-4 py-2">Special Allowance</td>
+                                <td className="border px-4 py-2">Rs {payrollData.special_allowance}</td>
+                                <td className="border px-4 py-2">TDS</td>
+                                <td className="border px-4 py-2">Rs -</td>
+                            </tr>
+                            <tr>
+                                <td className="border px-4 py-2">Conveyance</td>
+                                <td className="border px-4 py-2">Rs {payrollData.conveyance}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <hr className="my-4" />
 
                 <div className="mt-6">
-                    <Table className="table-auto w-full border-collapse">
-                        <TableHeader>
-                            <TableRow className="bg-gray-200">
-                                <TableHead className="bg-black text-white">Bonus / Reimbursements</TableHead>
-                                <TableHead className="bg-black text-white">Amount</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            <TableRow>
-                                <TableCell className="border px-4 py-2">Arrears</TableCell>
-                                <TableCell className="border px-4 py-2">Rs {payrollData.arrears_amount}</TableCell>
-                            </TableRow>
-                            <TableRow>
-                                <TableCell className="border px-4 py-2">Expense Reimbursement</TableCell>
-                                <TableCell className="border px-4 py-2">Rs {payrollData.expense_reimbursement}</TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </div>
-
-                <hr className="my-4" />
-
-                <div className="text-center mt-8">
-                    <h3 className="font-bold text-xl">
-                        Employee Net Pay: Rs {payrollData.in_hand_salary}
-                    </h3>
-                    <p className="text-gray-500">
-                        (Rupees {payrollData.in_hand_salary} only)
-                    </p>
-                </div>
-
-                <div className="text-right mt-4">
-                    <p className="text-gray-500">HR Department</p>
+                    <table className="table-auto w-full border-collapse">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th className="bg-black text-white">Bonus / Reimbursements</th>
+                                <th className="bg-black text-white">Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="border px-4 py-2">Arrears</td>
+                                <td className="border px-4 py-2">Rs {payrollData.arrears_amount}</td>
+                            </tr>
+                            <tr>
+                                <td className="border px-4 py-2">Expense Reimbursement</td>
+                                <td className="border px-4 py-2">Rs {payrollData.expense_reimbursement}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            {/* <div className="text-center mt-6">
-                <button
-                    onClick={handleDownload}
-                    className="px-4 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400"
-                >
-                    Download PDF
-                </button>
-            </div> */}
+            <button
+                className="mt-6 px-4 py-2 bg-blue-500 text-white rounded"
+                onClick={() => {
+                    setSlipSent(true);
+                    generatePDFAndPost();
+                }}
+            >
+                Generate and Post PDF
+            </button>
         </div>
     );
 };
