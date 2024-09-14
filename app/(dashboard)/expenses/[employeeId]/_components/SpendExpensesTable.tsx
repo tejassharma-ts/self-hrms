@@ -8,15 +8,16 @@ import {
 } from "@/components/ui/table";
 import React from "react";
 import { CircleCheck, CircleX, Clock7, EllipsisVertical } from "lucide-react";
-import { Expenses } from "@/app/(dashboard)/expenses/page";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import { ApprovedExpensesDialogue } from "@/app/(dashboard)/expenses/_components/ApprovedExpensesDialogue";
-import { DeclinedExpensesDialogue } from "@/app/(dashboard)/expenses/_components/DeclinedExpensesDialogue";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { PendingExpensesDialogue } from "@/app/(dashboard)/expenses/[employeeId]/_components/PendingExpensesDialogue";
+import { ExpenseReportSummary } from "@/app/(dashboard)/expenses/[employeeId]/_components/ExpenseReportSummary";
+import { expense } from "@/types/types";
+import { Expense } from "@/app/(dashboard)/expenses/[employeeId]/page";
 
 export const SpendExpensesTable = ({
   spendExpensesData,
 }: {
-  spendExpensesData: Expenses[];
+  spendExpensesData: Expense[];
 }): React.ReactNode => {
   return (
     <div className="rounded-md border">
@@ -29,7 +30,7 @@ export const SpendExpensesTable = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {spendExpensesData.map((eachExpensesEmployeeData: Expenses) => (
+          {spendExpensesData.map((eachExpensesEmployeeData: expense) => (
             <TableRow key={eachExpensesEmployeeData.employee.id}>
               <TableCell>{eachExpensesEmployeeData.date_incurred}</TableCell>
               <TableCell>{eachExpensesEmployeeData.category}</TableCell>
@@ -50,11 +51,23 @@ export const SpendExpensesTable = ({
                   <DialogTrigger>
                     <EllipsisVertical />
                   </DialogTrigger>
-                  {eachExpensesEmployeeData.status === "approved" ? (
-                    <ApprovedExpensesDialogue eachExpensesEmployeeData={eachExpensesEmployeeData} />
-                  ) : (
-                    <DeclinedExpensesDialogue />
-                  )}
+                  <DialogContent className={"min-w-max px-10"}>
+                    {eachExpensesEmployeeData.status === "approved" ? (
+                      <ExpenseReportSummary
+                        status={eachExpensesEmployeeData.status}
+                        eachExpensesEmployeeData={eachExpensesEmployeeData}
+                      />
+                    ) : eachExpensesEmployeeData.status === "rejected" ? (
+                      <ExpenseReportSummary
+                        status={eachExpensesEmployeeData.status}
+                        eachExpensesEmployeeData={eachExpensesEmployeeData}
+                      />
+                    ) : (
+                      <PendingExpensesDialogue
+                        eachExpensesEmployeeData={eachExpensesEmployeeData}
+                      />
+                    )}
+                  </DialogContent>
                 </Dialog>
               </TableCell>
             </TableRow>
