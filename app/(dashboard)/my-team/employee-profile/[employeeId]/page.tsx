@@ -66,8 +66,8 @@ const EmployeeProfilePage = async ({
   const tab = searchParams.tab;
   const employeeProfile: Employee = await getEmployeeProfile({ employeeId });
   return (
-    <div className="">
-      <Card className="flex h-[calc(100vh-10rem)] min-w-full">
+    <div>
+      <Card className="flex h-[calc(100vh-10rem)] min-w-full overflow-y-scroll">
         <CardContent>
           <TabsCard employeeId={employeeId} />
         </CardContent>
