@@ -16,41 +16,44 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/Icons";
-import { SignupFormSchema } from "@/validations/auth";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { SigninFormSchema } from "@/validations/auth";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { publicApiCaller } from "@/lib/auth";
+import useAuthStore from "@/model/auth";
 
-interface UserSignupFromProps extends React.HTMLAttributes<HTMLDivElement> {
+interface UserSigninFromProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
 }
 
-export default function UserSignupForm({ className, ...props }: UserSignupFromProps) {
+const FormSchema = z.object({
+  email: z.string(),
+  otp: z.string().min(6, {
+    message: "Please enter valid a OTP",
+  }),
+});
+
+export default function FinalVerification({ className, ...props }: UserSigninFromProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const pathname = usePathname();
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
+  const router = useRouter();
+  const { login } = useAuthStore();
 
   const form = useForm({
-    resolver: zodResolver(SignupFormSchema),
+    resolver: zodResolver(FormSchema),
     defaultValues: {
-      email: "varsha7022001@gmail.com",
+      email: searchParams.get("email")! || searchParams.get("company_email")!,
+      otp: "",
     },
   });
 
-  async function onSubmit(formData: z.infer<typeof SignupFormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setIsLoading(true);
-      const res = await publicApiCaller.post("/api/auth/register/", formData);
+      await login(data);
 
-      // OTP is successfully sent
-      const params = new URLSearchParams(searchParams);
-      params.set("company_email", formData.email);
-      replace(`${pathname}?${params.toString()}`);
-
-      console.log(res);
-    } catch (err) {
-      console.log(err);
+      router.push("/company-register");
+    } catch (err: any) {
       toast({
         title: "Authentication",
         description: "Something went wrong please try again later.",
@@ -68,19 +71,19 @@ export default function UserSignupForm({ className, ...props }: UserSignupFromPr
           <div className="grid gap-2">
             <FormField
               control={form.control}
-              name="email"
+              name="otp"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start space-y-1">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Login OTP</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button disabled={isLoading} className="mt-2">
-              {isLoading ? <Icons.loader /> : "Send OTP"}
+              {isLoading ? <Icons.loader /> : "Verify"}
             </Button>
           </div>
         </form>

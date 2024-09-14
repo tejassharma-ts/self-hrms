@@ -4,6 +4,7 @@ type CompanyAccount = {
   address: string;
   company_website_url: string;
   owner: string;
+  company_logo: string;
 };
 
 type Company = {
@@ -55,6 +56,7 @@ type UserAccount = {
   last_seen: string | null;
   company_name: string | null;
   employee_profile: EmployeeProfile;
+  company_logo: string;
 };
 
 export type { CompanyAccount, UserAccount };

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -15,13 +15,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import Link from "next/link";
 import { toast } from "@/hooks/use-toast";
 import useAuthStore from "@/model/auth";
 import { publicApiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import Countdown from "react-countdown";
+import { SelectRangeContext } from "react-day-picker";
 
 const FormSchema = z.object({
   email: z.string(),
@@ -33,6 +34,7 @@ const FormSchema = z.object({
 const maxOtpResendAttempts = 2;
 export function InputOTPForm() {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -48,23 +50,34 @@ export function InputOTPForm() {
   const { login } = useAuthStore();
   const [otpResendCount, setOtpResendCount] = useState(0);
 
+  useEffect(() => {
+    if (searchParams.has("final-verification")) {
+      form.resetField("otp");
+      setDate(Date.now() + 120000);
+    }
+  }, [searchParams]);
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     try {
       setIsLoading(true);
       const email = searchParams.get("email");
-      if (!email) {
+      if (!email && !searchParams.has("final-verification")) {
         await publicApiCaller.post("/api/auth/verify/", {
           email: data.email,
           code: data.otp,
         });
-        router.push("/auth");
+
+        // generate otp
+        await publicApiCaller.post("/api/auth/login/generate-otp/", {
+          email: data.email,
+        });
+
+        const params = new URLSearchParams(searchParams);
+        params.set("final-verification", "true");
+        router.replace(`${pathname}?${params.toString()}`);
       } else {
         await login(data);
-        toast({
-          title: "Authentication",
-          description: "Logged in succesfully",
-        });
-        router.push("/dashboard");
+        router.push("/company-register");
       }
     } catch (err) {
       toast({
@@ -129,7 +142,11 @@ export function InputOTPForm() {
           name="otp"
           render={({ field }) => (
             <FormItem className="flex flex-col items-center">
-              <FormLabel>Enter the OTP</FormLabel>
+              {searchParams.has("final-verification") ? (
+                <FormLabel>Login OTP</FormLabel>
+              ) : (
+                <FormLabel>Write the verification OTP</FormLabel>
+              )}
               <FormControl>
                 <InputOTP maxLength={6} {...field}>
                   <InputOTPGroup>
@@ -146,7 +163,7 @@ export function InputOTPForm() {
                 Please check your email <br />
                 <span className="font-medium">{searchParams.get("email")}</span>
                 <br />
-                <Link href="/auth" className="mt-2 block underline underline-offset-4">
+                <Link href="/register" className="mt-2 block underline underline-offset-4">
                   Email not correct?
                 </Link>
                 <span className="mt-4 block">
@@ -163,7 +180,7 @@ export function InputOTPForm() {
           )}
         />
         <Button disabled={isLoading} className="mt-2">
-          {isLoading ? <Icons.loader /> : "Submit"}
+          {isLoading ? <Icons.loader /> : "Verify"}
         </Button>
       </form>
     </Form>
