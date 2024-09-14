@@ -21,6 +21,23 @@ export const sidelinks: SideLink[] = [
     title: "My Team",
     href: "/my-team",
     icon: <Icons.people size={18} />,
+    sub: [
+      {
+        title: "Salary Details",
+        href: "/my-team?tab=salary-details",
+        icon: <Icons.leaveRequest size={18} />,
+      },
+      {
+        title: "Staff Details",
+        href: "/my-team?tab=staff-details",
+        icon: <Icons.absent size={18} />,
+      },
+      {
+        title: "Bank Details",
+        href: "/my-team?tab=bank-details",
+        icon: <Icons.calendar size={18} />,
+      },
+    ],
   },
   {
     title: "Attendence",

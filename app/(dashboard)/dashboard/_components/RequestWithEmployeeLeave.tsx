@@ -14,8 +14,21 @@ async function getAllEmployeeLeave() {
     console.log(err);
   }
 }
+
+async function getExpenseRequests() {
+  try {
+    const res = await apiCaller.get("/api/payroll_app/get-pending-expense-count/", {
+      headers: getAuthCookies(),
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export default async function RequestWithEmployeeLeave() {
   const res = await getAllEmployeeLeave();
+  const expenseRequest = await getExpenseRequests();
+
   if (!res) {
     return (
       <>
@@ -28,7 +41,10 @@ export default async function RequestWithEmployeeLeave() {
   return (
     <>
       <div className="col-span-3 mb-4">
-        <PendingRequests leaveRequestCount={res.leaves_request_count} />
+        <PendingRequests
+          leaveRequestCount={res.leaves_request_count}
+          expenseRequestCount={expenseRequest?.pending_expenses_count}
+        />
       </div>
       <div className="col-span-8 mb-4">
         <EmployeesOnLeave leavesRequest={res.leaves_request} />

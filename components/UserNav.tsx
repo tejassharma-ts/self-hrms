@@ -17,10 +17,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { removeAuthCookies } from "@/lib/client/auth";
+import { useClientAuth } from "@/context/auth-context";
 
 export function UserNav() {
+  const { authUser, authCompany } = useClientAuth();
   const { logout } = useAuthStore();
   const router = useRouter();
+
+  let companyLogoUrl;
+  if (authUser && authUser.company_logo) {
+    companyLogoUrl = authUser.company_logo;
+  } else if (authCompany && authCompany.company_logo) {
+    companyLogoUrl = authCompany.company_logo;
+  }
 
   async function onLogout() {
     try {
@@ -47,7 +56,7 @@ export function UserNav() {
         <Button variant="ghost" className="relative h-8 w-8 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage
-              src="https://mighty.tools/mockmind-api/content/abstract/47.jpg"
+              src={companyLogoUrl || "https://mighty.tools/mockmind-api/content/abstract/47.jpg"}
               alt="@shadcn"
             />
             <AvatarFallback>RIP</AvatarFallback>

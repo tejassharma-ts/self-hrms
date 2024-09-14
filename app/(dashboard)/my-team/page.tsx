@@ -1,67 +1,63 @@
-import React from "react";
-import { apiCaller } from "@/lib/auth";
-import { getAuthCookies } from "@/lib/server/api";
-import { Employee } from "@/app/(dashboard)/my-team/employee-profile/[employeeId]/page";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import SalaryStructure from "./_components/SalaryStructure";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { Suspense } from "react";
+import StaffDetails from "./_components/StaffDetails";
+import BankDetails from "./_components/BankDetails";
+import TableSkeleton from "./_skeletons/TableSkeleton";
 
-export type Employees = {
-  employees: Employee[];
+type MyTeamPageProps = {
+  searchParams: {
+    tab: "salary-detail" | "staff-details" | "bank-details";
+  };
 };
 
-async function getAllEmployeeProfiles() {
-  try {
-    const res = await apiCaller.get("/api/companies-app/company/add-employee/", {
-      headers: getAuthCookies(),
-    });
-    return res.data;
-  } catch (err) {
-    throw new Error(`Error getPayroll: ${err}`);
-  }
-}
-
-const MyTeamPage = async () => {
-  const allEmployeeProfiles: Employees = await getAllEmployeeProfiles();
+export default function MyTeamPage({ searchParams }: MyTeamPageProps) {
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>EmployeeID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Phone Number</TableHead>
-            <TableHead>Date of Birth</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {allEmployeeProfiles.employees.map((eachEmployeeProfile) => (
-            <TableRow key={eachEmployeeProfile.id}>
-              <TableCell>
-                <Link
-                  href={`/my-team/employee-profile/${eachEmployeeProfile.id}/?tab=person-details`}>
-                  {eachEmployeeProfile.id}
-                </Link>
-              </TableCell>
-              <TableCell>
-                {eachEmployeeProfile.first_name} {eachEmployeeProfile.last_name}
-              </TableCell>{" "}
-              <TableCell>{eachEmployeeProfile.email}</TableCell>{" "}
-              <TableCell>{eachEmployeeProfile.phone_number}</TableCell>
-              <TableCell>{eachEmployeeProfile.date_of_birth}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+    <div>
+      <Tabs defaultValue={searchParams.tab || "salary-details"} className="relative">
+        <TabsList className="relative">
+          <TabsTrigger value="salary-details" asChild>
+            <Link href="?tab=salary-details" replace>
+              Salary Details
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger value="staff-details" asChild>
+            <Link href="?tab=staff-details" replace>
+              Staff Details
+            </Link>
+          </TabsTrigger>
+          <TabsTrigger value="bank-details" asChild>
+            <Link href="?tab=bank-details" replace>
+              Bank Details
+            </Link>
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="salary-details">
+          <Suspense fallback={<TableSkeleton />}>
+            <SalaryStructure />
+          </Suspense>
+        </TabsContent>
+        <TabsContent value="staff-details">
+          <Suspense fallback={<TableSkeleton />}>
+            <StaffDetails />
+          </Suspense>
+        </TabsContent>
+        <TabsContent value="bank-details">
+          <Suspense fallback={<TableSkeleton />}>
+            <BankDetails />
+          </Suspense>
+        </TabsContent>
+        <div className="absolute right-0 top-0 flex gap-4">
+          <Link href="#" className={buttonVariants({ variant: "secondary", size: "sm" })}>
+            Add Staff
+          </Link>
+          {/* <Link href="#" className={buttonVariants({ size: "sm" })}> */}
+          {/*   Add Employee */}
+          {/* </Link> */}
+        </div>
+      </Tabs>
     </div>
   );
-};
-
-export default MyTeamPage;
+}
