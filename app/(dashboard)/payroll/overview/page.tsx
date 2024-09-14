@@ -25,6 +25,7 @@ const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
       <div>
         <PayrollOverviewTable payrollData={payrollData} />
       </div>
+
     </div>
   );
 };
