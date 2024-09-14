@@ -4,6 +4,7 @@ import { apiCaller } from "@/lib/auth";
 import { PayrollOverviewHeader } from "@/app/(dashboard)/payroll/_components/PayrollOverviewHeader";
 import { PayrollOverviewTable } from "@/app/(dashboard)/payroll/_components/PayrollOverviewTable";
 import { Payroll } from "@/app/(dashboard)/payroll/history/page";
+import PaySlip from "@/app/(dashboard)/payroll/_components/PaySlip";
 
 async function getPayrollOverview() {
   try {
@@ -25,7 +26,7 @@ const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
       <div>
         <PayrollOverviewTable payrollData={payrollData} />
       </div>
-
+      <PaySlip />
     </div>
   );
 };

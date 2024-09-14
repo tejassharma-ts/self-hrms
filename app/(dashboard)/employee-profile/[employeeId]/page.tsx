@@ -1,14 +1,14 @@
 import React from "react";
-import { TabsCard } from "@/app/(dashboard)/my-team/_components/TabsCard";
+import { TabsCard } from "@/app/(dashboard)/employee-profile/_components/TabsCard";
 import { Card, CardContent } from "@/components/ui/card";
-import { EmployeeProfile } from "@/app/(dashboard)/my-team/_components/EmployeeProfile";
+import { EmployeeProfile } from "@/app/(dashboard)/employee-profile/_components/EmployeeProfile";
 import { apiCaller } from "@/lib/auth";
 import { getAuthCookies } from "@/lib/server/api";
-import { EmployeePersonalInformation } from "@/app/(dashboard)/my-team/_components/EmployeePersonalInformation";
-import { EmployeeAddressDetails } from "@/app/(dashboard)/my-team/_components/EmployeeAddressDetails";
-import { EmployeeDocuments } from "@/app/(dashboard)/my-team/_components/EmployeeDocuments";
-import { ContactDetails } from "@/app/(dashboard)/my-team/_components/ContactDetails";
-import { AccountDetails } from "@/app/(dashboard)/my-team/_components/AccountDetails";
+import { EmployeePersonalInformation } from "@/app/(dashboard)/employee-profile/_components/EmployeePersonalInformation";
+import { EmployeeAddressDetails } from "@/app/(dashboard)/employee-profile/_components/EmployeeAddressDetails";
+import { EmployeeDocuments } from "@/app/(dashboard)/employee-profile/_components/EmployeeDocuments";
+import { ContactDetails } from "@/app/(dashboard)/employee-profile/_components/ContactDetails";
+import { AccountDetails } from "@/app/(dashboard)/employee-profile/_components/AccountDetails";
 
 export type Employee = {
   id: string;

@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Employee } from "@/app/(dashboard)/my-team/employee-profile/[employeeId]/page";
-import { EmployeeDetailsCardHeader } from "@/app/(dashboard)/my-team/_components/EmployeeDetailsCardHeader";
+import { Employee } from "@/app/(dashboard)/employee-profile/[employeeId]/page";
+import { EmployeeDetailsCardHeader } from "@/app/(dashboard)/employee-profile/_components/EmployeeDetailsCardHeader";
 
 export const EmployeeDocuments = ({ employeeProfile }: { employeeProfile: Employee }) => {
   return (

@@ -1,6 +1,6 @@
 import React from "react";
 import { CardHeader, CardTitle } from "@/components/ui/card";
-import { EditButton } from "@/app/(dashboard)/my-team/_components/EditButton";
+import { EditButton } from "@/app/(dashboard)/employee-profile/_components/EditButton";
 
 export const EmployeeDetailsCardHeader = ({ heading }: { heading: string }) => {
   return (
