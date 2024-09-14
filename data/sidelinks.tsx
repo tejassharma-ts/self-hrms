@@ -19,7 +19,7 @@ export const sidelinks: SideLink[] = [
   },
   {
     title: "My Team",
-    href: "/orders",
+    href: "/my-team",
     icon: <Icons.people size={18} />,
   },
   {
