@@ -275,7 +275,7 @@ const PaySlip: React.FC<PaySlipProps> = ({ payrollData, onSlipSent }) => {
 
                 apiCaller.post("api/payroll_app/create-salary-slip/", formData)
                     .then((response) => {
-                        console.log("PDF posted successfully:", response.data);  // Full API response
+                        console.log("PDF posted successfully:", response.data);
                         formData.set('slip_sent_status', 'true');
                         onSlipSent();
                     })
