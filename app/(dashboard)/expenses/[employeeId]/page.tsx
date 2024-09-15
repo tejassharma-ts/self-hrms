@@ -6,28 +6,12 @@ import { getAuthCookies } from "@/lib/server/api";
 import { SpendExpensesYearFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesYearFilter";
 import { SpendExpensesMonthFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesMonthFilter";
 import { getMonthNumber } from "@/lib/utils";
-import { Employee } from "@/types/types";
+import { IExpensesSearchParams, IPayrollExpenseDetails } from "@/types/types";
 
-type params = {
-  employeeId: string;
-};
-
-export interface Expense {
-  id: string;
-  employee: Employee;
-  company: string;
-  date_incurred: string;
-  amount: string;
-  description: string;
-  category: string;
-  bill: string;
-  status: "pending" | "approved" | "rejected";
-}
-
-interface getEmployeeSpendDataProps {
+interface IGetEmployeeSpendDataProps {
   employeeId: string;
   status: string;
-  month: number | null;
+  month: number;
   year: number;
 }
 
@@ -36,18 +20,21 @@ async function getEmployeeSpendData({
   status,
   month,
   year,
-}: getEmployeeSpendDataProps): Promise<Expense[]> {
+}: IGetEmployeeSpendDataProps): Promise<IPayrollExpenseDetails[]> {
   try {
     const updatedMonth = month === 0 ? null : month;
-    const res = await apiCaller.get<Expense[]>("/api/payroll_app/expenses-details/", {
-      headers: getAuthCookies(),
-      params: {
-        employee_id: employeeId,
-        approval_status: status,
-        month: updatedMonth,
-        year,
+    const res = await apiCaller.get<IPayrollExpenseDetails[]>(
+      "/api/payroll_app/expenses-details/",
+      {
+        headers: getAuthCookies(),
+        params: {
+          employee_id: employeeId,
+          approval_status: status,
+          month: updatedMonth,
+          year,
+        },
       },
-    });
+    );
     return res.data;
   } catch (err) {
     throw new Error("Error getting employee spend data.");
@@ -58,15 +45,16 @@ const EmployeePage = async ({
   params,
   searchParams,
 }: {
-  params: params;
-  searchParams: any;
+  params: { employeeId: string };
+  searchParams: IExpensesSearchParams;
 }): Promise<React.ReactNode> => {
   const status = searchParams.status;
   const month = searchParams.month;
   const monthNumber = getMonthNumber(month);
   const year = searchParams.year;
   const employeeId = params.employeeId;
-  const employeeSpendData: Expense[] = await getEmployeeSpendData({
+
+  const employeeSpendData: IPayrollExpenseDetails[] = await getEmployeeSpendData({
     employeeId,
     status,
     month: monthNumber,
