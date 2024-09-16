@@ -4,39 +4,8 @@ import { PayrollHeader } from "../_components/PayrollHeader";
 import { PayrollTable } from "../_components/PayrollTable";
 import EmployeePayroll from "../_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
+import { Payroll } from "@/types/types";
 
-export type Employee = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  profile_picture: string;
-  department: string;
-  position: string;
-};
-
-export type Payroll = {
-  id: string;
-  employee: Employee;
-  pay_date: string;
-  days_worked: number;
-  overtime_hours: string;
-  overtime_pay: string;
-  total_earnings: string;
-  total_deductions: string;
-  esi_contribution: string;
-  pf_contribution: string;
-  final_salary: string;
-  gross_salary: string;
-  in_hand_salary: string;
-  arrears_amount: string;
-  arrears_month: string | null;
-  expense_reimbursement: string;
-  created_at: string;
-  updated_at: string;
-  company: string;
-  salary_structure: string;
-  bonus?: string;
-};
 
 async function getPayroll({ year }: { year: number }) {
   try {

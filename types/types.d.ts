@@ -25,7 +25,6 @@ interface AttendanceData {
   profile_picture: string;
 }
 
-<<<<<<< Akshat
 interface Employee {
   id: string;
   first_name: string;
@@ -34,35 +33,6 @@ interface Employee {
   department: string;
   position: string;
   email: string;
-=======
-// In attendance page
-interface EmployeeProfile {
-  id: string;
-  name: string;
-  profile_picture: string;
-  department: string;
-  monthly_percentage: number;
-  yearly_percentage: number;
-  today_status: string;
-  today_check_in_time: string;
-  today_check_out_time: string;
-}
-
-interface AttendanceData {
-  employees: {
-    id: string,
-    first_name: string,
-    last_name: string,
-    email: string,
-    position: string,
-    status: string,
-    check_in_time: string | null,
-    check_out_time: string | null,
-    department: string,
-    profile_picture: string,
-  }[],
-  total_employee: number;
->>>>>>> development
 }
 
 interface expense {
@@ -110,3 +80,33 @@ export interface EmployeePayrollApiResponse {
   total_earnings: string;
   final_salary: string;
 }
+
+export type Payroll = {
+  id: string;
+  hra: string;
+  conveyance: string;
+  allowances: string;
+  special_allowance: string;
+  days_in_month: number;
+  employee: Employee;
+  pay_date: string;
+  days_worked: number;
+  overtime_hours: string;
+  overtime_pay: string;
+  total_earnings: string;
+  total_deductions: string;
+  esi_contribution: string;
+  pf_contribution: string;
+  final_salary: string;
+  gross_salary: string;
+  in_hand_salary: string;
+  arrears_amount: string;
+  arrears_month: string | null;
+  expense_reimbursement: string;
+  created_at: string;
+  updated_at: string;
+  company: string;
+  salary_structure: string;
+  bonus?: string;
+  basic_salary?: string;
+};

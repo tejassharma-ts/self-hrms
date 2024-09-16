@@ -3,7 +3,7 @@ import { getAuthCookies } from "@/lib/server/api";
 import { apiCaller } from "@/lib/auth";
 import { PayrollOverviewHeader } from "@/app/(dashboard)/payroll/_components/PayrollOverviewHeader";
 import { PayrollOverviewTable } from "@/app/(dashboard)/payroll/_components/PayrollOverviewTable";
-import { Payroll } from "@/app/(dashboard)/payroll/history/page";
+import { Payroll } from "@/types/types";
 
 async function getPayrollOverview() {
   try {
@@ -25,6 +25,7 @@ const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
       <div>
         <PayrollOverviewTable payrollData={payrollData} />
       </div>
+
     </div>
   );
 };
