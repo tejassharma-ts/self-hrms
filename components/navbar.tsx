@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import useAuthStore from "@/model/auth";
 import { toast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
+import { useClientAuth } from "@/context/auth-context";
 
 export default function Navbar() {
   const { logout } = useAuthStore();
@@ -23,7 +24,7 @@ export default function Navbar() {
       toast({
         description: "You are logged out successfully",
       });
-      return router.push("/auth");
+      return router.push("/register");
     } catch (err) {
       console.log("This is error", err);
       toast({

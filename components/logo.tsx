@@ -9,6 +9,14 @@ type LogoProps = {
 
 export default function Logo({ isCollapsed }: LogoProps) {
   const { isLoading, authCompany, authUser } = useClientAuth();
+
+  let companyLogoUrl;
+  if (authUser && authUser.company_logo) {
+    companyLogoUrl = authUser.company_logo;
+  } else if (authCompany && authCompany.company_logo) {
+    companyLogoUrl = authCompany.company_logo;
+  }
+
   if (isLoading) {
     return <LogoSkeleton isCollapsed={isCollapsed} />;
   }
@@ -18,7 +26,9 @@ export default function Logo({ isCollapsed }: LogoProps) {
       return (
         <>
           <Avatar>
-            <AvatarImage src="https://mighty.tools/mockmind-api/content/abstract/47.jpg" />
+            <AvatarImage
+              src={companyLogoUrl || "https://mighty.tools/mockmind-api/content/abstract/47.jpg"}
+            />
             <AvatarFallback>RIP</AvatarFallback>
           </Avatar>
           {!isCollapsed && (
