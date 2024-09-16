@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { bonusTableHead, deductionsTableHead } from "@/app/(dashboard)/my-team/constants";
+import { deductionsTableHead } from "@/app/(dashboard)/my-team/constants";
 
 export const DeductionsTable = ({ deductions }: { deductions: Deductions }) => {
   console.table(deductions.deductions);
