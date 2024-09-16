@@ -6,11 +6,11 @@ import { UserNav } from "@/components/UserNav";
 import { AuthProvider } from "@/context/auth-context";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  // const isAuth = isUserAuthenticated();
+  const isAuth = isUserAuthenticated();
 
-  // if (!isAuth) {
-  //   redirect("/auth");
-  // }
+  if (!isAuth) {
+    redirect("/auth");
+  }
   return (
     <AuthProvider>
       <MainLayout>

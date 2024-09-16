@@ -11,11 +11,11 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { yearValues } from "@/app/(dashboard)/expenses/_data/ExpensesYearFilterData";
+import { statusValues } from "@/app/(dashboard)/expenses/_data/filterDataValues";
 
-export const SpendExpensesYearFilter = (): React.ReactNode => {
+export const StatusFilter = (): React.ReactNode => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const placeholder: string = "Year";
+  const placeholder: string = "filter";
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -24,9 +24,9 @@ export const SpendExpensesYearFilter = (): React.ReactNode => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (value !== "") {
-      current.set("year", value);
+      current.set("status", value);
     } else {
-      current.delete("year");
+      current.delete("status");
     }
 
     const search = current.toString();
@@ -46,7 +46,7 @@ export const SpendExpensesYearFilter = (): React.ReactNode => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {yearValues.map((value: string) => (
+          {statusValues.map((value: string) => (
             <SelectItem key={value} value={value}>
               {value}
             </SelectItem>

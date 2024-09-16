@@ -9,69 +9,90 @@ import { EmployeeAddressDetails } from "@/app/(dashboard)/my-team/_components/Em
 import { EmployeeDocuments } from "@/app/(dashboard)/my-team/_components/EmployeeDocuments";
 import { ContactDetails } from "@/app/(dashboard)/my-team/_components/ContactDetails";
 import { AccountDetails } from "@/app/(dashboard)/my-team/_components/AccountDetails";
+import { HistoryDetails } from "@/app/(dashboard)/my-team/_components/HistoryDetails";
+import { Bonuses, Deductions, expense, LeavesResponse, Employee } from "@/types/types";
+import { getMonthNumber } from "@/lib/utils";
 
-export type Employee = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  phone_number: string;
-  address: string | null;
-  date_of_birth: string;
-  position: string;
-  date_joined: string;
-  salary: string;
-  is_active: boolean;
-  is_hr: boolean;
-  created_at: string;
-  updated_at: string;
-  department: string;
-  profile_picture: string;
-  bank_name: string | null;
-  account_number: string | null;
-  ifsc_code: string | null;
-  aadhar_number: string | null;
-  pan_number: string | null;
-  gender: string | null;
-  user: string;
-  company: string;
-};
-
-type params = {
+type Params = {
   employeeId: string;
 };
 
-async function getEmployeeProfile({ employeeId }: { employeeId: string }) {
-  try {
-    const res = await apiCaller.get<Employee>("/api/companies-app/company/employee-detail/", {
-      headers: getAuthCookies(),
-      params: {
-        employee_id: employeeId,
-      },
-    });
-    return res.data;
-  } catch (err) {
-    throw new Error(`Error getPayroll: ${err}`);
-  }
+type SearchParams = {
+  tab?: string;
+  month?: string;
+  year?: number;
+};
+
+async function fetchEmployeeData(employeeId: string, month?: number, year?: number) {
+  const headers = getAuthCookies();
+
+  const [employeeProfile, leaves, attendance, bonuses, deductions, expenses, payroll] =
+    await Promise.all([
+      apiCaller.get<Employee>("/api/companies-app/company/employee-detail/", {
+        headers,
+        params: { employee_id: employeeId },
+      }),
+      apiCaller.get<LeavesResponse>("/api/companies-app/company/leaves/", {
+        headers,
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get("/api/companies-app/employee/attendance/", {
+        headers,
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get<Bonuses>("/api/companies-app/employee-bonus-get/", {
+        headers,
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get<Deductions>("/api/companies-app/employee-deduction-get/", {
+        headers,
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get<expense[]>("/api/payroll_app/expenses-details/", {
+        headers,
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get("/api/payroll_app/payrolls/", {
+        headers,
+        params: { employee_id: employeeId, month, year },
+      }),
+    ]);
+
+  return {
+    employeeProfile: employeeProfile.data,
+    leaves: leaves.data,
+    attendance: attendance.data,
+    bonuses: bonuses.data,
+    deductions: deductions.data,
+    expenses: expenses.data,
+    payroll: payroll.data,
+  };
 }
 
-const EmployeeProfilePage = async ({
+export default async function EmployeeProfilePage({
   searchParams,
   params,
 }: {
-  searchParams: any;
-  params: params;
-}) => {
-  const employeeId = params.employeeId;
-  const tab = searchParams.tab;
-  const employeeProfile: Employee = await getEmployeeProfile({ employeeId });
+  searchParams: SearchParams;
+  params: Params;
+}) {
+  const { month, year, tab } = searchParams;
+  const { employeeId } = params;
+
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const monthNumber = month && getMonthNumber(month);
+  const updatedMonth = monthNumber ? monthNumber : currentMonth + 1;
+  const updatedYear = year ? year : currentYear;
+
+  const { employeeProfile, leaves, attendance, bonuses, deductions, expenses, payroll } =
+    await fetchEmployeeData(employeeId, updatedMonth, updatedYear);
+
   return (
     <div>
-      <Card className="flex h-[calc(100vh-10rem)] min-w-full overflow-y-scroll">
-        <CardContent>
-          <TabsCard employeeId={employeeId} />
-        </CardContent>
-        <div className="flex-grow">
+      <Card className="flex h-[calc(100vh-10rem)] w-screen overflow-y-scroll">
+        <TabsCard employeeId={employeeId} />
+        <div className="min-w-[80rem] max-w-[80rem]">
           <CardContent>
             <EmployeeProfile employeeProfile={employeeProfile} />
           </CardContent>
@@ -98,10 +119,21 @@ const EmployeeProfilePage = async ({
               <AccountDetails employeeProfile={employeeProfile} />
             </CardContent>
           )}
+          {tab === "history" && (
+            <CardContent>
+              <HistoryDetails
+                expenses={expenses}
+                deductions={deductions}
+                bonuses={bonuses}
+                attendance={attendance}
+                leaves={leaves}
+                employeeProfile={employeeProfile}
+                payrollData={payroll}
+              />
+            </CardContent>
+          )}
         </div>
       </Card>
     </div>
   );
-};
-
-export default EmployeeProfilePage;
+}

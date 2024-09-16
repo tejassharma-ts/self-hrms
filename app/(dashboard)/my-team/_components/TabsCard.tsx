@@ -29,7 +29,7 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
     {
       name: "History",
       icon: <History />,
-      href: `/my-team/employee-profile/${employeeId}/?tab=history`,
+      href: `/my-team/employee-profile/${employeeId}/?tab=history&category=leaves`,
     },
   ];
 
@@ -42,8 +42,8 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
   };
 
   return (
-    <Card className="w-2/8">
-      <CardContent className="p-6">
+    <Card className={"ml-4 h-[18rem] w-[18rem]"}>
+      <CardContent className="w-[18rem]">
         <div className="flex flex-col items-start gap-y-6">
           {tabLinks.map((tab) => (
             <button
