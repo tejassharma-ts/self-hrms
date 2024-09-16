@@ -68,23 +68,25 @@ export default function WelcomeCard() {
   }
 
   function renderAttendanceStatus() {
-    if (attendanceStatus === "Not Checked In")
-      return (
-        <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
-          Check in
-        </Button>
-      );
-    else if (attendanceStatus === "Checked In") {
-      return (
-        <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
-          Check out
-        </Button>
-      );
-    } else {
-      // TODO: get the attendance timing
-      return (
-        <h1 className="text-sm font-medium text-white">Your attendance for today is recorded</h1>
-      );
+    if (authUser) {
+      if (attendanceStatus === "Not Checked In")
+        return (
+          <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
+            Check in
+          </Button>
+        );
+      else if (attendanceStatus === "Checked In") {
+        return (
+          <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
+            Check out
+          </Button>
+        );
+      } else {
+        // TODO: get the attendance timing
+        return (
+          <h1 className="text-sm font-medium text-white">Your attendance for today is recorded</h1>
+        );
+      }
     }
   }
   return (

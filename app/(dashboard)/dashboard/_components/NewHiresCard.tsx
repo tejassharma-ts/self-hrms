@@ -42,9 +42,9 @@ export default async function NewHiresCard() {
                 </h3>
                 <p className="text-sm text-gray-500">{seeker.position}</p>
               </div>
-              <Button variant="outline" size="sm" className="h-7 px-5">
-                Send
-              </Button>
+              {/* <Button variant="outline" size="sm" className="h-7 px-5"> */}
+              {/*   Send */}
+              {/* </Button> */}
             </div>
           ))}
         </ScrollArea>

@@ -68,16 +68,16 @@ export default function UserSigninForm({ className, ...props }: UserSigninFromPr
               name="email"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start space-y-1">
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel>Login OTP</FormLabel>
                   <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <Button disabled={isLoading} className="mt-2">
-              {isLoading ? <Icons.loader /> : "Login"}
+              {isLoading ? <Icons.loader /> : "Verify"}
             </Button>
           </div>
         </form>
