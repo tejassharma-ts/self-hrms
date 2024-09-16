@@ -109,4 +109,5 @@ export type Payroll = {
   salary_structure: string;
   bonus?: string;
   basic_salary?: string;
+  slip_sent_status: boolean;
 };
