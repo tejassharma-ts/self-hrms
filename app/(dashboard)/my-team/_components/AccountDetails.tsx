@@ -24,7 +24,7 @@ export const AccountDetails = ({ employeeProfile }: { employeeProfile: Employee 
   ];
   return (
     <Card className="w-full border">
-      <EmployeeDetailsCardHeader heading={"Contact Details"} />
+      <EmployeeDetailsCardHeader heading={"Account Details"} />
       <CardContent>
         <div className={"flex items-center justify-between"}>
           <div className={"flex w-1/2 flex-col items-start gap-y-10"}>
