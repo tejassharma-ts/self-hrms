@@ -23,9 +23,10 @@ import { publicApiCaller } from "@/lib/auth";
 
 interface UserSigninFromProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
+  actionText?: string;
 }
 
-export default function UserSigninForm({ className, ...props }: UserSigninFromProps) {
+export default function UserSigninForm({ className, actionText, ...props }: UserSigninFromProps) {
   const [isLoading, setIsLoading] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -77,7 +78,7 @@ export default function UserSigninForm({ className, ...props }: UserSigninFromPr
               )}
             />
             <Button disabled={isLoading} className="mt-2">
-              {isLoading ? <Icons.loader /> : "Verify"}
+              {isLoading ? <Icons.loader /> : actionText || "Verify"}
             </Button>
           </div>
         </form>

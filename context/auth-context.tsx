@@ -1,9 +1,9 @@
 "use client";
 
-import { getAuthCookie, getSessionUserFromCookie, /* removeAuthCookies */ } from "@/lib/client/auth";
+import { getAuthCookie, getSessionUserFromCookie /* removeAuthCookies */ } from "@/lib/client/auth";
 import { CompanyAccount, UserAccount } from "@/types/auth";
 import useAuthStore from "@/model/auth";
-// import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { apiCaller } from "@/lib/auth";
 
@@ -22,7 +22,7 @@ type AuthProviderProps = {
 };
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  // const router = useRouter();
+  const router = useRouter();
   const { logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
   const [authCompany, setAuthCompany] = useState<CompanyAccount | null>(null);
@@ -65,7 +65,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       const res = await apiCaller.get<CompanyAccount>("/api/companies-app/company/profile/");
       setAuthCompany(res.data);
-    } catch (err) {
+    } catch (err: any) {
+      if (err.response && err.response.status === 404) {
+        router.push("/company-register");
+      }
       throw new Error("Failed to fetch company.");
     }
   }
