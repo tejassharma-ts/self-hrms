@@ -4,51 +4,15 @@ import { PayrollHeader } from "../_components/PayrollHeader";
 import { PayrollTable } from "../_components/PayrollTable";
 import EmployeePayroll from "../_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
+import { Payroll } from "@/types/types";
 
-export type Employee = {
-  id: string;
-  first_name: string;
-  last_name: string;
-  profile_picture: string;
-  department: string;
-  position: string;
-};
-
-export type Payroll = {
-  id: string;
-  hra: string;
-  conveyance: string;
-  allowances: string;
-  special_allowance: string;
-  days_in_month: number;
-  employee: Employee;
-  pay_date: string;
-  days_worked: number;
-  overtime_hours: string;
-  overtime_pay: string;
-  total_earnings: string;
-  total_deductions: string;
-  esi_contribution: string;
-  pf_contribution: string;
-  final_salary: string;
-  gross_salary: string;
-  in_hand_salary: string;
-  arrears_amount: string;
-  arrears_month: string | null;
-  expense_reimbursement: string;
-  created_at: string;
-  updated_at: string;
-  company: string;
-  salary_structure: string;
-  bonus?: string;
-};
-
-async function getPayroll({ year }: { year: number }) {
+async function getPayroll({ year, id }: { year: number; id: string }) {
   try {
     const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
       headers: getAuthCookies(),
       params: {
         year: year,
+        employee_id: id,
       },
     });
     return res.data;
@@ -62,12 +26,12 @@ const PayrollHistoryPage = async ({
 }: {
   searchParams: any;
 }): Promise<React.ReactNode> => {
-  const year = searchParams.year;
+  const { year, id } = searchParams;
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");
-  const payrollData: Payroll[] = await getPayroll({ year });
+  const payrollData: Payroll[] = await getPayroll({ year, id });
   return (
     <div className={"container w-full"}>
-      <PayrollHeader />
+      <PayrollHeader payrollData={payrollData} />
       {!showPayrollHistory ? (
         <div>
           <PayrollTable payrollData={payrollData} />

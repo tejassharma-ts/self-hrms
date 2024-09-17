@@ -4,11 +4,13 @@ import { Card, CardContent } from "@/components/ui/card";
 
 interface IBonusesAndDeductionsCardProps {
   heading: string;
+  totalDeductions: string | null;
+  bonus?: string;
 }
 
 interface IPricingProps {
   heading: string;
-  price: number;
+  price: string;
 }
 
 const Pricing = ({ heading, price }: IPricingProps) => {
@@ -20,7 +22,11 @@ const Pricing = ({ heading, price }: IPricingProps) => {
   );
 };
 
-export const BonusesAndDeductionsCard = ({ heading }: IBonusesAndDeductionsCardProps) => {
+export const BonusesAndDeductionsCard = ({
+  heading,
+  totalDeductions,
+  bonus,
+}: IBonusesAndDeductionsCardProps) => {
   return (
     <Card
       className={cn(
@@ -31,9 +37,9 @@ export const BonusesAndDeductionsCard = ({ heading }: IBonusesAndDeductionsCardP
           <h2 className="text-md font-semibold text-gray-400">{heading}</h2>
         </div>
         <div className={"flex items-center justify-between"}>
-          <Pricing heading={"Total Bonus"} price={287} />
+          <Pricing heading={"Total Bonus"} price={bonus || "0.00"} />
           <p className={"h-full bg-gray-200 px-[0.8px]"}></p>
-          <Pricing heading={"Total Deductions"} price={100} />
+          <Pricing heading={"Total Deductions"} price={`${totalDeductions}`} />
         </div>
       </CardContent>
     </Card>

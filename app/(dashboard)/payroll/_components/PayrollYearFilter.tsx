@@ -1,6 +1,5 @@
 "use client";
 import * as React from "react";
-import { PayrollYearDummyData } from "../_data/PayrollYearDummyData";
 import {
   Select,
   SelectContent,
@@ -11,6 +10,7 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { yearValues } from "@/app/(dashboard)/expenses/_data/filterDataValues";
 
 export const PayrollYearFilter = (): React.ReactNode => {
   const router = useRouter();
@@ -42,7 +42,7 @@ export const PayrollYearFilter = (): React.ReactNode => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {PayrollYearDummyData.map((value: string) => (
+          {yearValues.map((value: string) => (
             <SelectItem key={value} value={value}>
               {value}
             </SelectItem>

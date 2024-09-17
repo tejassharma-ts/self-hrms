@@ -1,20 +1,20 @@
 import React from "react";
 import { getAuthCookies } from "@/lib/server/api";
 import { ExpensesHeader } from "./_components/ExpensesHeader";
-import { ExpensesMonthFilter } from "./_components/ExpensesMonthFilter";
-import { ExpensesYearFilter } from "./_components/ExpensesYearFilter";
+import { MonthFilter } from "@/components/MonthFilter";
+import { YearFilter } from "@/components/YearFilter";
 import { ExpensesEmployeeTable } from "./_components/ExpensesEmployeeTable";
 import { apiCaller } from "@/lib/auth";
 import { getMonthNumber } from "@/lib/utils";
 import { Expenses } from "@/types/types";
 
-interface getExpensesProps {
-  status: string;
-  month: number | null;
-  year: number;
-}
+type SearchParams = {
+  status?: string;
+  month?: string;
+  year?: number;
+};
 
-async function getExpenses({ status, month, year }: getExpensesProps): Promise<Expenses> {
+async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
     const res = await apiCaller.get<Expenses>(`/api/payroll_app/expenses/`, {
       headers: getAuthCookies(),
@@ -30,27 +30,29 @@ async function getExpenses({ status, month, year }: getExpensesProps): Promise<E
   }
 }
 
-const Page = async ({ searchParams }: { searchParams: any }): Promise<React.ReactNode> => {
-  const status = searchParams.status;
-  const month = searchParams.month;
-  const monthNumber = getMonthNumber(month);
-  const year = searchParams.year;
+const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<React.ReactNode> => {
+  const { month, year, status } = searchParams;
 
-  const updatedMonth = monthNumber === 0 ? 9 : monthNumber;
-  const expensesEmployeeData: Expenses = await getExpenses({
-    status,
-    month: updatedMonth,
-    year,
-  });
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const monthNumber = month ? getMonthNumber(month) : undefined;
+  const updatedMonth = monthNumber ?? currentMonth + 1;
+  const updatedYear = year ? year : currentYear;
+
+  const expensesEmployeeData: Expenses = await getExpenses(status, updatedMonth, updatedYear);
 
   return (
     <>
-      <ExpensesHeader />
-      <div className={"grid grid-cols-4"}>
-        <div className={"col-span-3"}>
-          <div className={"mb-10 flex justify-end gap-x-4"}>
-            <ExpensesMonthFilter />
-            <ExpensesYearFilter />
+      <ExpensesHeader
+        totalExpenses={expensesEmployeeData.pending_total + expensesEmployeeData.approved_total}
+        pendingExpenses={expensesEmployeeData.pending_total}
+        approvedExpenses={expensesEmployeeData.approved_total}
+      />
+      <div className="grid grid-cols-4">
+        <div className="col-span-3">
+          <div className="mb-10 flex justify-end gap-x-4">
+            <MonthFilter />
+            <YearFilter />
           </div>
           <div>
             <ExpensesEmployeeTable expensesEmployeeData={expensesEmployeeData} />
