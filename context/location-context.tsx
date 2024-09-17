@@ -1,5 +1,6 @@
 "use client";
 
+import { apiCaller } from "@/lib/auth";
 import React, { createContext, useState, useEffect, useContext, ReactNode } from "react";
 
 interface Location {
@@ -18,26 +19,51 @@ interface LocationProviderProps {
   children: ReactNode;
 }
 
+const LOCATION_KEY = "userLocation";
+
 export const LocationProvider: React.FC<LocationProviderProps> = ({ children }) => {
   const [location, setLocation] = useState<Location>({ latitude: null, longitude: null });
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          console.log(position);
-          setLocation({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-          });
-        },
-        (err) => {
-          setError(err.message);
-        },
-      );
+    const storedLocation = localStorage.getItem(LOCATION_KEY);
+
+    async function updateLocation(lat: number, long: number) {
+      try {
+        await apiCaller.patch("/api/companies-app/company/profile/", {
+          lat,
+          long,
+        });
+        localStorage.setItem(LOCATION_KEY, JSON.stringify({ latitude: lat, longitude: long }));
+      } catch (err) {
+        console.error("Error updating location:", err);
+      }
+    }
+
+    function fetchLocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            const { latitude, longitude } = position.coords;
+            setLocation({ latitude, longitude });
+            await updateLocation(latitude, longitude);
+          },
+          (err) => {
+            console.error("Geolocation error:", err);
+            setError(err.message);
+          },
+        );
+      } else {
+        setError("Geolocation is not supported by this browser.");
+      }
+    }
+
+    if (storedLocation) {
+      const parsedLocation = JSON.parse(storedLocation);
+      setLocation(parsedLocation);
+      // additionally we can call the server to check if the location given by company is still valid. Maybe?
     } else {
-      setError("Geolocation is not supported by this browser.");
+      fetchLocation();
     }
   }, []);
 
