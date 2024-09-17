@@ -1,11 +1,11 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
-import { apiCaller } from "@/lib/auth";
+// import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
+// import { apiCaller } from "@/lib/auth";
 import { Payroll } from "@/types/types";
-import { toast } from "@/hooks/use-toast";
-import { BlobProvider, Document, Page } from "@react-pdf/renderer";
+// import { toast } from "@/hooks/use-toast";
+// import { BlobProvider, Document, Page } from "@react-pdf/renderer";
 
 interface PaySlipProps {
   payrollData: Payroll;
@@ -14,78 +14,78 @@ interface PaySlipProps {
 
 const PaySlip: React.FC<PaySlipProps> = ({ payrollData, onSlipSent }) => {
   const payslipRef = useRef<HTMLDivElement | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    async function generatePaySlip() {
-      return;
-      if (payslipRef.current) {
-        try {
-          setIsLoading(true);
-          toast({
-            title: "Processing",
-            description: "Generating and sending the payslip...",
-            variant: "default",
-          });
+  // useEffect(() => {
+  //   async function generatePaySlip() {
+  //     return;
+  //     if (payslipRef.current) {
+  //       try {
+  //         setIsLoading(true);
+  //         toast({
+  //           title: "Processing",
+  //           description: "Generating and sending the payslip...",
+  //           variant: "default",
+  //         });
 
-          const element = payslipRef.current;
-          const canvas = await html2canvas(element, { scale: 2 });
-          const imgData = canvas.toDataURL("image/jpeg", 1.0);
-          const pdf = new jsPDF("p", "mm", "a4");
-          const imgWidth = 210;
-          const pageHeight = 295;
-          const imgHeight = (canvas.height * imgWidth) / canvas.width;
-          let heightLeft = imgHeight;
-          let position = 0;
+  //         const element = payslipRef.current;
+  //         const canvas = await html2canvas(element, { scale: 2 });
+  //         const imgData = canvas.toDataURL("image/jpeg", 1.0);
+  //         const pdf = new jsPDF("p", "mm", "a4");
+  //         const imgWidth = 210;
+  //         const pageHeight = 295;
+  //         const imgHeight = (canvas.height * imgWidth) / canvas.width;
+  //         let heightLeft = imgHeight;
+  //         let position = 0;
 
-          pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-          heightLeft -= pageHeight;
+  //         pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+  //         heightLeft -= pageHeight;
 
-          while (heightLeft >= 0) {
-            position = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-          }
+  //         while (heightLeft >= 0) {
+  //           position = heightLeft - imgHeight;
+  //           pdf.addPage();
+  //           pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+  //           heightLeft -= pageHeight;
+  //         }
 
-          const pdfBlob = pdf.output("blob");
-          const formData = new FormData();
-          formData.append("employee", payrollData.employee.id);
-          formData.append("salary_structure", payrollData.salary_structure);
-          formData.append("slip_sent_status", "true");
-          formData.append("slip", pdfBlob, "payroll-slip.pdf");
+  //         const pdfBlob = pdf.output("blob");
+  //         const formData = new FormData();
+  //         formData.append("employee", payrollData.employee.id);
+  //         formData.append("salary_structure", payrollData.salary_structure);
+  //         formData.append("slip_sent_status", "true");
+  //         formData.append("slip", pdfBlob, "payroll-slip.pdf");
 
-          await apiCaller.post("api/payroll_app/create-salary-slip/", formData);
+  //         await apiCaller.post("api/payroll_app/create-salary-slip/", formData);
 
-          toast({
-            title: "Success",
-            description: "Payslip sent successfully.",
-            variant: "default",
-          });
+  //         toast({
+  //           title: "Success",
+  //           description: "Payslip sent successfully.",
+  //           variant: "default",
+  //         });
 
-          formData.set("slip_sent_status", "true");
-          onSlipSent();
-        } catch (error) {
-          toast({
-            title: "Error",
-            description: "Failed to send payslip. Please try again.",
-            variant: "destructive",
-          });
-          console.error("Error posting PDF:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        toast({
-          title: "Error",
-          description: "Payslip generation failed. No data available.",
-          variant: "destructive",
-        });
-      }
-    }
+  //         formData.set("slip_sent_status", "true");
+  //         onSlipSent();
+  //       } catch (error) {
+  //         toast({
+  //           title: "Error",
+  //           description: "Failed to send payslip. Please try again.",
+  //           variant: "destructive",
+  //         });
+  //         console.error("Error posting PDF:", error);
+  //       } finally {
+  //         setIsLoading(false);
+  //       }
+  //     } else {
+  //       toast({
+  //         title: "Error",
+  //         description: "Payslip generation failed. No data available.",
+  //         variant: "destructive",
+  //       });
+  //     }
+  //   }
 
-    generatePaySlip();
-  }, [payrollData]);
+  //   generatePaySlip();
+  // }, [payrollData]);
 
   return (
     <div className="mx-auto h-0 w-0 max-w-4xl rounded-lg border bg-white shadow-lg">

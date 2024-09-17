@@ -1,7 +1,10 @@
-"use client";
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
@@ -10,99 +13,72 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState, FC } from 'react';
-import { apiCaller } from '@/lib/auth';
+import { apiCaller } from "@/lib/auth";
 
-interface DeductionData {
-    employee: string;
-    deduction_type_names: string[];
-    amount: string;
-    reason: string;
-    date_applied: string;
-}
+const formSchema = z.object({
+    deductionType: z.string().min(1, { message: "Deduction type is required" }),
+    amount: z.string().min(1, { message: "Amount is required" }),
+    reason: z.string().optional(),
+    dateApplied: z.string().min(1, { message: "Date applied is required" }),
+});
 
 interface AddDeductionProps {
     employeeID: string;
 }
 
-const AddDeduction: FC<AddDeductionProps> = ({ employeeID }) => {
-    const [deductionTypes, setDeductionTypes] = useState<string[]>(['Leave deduction', 'Late Deduction']);
-    const [selectedDeductionType, setSelectedDeductionType] = useState<string>(deductionTypes[0]);
-    const [amount, setAmount] = useState<string>('');
-    const [reason, setReason] = useState<string>('');
-    const [dateApplied, setDateApplied] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
-    const [errorMessage, setErrorMessage] = useState<string>('');
+const AddDeduction: React.FC<AddDeductionProps> = ({ employeeID }) => {
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            deductionType: "Leave deduction",
+            amount: "",
+            reason: "",
+            dateApplied: "",
+        },
+    });
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-        e.preventDefault();
-        setLoading(true);
-        setErrorMessage('');
-
-        const deductionData: DeductionData = {
-            employee: employeeID,
-            deduction_type_names: [selectedDeductionType],
-            amount,
-            reason,
-            date_applied: dateApplied,
-        };
-
+    const onSubmit = async (values: z.infer<typeof formSchema>) => {
         try {
-            const response = await apiCaller.post('api/payroll_app/deductions/', deductionData);
+            const deductionData = {
+                employee: employeeID,
+                deduction_type_names: [values.deductionType],
+                amount: values.amount,
+                reason: values.reason,
+                date_applied: values.dateApplied,
+            };
+            console.log("Deduction Data being sent:", deductionData);
 
-            if (response.status === 201) {
-                console.log('API Response:', response.data);
-                setAmount('');
-                setReason('');
-                setDateApplied('');
-                setSelectedDeductionType(deductionTypes[0]);
-            } else {
-                setErrorMessage('Failed to add deduction. Please try again.');
-            }
-        } catch (error: any) {
-            if (error.response) {
-                console.error('Error Response:', error.response);
-                if (error.response.data.detail === 'Company not found') {
-                    setErrorMessage('Error: The payroll company was not found. Please check the payroll ID.');
-                } else {
-                    setErrorMessage(`Error: ${error.response.data.detail || 'Something went wrong'}`);
-                }
-            } else if (error.request) {
-                console.error('No response from server:', error.request);
-                setErrorMessage('No response from the server. Please check your connection.');
-            } else {
-                console.error('Error:', error.message);
-                setErrorMessage(`Error: ${error.message}`);
-            }
-        } finally {
-            setLoading(false);
+            const response = await apiCaller.post("api/payroll_app/deductions/", deductionData);
+            console.log("Deduction added successfully:", response.data);
+        } catch (error) {
+            console.error("Error adding deduction:", error);
         }
     };
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button className='bg-transparent border-none hover:bg-transparent text-black'>
-                    Add Deduction
-                </Button>
+                <Button variant="ghost" className="w-full rounded-none">Add Deduction</Button>
             </DialogTrigger>
-
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Add Deduction</DialogTitle>
                     <DialogDescription>Fill in the details below to add a deduction.</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    {/* Deduction Type */}
                     <div>
                         <label className="block text-sm font-medium">Deduction Type</label>
-                        <Select onValueChange={(value: string) => setSelectedDeductionType(value)}>
+                        <Select
+                            onValueChange={(value: string) => form.setValue("deductionType", value)}
+                            defaultValue={form.getValues("deductionType")}
+                        >
                             <SelectTrigger className="mt-1 block w-full h-11">
-                                <SelectValue placeholder="Select" />
+                                <SelectValue placeholder="Select deduction type" />
                             </SelectTrigger>
                             <SelectContent>
-                                {deductionTypes.map((type, index) => (
-                                    <SelectItem key={index} value={type}>{type}</SelectItem>
-                                ))}
+                                <SelectItem value="Leave deduction">Leave deduction</SelectItem>
+                                <SelectItem value="Late Deduction">Late Deduction</SelectItem>
                             </SelectContent>
                         </Select>
                     </div>
@@ -112,19 +88,16 @@ const AddDeduction: FC<AddDeductionProps> = ({ employeeID }) => {
                         <Input
                             type="number"
                             placeholder="Enter amount"
-                            value={amount}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAmount(e.target.value)}
+                            {...form.register("amount")}
                             className="mt-1 block w-full"
                         />
                     </div>
-
                     <div>
                         <label className="block text-sm font-medium">Reason</label>
                         <Input
                             type="text"
                             placeholder="Enter reason"
-                            value={reason}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setReason(e.target.value)}
+                            {...form.register("reason")}
                             className="mt-1 block w-full"
                         />
                     </div>
@@ -133,21 +106,14 @@ const AddDeduction: FC<AddDeductionProps> = ({ employeeID }) => {
                         <label className="block text-sm font-medium">Date Applied</label>
                         <Input
                             type="date"
-                            value={dateApplied}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDateApplied(e.target.value)}
+                            {...form.register("dateApplied")}
                             className="mt-1 block w-full"
                         />
                     </div>
 
-                    {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-
                     <div className="flex justify-between mt-6">
-                        <Button
-                            type="submit"
-                            className="bg-black text-white py-2 px-4 rounded-lg"
-                            disabled={loading}
-                        >
-                            {loading ? 'Adding...' : 'Add Deduction'}
+                        <Button type="submit" className="bg-black text-white py-2 px-4 rounded-lg">
+                            Add Deduction
                         </Button>
                     </div>
                 </form>

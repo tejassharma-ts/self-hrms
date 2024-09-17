@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   table: {
-    display: "table",
+    table: "table",
     width: "auto",
     borderCollapse: "collapse",
     marginTop: 20,
