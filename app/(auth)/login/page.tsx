@@ -2,6 +2,7 @@ import Image from "next/image";
 import UserSigninForm from "../auth/_components/UserSigninForm";
 import { InputOTPForm } from "../auth/_components/OTPVerifyForm";
 import UserSignupForm from "../auth/_components/UserSignupForm";
+import Link from "next/link";
 
 type AuthPageProps = {
   searchParams: {
@@ -39,6 +40,12 @@ export default function LoginPage({ searchParams }: AuthPageProps) {
             <h1 className="text-2xl font-bold">Login</h1>
           </div>
           {aptForm()}
+          <p className="-mt-4 text-center text-muted-foreground">
+            Don't have an account?{" "}
+            <Link href="/register" className="underline underline-offset-4">
+              Register
+            </Link>
+          </p>
         </div>
       </div>
     </div>
