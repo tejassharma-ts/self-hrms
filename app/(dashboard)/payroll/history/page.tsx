@@ -6,13 +6,13 @@ import EmployeePayroll from "../_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
 import { Payroll } from "@/types/types";
 
-
-async function getPayroll({ year }: { year: number }) {
+async function getPayroll({ year, id }: { year: number; id: string }) {
   try {
     const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
       headers: getAuthCookies(),
       params: {
         year: year,
+        employee_id: id,
       },
     });
     return res.data;
@@ -26,12 +26,12 @@ const PayrollHistoryPage = async ({
 }: {
   searchParams: any;
 }): Promise<React.ReactNode> => {
-  const year = searchParams.year;
+  const { year, id } = searchParams;
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");
-  const payrollData: Payroll[] = await getPayroll({ year });
+  const payrollData: Payroll[] = await getPayroll({ year, id });
   return (
     <div className={"container w-full"}>
-      <PayrollHeader />
+      <PayrollHeader payrollData={payrollData} />
       {!showPayrollHistory ? (
         <div>
           <PayrollTable payrollData={payrollData} />

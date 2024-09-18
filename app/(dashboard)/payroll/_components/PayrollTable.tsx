@@ -8,7 +8,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PayrollYearFilter } from "../_components/PayrollYearFilter";
-import { Payroll } from "../history/page";
+import { Payroll } from "@/types/types";
+import { payrollTableHead } from "@/app/(dashboard)/payroll/constant";
 
 export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React.ReactNode => {
   return (
@@ -21,12 +22,9 @@ export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Month</TableHead>
-              <TableHead>Bonus</TableHead>
-              <TableHead>Deductions</TableHead>
-              <TableHead>Payable</TableHead>
-              <TableHead>Paid Amount</TableHead>
-              <TableHead>Pending</TableHead>
+              {payrollTableHead.map((value, index) => (
+                <TableHead key={index}>{value}</TableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -36,9 +34,9 @@ export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React
                   <TableCell>{new Date(eachPayroll.pay_date).toLocaleDateString()}</TableCell>
                   <TableCell>Rs {eachPayroll.bonus ? eachPayroll.bonus : 0}</TableCell>
                   <TableCell>Rs {eachPayroll.total_deductions}</TableCell>
-                  <TableCell>Rs {eachPayroll.in_hand_salary}</TableCell>
-                  <TableCell>Rs {eachPayroll.in_hand_salary}</TableCell>
-                  <TableCell>Rs {eachPayroll.arrears_amount}</TableCell>
+                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.in_hand_salary}</TableCell>
+                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.in_hand_salary}</TableCell>
+                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.arrears_amount}</TableCell>
                 </TableRow>
               );
             })}

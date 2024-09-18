@@ -81,7 +81,90 @@ export interface EmployeePayrollApiResponse {
   final_salary: string;
 }
 
-export type Payroll = {
+interface IPayrollExpenseDetails {
+  id: string;
+  employee: Employee;
+  company: string;
+  date_incurred: string;
+  amount: string;
+  description: string;
+  category: string;
+  bill: string;
+  status: "pending" | "approved" | "rejected";
+}
+
+type LeaveRequest = {
+  id: string;
+  employee: object;
+  leave_type: string;
+  start_date: string;
+  end_date: string;
+  reason: string;
+  status: "Pending" | "Approved" | "Rejected";
+  applied_at: string;
+  reviewed_at: string | null;
+  rejection_reason: string | null;
+  company: string;
+  reviewer: string | null;
+};
+
+type EmployeeLeaveStats = {
+  total_leaves_per_year: number;
+  used_leaves: number;
+};
+
+type LeavesResponse = {
+  leaves_request: LeaveRequest[];
+  leaves_request_count: number;
+  employee_leave_stats: EmployeeLeaveStats;
+};
+
+type Attendance = {
+  employee: string;
+  company: string;
+  date: string;
+  check_in_time: string | null;
+  check_out_time: string | null;
+  status: "Present" | "Absent" | "On Leave";
+  lat: string | null;
+  long: string | null;
+};
+
+type EmployeeAttendance = {
+  employee: Employee;
+  attendances: Attendance[];
+};
+
+interface Bonus {
+  employee: string;
+  bonus_types: any[];
+  amount: string;
+  reason: string;
+  date_awarded: string;
+  company: string;
+}
+
+interface Bonuses {
+  bonuses: Bonus[];
+  bonuses_count: number;
+}
+
+interface Deduction {
+  employee: string;
+  amount: string;
+  date_applied: string;
+  payroll_period: string | null;
+  reason: string;
+  company: string;
+  deduction_types: any[];
+}
+
+interface Deductions {
+  deductions: Deduction[];
+  deductions_count: number;
+}
+
+interface Payroll {
   id: string;
   hra: string;
   conveyance: string;
@@ -110,4 +193,4 @@ export type Payroll = {
   bonus?: string;
   basic_salary?: string;
   slip_sent_status: boolean;
-};
+}

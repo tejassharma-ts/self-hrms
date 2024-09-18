@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import { useState } from "react";
-import { yearValues } from "../_data/ExpensesYearFilterData";
 import {
   Select,
   SelectContent,
@@ -12,21 +11,24 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { monthValues } from "@/app/(dashboard)/expenses/_data/filterDataValues";
 
-export const ExpensesYearFilter = (): React.ReactNode => {
+export const MonthFilter = (): React.ReactNode => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const placeholder: string = "Year";
+
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  const placeholder: string = "Month";
 
   const handleValueChange = (value: string): void => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (value !== "") {
-      current.set("year", value);
+      current.set("month", value);
     } else {
-      current.delete("year");
+      current.delete("month");
     }
 
     const search = current.toString();
@@ -34,6 +36,7 @@ export const ExpensesYearFilter = (): React.ReactNode => {
 
     router.push(`${pathname}${query}`);
   };
+
   return (
     <Select onValueChange={handleValueChange} onOpenChange={(open) => setIsOpen(open)}>
       <SelectTrigger
@@ -45,7 +48,7 @@ export const ExpensesYearFilter = (): React.ReactNode => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {yearValues.map((value: string) => (
+          {monthValues.map((value: string) => (
             <SelectItem key={value} value={value}>
               {value}
             </SelectItem>

@@ -13,10 +13,12 @@ export const PendingExpensesDialogue = ({
 }: {
   eachExpensesEmployeeData: expense;
 }) => {
+  const { refresh } = useRouter();
+
   const [rejectionReason, setRejectionReason] = useState<string>("");
   const [isPending, startTransition] = useTransition();
 
-  const { refresh } = useRouter();
+  const closeRef = useRef<ElementRef<"button">>(null);
 
   const handleApproveClick = () => {
     startTransition(async () => {
@@ -45,7 +47,6 @@ export const PendingExpensesDialogue = ({
   const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setRejectionReason(event.target.value);
   };
-  const closeRef = useRef<ElementRef<"button">>(null);
 
   return (
     <DialogContent className={"min-w-max px-10"}>

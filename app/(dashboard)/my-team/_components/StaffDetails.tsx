@@ -12,6 +12,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import Link from "next/link";
 
 type Staff = {
   id: string;
@@ -94,7 +95,11 @@ export default async function StaffDetails() {
         <TableBody>
           {staffs.map((data, index) => (
             <TableRow key={index}>
-              <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
+              <TableCell>
+                <Link href={`my-team/employee-profile/${data.id}/?tab=person-details`}>
+                  {getFullName(data.first_name, data.last_name)}
+                </Link>
+              </TableCell>
               {/* <TableCell>{data.id}</TableCell> */}
               <TableCell>{data.email}</TableCell>
               <TableCell>{data.phone_number}</TableCell>

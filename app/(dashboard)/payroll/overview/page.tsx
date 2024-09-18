@@ -12,7 +12,7 @@ async function getPayrollOverview() {
     });
     return res.data;
   } catch (err) {
-    throw new Error(`Error getPayroll: ${err}`);
+    throw new Error(`Error getPayroll Overview: ${err}`);
   }
 }
 
@@ -20,8 +20,10 @@ const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
   const payrollData: Payroll[] = await getPayrollOverview();
   return (
     <div className={"container w-full"}>
-      <PayrollOverviewHeader />
-
+      <PayrollOverviewHeader
+        bonus={payrollData[0]?.bonus}
+        totalDeductions={payrollData[0]?.total_deductions}
+      />
       <div>
         <PayrollOverviewTable payrollData={payrollData} />
       </div>

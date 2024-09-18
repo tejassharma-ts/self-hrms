@@ -21,7 +21,7 @@ const months = [
 ];
 
 export const getMonthNumber = (month: string) => {
-  return months.indexOf(month) + 1;
+  if (month) return months.indexOf(month) + 1;
 };
 
 export function formatTodaysDate() {

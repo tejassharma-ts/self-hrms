@@ -12,3 +12,5 @@ export const monthValues: string[] = [
   "November",
   "December",
 ];
+export const statusValues: string[] = ["approved", "pending", "rejected"];
+export const yearValues: string[] = ["2024", "2023", "2022", "2021"];

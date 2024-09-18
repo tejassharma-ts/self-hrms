@@ -4,7 +4,13 @@ import { PencilLine } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExpenseCard } from "@/app/(dashboard)/expenses/_components/ExpenseCard";
 
-export const PayrollOverviewHeader = (): React.ReactNode => {
+export const PayrollOverviewHeader = ({
+  totalDeductions,
+  bonus,
+}: {
+  totalDeductions: string | null;
+  bonus?: string;
+}): React.ReactNode => {
   return (
     <>
       <div className={"mb-10 grid grid-cols-4 gap-4"}>
@@ -26,7 +32,11 @@ export const PayrollOverviewHeader = (): React.ReactNode => {
           </CardContent>
         </Card>
         <ExpenseCard heading={"Total Payroll Expenses"} money={"58,764.25"} />
-        <BonusesAndDeductionsCard heading={"Bonuses & Deductions"} />
+        <BonusesAndDeductionsCard
+          bonus={bonus}
+          totalDeductions={totalDeductions}
+          heading={"Bonuses & Deductions"}
+        />
       </div>
     </>
   );

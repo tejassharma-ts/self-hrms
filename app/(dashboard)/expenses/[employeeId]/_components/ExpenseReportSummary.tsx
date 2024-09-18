@@ -9,7 +9,7 @@ export const ExpenseReportSummary = ({
   eachExpensesEmployeeData: expense;
   status: string;
 }) => {
-  const fields = [
+  const fields: { name: string; value: string }[] = [
     {
       name: "Name",
       value:
