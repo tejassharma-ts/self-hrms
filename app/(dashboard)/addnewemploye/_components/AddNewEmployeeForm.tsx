@@ -32,6 +32,8 @@ import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Icons } from "@/components/Icons";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import useEmployeeStore from "@/model/employee";
 
 const employeeSchema = z.object({
   first_name: z.string().max(50, "First name must be 50 characters or less"),
@@ -57,8 +59,12 @@ const employeeSchema = z.object({
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
+  const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace, refresh } = useRouter();
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -86,10 +92,11 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
   async function onSubmit(data: EmployeeFormValues) {
     try {
       setIsLoading(true);
-      await apiCaller.post("api/companies-app/company/add-employee/", {
+      const res = await apiCaller.post("api/companies-app/company/add-employee/", {
         ...data,
-        company_id: authUser?.employee_profile.company.id,
+        company_id: authUser?.employee_profile.company.id || authCompany?.id,
       });
+      setEmployeeId(res.data.id);
       toast({
         description: "Employee successfully added",
       });
