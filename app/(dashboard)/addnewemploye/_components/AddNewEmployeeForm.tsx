@@ -32,7 +32,6 @@ import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Icons } from "@/components/Icons";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import useEmployeeStore from "@/model/employee";
 
 const employeeSchema = z.object({
@@ -62,9 +61,6 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
   const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { replace, refresh } = useRouter();
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
