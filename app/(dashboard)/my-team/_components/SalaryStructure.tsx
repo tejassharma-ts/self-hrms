@@ -7,11 +7,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { apiCaller } from "@/lib/auth";
-import { getAuthCookies } from "@/lib/server/api";
+// import { getAuthCookies } from "@/lib/server/api";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { cookies } from "next/headers";
 
 type EmployeeData = {
   id: string;
@@ -46,7 +47,12 @@ type EmployeeData = {
 async function getSalaryStructure() {
   try {
     const res = await apiCaller.get<EmployeeData[]>("/api/payroll_app/salary-structures/", {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
     });
     return res.data;
   } catch (err) {

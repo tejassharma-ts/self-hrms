@@ -12,6 +12,8 @@ import RequestWithEmployeeLeaveSkeleton from "./_skeletons/RequestWithEmployeeLe
 import ProjectAnalyticsSkeleton from "./_skeletons/ProjectAnalytics";
 // import MeetingCard from "@/app/(dashboard)/dashboard/_components/MeetingCard";
 
+export const dynamic = "force-dynamic";
+
 export default function GridCards() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-11">

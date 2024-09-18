@@ -1,12 +1,17 @@
 import { AttendanceDataApi } from "@/types/dashboard";
 import ValueCard from "./ValueCard";
-import { getAuthCookies } from "@/lib/server/api";
 import { apiCaller } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 async function getEmployeeAttendence() {
   try {
     const res = await apiCaller.get<AttendanceDataApi>("/api/companies-app/company/attendance/", {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
     });
     return res.data;
   } catch (err) {

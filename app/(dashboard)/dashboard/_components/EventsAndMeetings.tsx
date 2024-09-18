@@ -1,16 +1,22 @@
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddNewEvent from "../_modals/AddNewEvent";
-import { getAuthCookies } from "@/lib/server/api";
+// import { getAuthCookies } from "@/lib/server/api";
 import { Meeting } from "@/types/dashboard";
 import { formatISOToTime } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
+import { cookies } from "next/headers";
 
 async function getAllMeetings() {
   try {
     const res = await apiCaller.get<Meeting[]>("/api/employees-app/event-meetings/", {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
     });
     return res.data;
   } catch (err) {

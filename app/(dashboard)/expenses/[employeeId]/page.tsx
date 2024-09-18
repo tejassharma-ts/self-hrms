@@ -2,11 +2,12 @@ import React from "react";
 import { SpendExpensesTable } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesTable";
 import { SpendExpensesHeader } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesHeader";
 import { apiCaller } from "@/lib/auth";
-import { getAuthCookies } from "@/lib/server/api";
+// import { getAuthCookies } from "@/lib/server/api";
 import { getMonthNumber } from "@/lib/utils";
 import { IPayrollExpenseDetails } from "@/types/types";
 import { MonthFilter } from "@/components/MonthFilter";
 import { YearFilter } from "@/components/YearFilter";
+import { cookies } from "next/headers";
 
 interface IExpensesSearchParams {
   status: string;
@@ -32,7 +33,12 @@ async function getEmployeeSpendData({
     const res = await apiCaller.get<IPayrollExpenseDetails[]>(
       "/api/payroll_app/expenses-details/",
       {
-        headers: getAuthCookies(),
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
         params: {
           employee_id: employeeId,
           approval_status: status,

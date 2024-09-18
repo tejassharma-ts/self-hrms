@@ -1,15 +1,20 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { getAuthCookies } from "@/lib/server/api";
 import { NewHire } from "@/types/dashboard";
 import { getFullName } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
+import { cookies } from "next/headers";
 
 async function getNewHire() {
   try {
     const res = await apiCaller.get<NewHire[]>("/api/companies-app/company/newly-hired/", {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
     });
     return res.data;
   } catch (err) {

@@ -1,15 +1,24 @@
 import React from "react";
-import { getAuthCookies } from "@/lib/server/api";
+// import { getAuthCookies } from "@/lib/server/api";
 import { PayrollHeader } from "../_components/PayrollHeader";
 import { PayrollTable } from "../_components/PayrollTable";
 import EmployeePayroll from "../_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
 import { Payroll } from "@/types/types";
+import { cookies } from "next/headers";
+
+export const dynamic = "force-dynamic";
 
 async function getPayroll({ year, id }: { year: number; id: string }) {
   try {
     const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
+
       params: {
         year: year,
         employee_id: id,

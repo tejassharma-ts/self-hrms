@@ -1,9 +1,8 @@
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import BarChartComponent from "./BarChartComponent";
 import AddNewProject from "../_modals/AddNewProject";
-import { getAuthCookies } from "@/lib/server/api";
 import { apiCaller } from "@/lib/auth";
-// import { cookies } from "next/headers";
+import { cookies } from "next/headers";
 
 async function getProjects() {
   try {
@@ -12,7 +11,12 @@ async function getProjects() {
     const res = await apiCaller.get(
       "/api/project_management/projects/create/?company=f619fb18-cbbb-411b-a55c-ea85320cd2fd",
       {
-        headers: getAuthCookies(),
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
       },
     );
     return res.data;

@@ -7,6 +7,7 @@ import { ExpensesEmployeeTable } from "./_components/ExpensesEmployeeTable";
 import { apiCaller } from "@/lib/auth";
 import { getMonthNumber } from "@/lib/utils";
 import { Expenses } from "@/types/types";
+import { cookies } from "next/headers";
 
 type SearchParams = {
   status?: string;
@@ -17,7 +18,12 @@ type SearchParams = {
 async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
     const res = await apiCaller.get<Expenses>(`/api/payroll_app/expenses/`, {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
       params: {
         status,
         month,
