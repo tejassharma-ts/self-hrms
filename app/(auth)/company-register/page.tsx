@@ -60,10 +60,12 @@ export default function CompanyProfile() {
     try {
       const formData = new FormData();
       Object.keys(values).forEach((key) => {
-        if (key === "company_logo" && values[key]) {
-          formData.append(key, values[key], values[key].name);
+        const typedKey = key as keyof typeof values;
+
+        if (typedKey === "company_logo" && values[typedKey]) {
+          formData.append(typedKey, values[typedKey], (values[typedKey] as File).name);
         } else {
-          formData.append(key, values[key]);
+          formData.append(typedKey, values[typedKey] as string);
         }
       });
 
