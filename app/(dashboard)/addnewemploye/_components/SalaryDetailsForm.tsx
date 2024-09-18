@@ -1,0 +1,147 @@
+'use client';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useState, useEffect } from 'react';
+const salarySchema = z.object({
+    basic: z.string().min(1, 'Basic salary is required'),
+    hra: z.boolean().optional(),
+    hraAmount: z.string().optional().refine((value, context) => {
+        if (context.parent.hra && !value) {
+            return false;
+        }
+        return true;
+    }, 'HRA amount is required if HRA is selected'),
+    conveyance: z.string().min(1, 'Conveyance is required'),
+    allowance: z.string().min(1, 'Allowance is required'),
+    specialAllowance: z.string().min(1, 'Special Allowance is required'),
+    pf: z.string().min(1, 'PF is required'),
+    lta: z.string().min(1, 'LTA is required'),
+    medical: z.string().min(1, 'Medical is required'),
+    employeeESI: z.string().min(1, 'Employee ESI is required'),
+    employerESI: z.string().min(1, 'Employer ESI is required'),
+    gratuity: z.string().min(1, 'Gratuity is required'),
+    totalCTC: z.string().min(1, 'Total CTC is required'),
+});
+
+type SalaryFormValues = z.infer<typeof salarySchema>;
+
+const SalaryDetailsForm = () => {
+    const form = useForm<SalaryFormValues>({
+        resolver: zodResolver(salarySchema),
+        defaultValues: {
+            basic: '',
+            hra: false,
+            hraAmount: '',
+            conveyance: '',
+            allowance: '',
+            specialAllowance: '',
+            pf: '',
+            lta: '',
+            medical: '',
+            employeeESI: '',
+            employerESI: '',
+            gratuity: '',
+            totalCTC: '',
+        },
+    });
+
+    const [totalCTC, setTotalCTC] = useState<string>('');
+
+    const calculateTotalCTC = (values: SalaryFormValues) => {
+        const fields = [
+            'basic', 'hraAmount', 'conveyance', 'allowance', 'specialAllowance', 'pf',
+            'lta', 'medical', 'employeeESI', 'employerESI', 'gratuity',
+        ];
+
+        const total = fields.reduce((sum, field) => sum + (parseFloat(values[field]) || 0), 0);
+        setTotalCTC(total.toFixed(2));
+    };
+
+    useEffect(() => {
+        const subscription = form.watch((values) => calculateTotalCTC(values));
+        return () => subscription.unsubscribe();
+    }, [form]);
+
+    const onSubmit = (data: SalaryFormValues) => {
+        console.log(data);
+    };
+
+    const renderFormField = (name: keyof SalaryFormValues, label: string, type: string = 'number', isOptional = false) => (
+        <FormField
+            control={form.control}
+            name={name}
+            render={({ field }) => (
+                <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                        <Input type={type} placeholder={`Enter ${label}`} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
+    );
+
+    return (
+        <div className='mt-10'>
+            <div className="p-8 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+
+                        <div className="flex gap-6 mb-8">
+                            <h2 className="text-lg font-semibold w-96">Basic Info</h2>
+                            <div className="w-full">
+                                {renderFormField('basic', 'Basic')}
+
+                                <FormField
+                                    control={form.control}
+                                    name="hra"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>HRA</FormLabel>
+                                            <FormControl>
+                                                <Checkbox className="size-3 ms-2" checked={field.value} onCheckedChange={field.onChange} />
+                                            </FormControl>
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {form.watch('hra') && renderFormField('hraAmount', 'HRA Amount')}
+
+                                {renderFormField('conveyance', 'Conveyance')}
+                                {renderFormField('allowance', 'Allowance')}
+                                {renderFormField('specialAllowance', 'Special Allowance')}
+                                {renderFormField('pf', 'PF')}
+                                {renderFormField('lta', 'LTA')}
+                                {renderFormField('medical', 'Medical')}
+                                {renderFormField('employeeESI', 'Employee Contribution ESI')}
+                                {renderFormField('employerESI', 'Employer Contribution ESI')}
+                                {renderFormField('gratuity', 'Gratuity')}
+
+                                <FormItem>
+                                    <FormLabel>Total CTC</FormLabel>
+                                    <FormControl>
+                                        <Input type="text" value={totalCTC} readOnly />
+                                    </FormControl>
+                                </FormItem>
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end">
+                            <Button type="submit" className="text-white px-6 py-2 rounded-lg">
+                                ADD Salary Details
+                            </Button>
+                        </div>
+                    </form>
+                </Form>
+            </div>
+        </div>
+    );
+};
+
+export default SalaryDetailsForm;

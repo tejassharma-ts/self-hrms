@@ -3,8 +3,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Button } from "@/components/ui/button";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import {
     Dialog,
     DialogContent,
@@ -46,9 +60,8 @@ const AddDeduction: React.FC<AddDeductionProps> = ({ employeeID }) => {
                 reason: values.reason,
                 date_applied: values.dateApplied,
             };
-            console.log("Deduction Data being sent:", deductionData);
 
-            const response = await apiCaller.post("api/payroll_app/deductions/", deductionData);
+            const response = await apiCaller.post("/api/payroll_app/deductions/", deductionData);
             console.log("Deduction added successfully:", response.data);
         } catch (error) {
             console.error("Error adding deduction:", error);
@@ -65,58 +78,77 @@ const AddDeduction: React.FC<AddDeductionProps> = ({ employeeID }) => {
                     <DialogTitle>Add Deduction</DialogTitle>
                     <DialogDescription>Fill in the details below to add a deduction.</DialogDescription>
                 </DialogHeader>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    {/* Deduction Type */}
-                    <div>
-                        <label className="block text-sm font-medium">Deduction Type</label>
-                        <Select
-                            onValueChange={(value: string) => form.setValue("deductionType", value)}
-                            defaultValue={form.getValues("deductionType")}
-                        >
-                            <SelectTrigger className="mt-1 block w-full h-11">
-                                <SelectValue placeholder="Select deduction type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="Leave deduction">Leave deduction</SelectItem>
-                                <SelectItem value="Late Deduction">Late Deduction</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <div>
-                        <label className="block text-sm font-medium">Amount</label>
-                        <Input
-                            type="number"
-                            placeholder="Enter amount"
-                            {...form.register("amount")}
-                            className="mt-1 block w-full"
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="deductionType"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Deduction Type</FormLabel>
+                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select deduction type" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            <SelectItem value="Leave deduction">Leave deduction</SelectItem>
+                                            <SelectItem value="Late Deduction">Late Deduction</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
-                    </div>
-                    <div>
-                        <label className="block text-sm font-medium">Reason</label>
-                        <Input
-                            type="text"
-                            placeholder="Enter reason"
-                            {...form.register("reason")}
-                            className="mt-1 block w-full"
-                        />
-                    </div>
 
-                    <div>
-                        <label className="block text-sm font-medium">Date Applied</label>
-                        <Input
-                            type="date"
-                            {...form.register("dateApplied")}
-                            className="mt-1 block w-full"
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Amount</FormLabel>
+                                    <FormControl>
+                                        <Input type="number" placeholder="Enter amount" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
-                    </div>
 
-                    <div className="flex justify-between mt-6">
+                        <FormField
+                            control={form.control}
+                            name="reason"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Reason</FormLabel>
+                                    <FormControl>
+                                        <Input type="text" placeholder="Enter reason" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="dateApplied"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Date Applied</FormLabel>
+                                    <FormControl>
+                                        <Input type="date" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
                         <Button type="submit" className="bg-black text-white py-2 px-4 rounded-lg">
                             Add Deduction
                         </Button>
-                    </div>
-                </form>
+                    </form>
+                </Form>
             </DialogContent>
         </Dialog>
     );
