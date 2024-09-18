@@ -3,7 +3,7 @@ import { getAuthCookies } from "@/lib/server/api";
 import Profiles from "./_components/Profiles";
 
 type AttendancePercentageResponse = {
-  employee_stats: EmployeeProfile[];
+  employee_stats: any;
   month: number;
   year: number;
 };
@@ -29,7 +29,7 @@ async function getProfiles() {
 
 async function getAttendances() {
   try {
-    const res = await apiCaller.get<AttendanceData>(
+    const res = await apiCaller.get(
       "/api/companies-app/company/attendance/status/",
       {
         headers: getAuthCookies(),

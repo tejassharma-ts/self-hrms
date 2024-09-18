@@ -1,10 +1,9 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Employee } from "@/app/(dashboard)/my-team/employee-profile/[employeeId]/page";
 import { EditButton } from "@/app/(dashboard)/my-team/_components/EditButton";
 
-export const EmployeeProfile = ({ employeeProfile }: { employeeProfile: Employee }) => {
+export const EmployeeProfile = ({ employeeProfile }: { employeeProfile: any }) => {
   return (
     <Card className="w-full border">
       <CardContent>

@@ -10,7 +10,6 @@ import { apiCaller } from "@/lib/auth";
 import { getAuthCookies } from "@/lib/server/api";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Employee } from "../../payroll/history/page";
 import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
@@ -40,7 +39,7 @@ type EmployeeData = {
   gross_monthly_salary: string;
   created_at: string;
   updated_at: string;
-  employee: Employee;
+  employee: any;
   company: string;
 };
 

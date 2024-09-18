@@ -33,6 +33,7 @@ interface Employee {
   department: string;
   position: string;
   email: string;
+  name: string;
 }
 
 interface expense {
@@ -120,6 +121,7 @@ type LeavesResponse = {
 };
 
 type Attendance = {
+  employees: any;
   employee: string;
   company: string;
   date: string;

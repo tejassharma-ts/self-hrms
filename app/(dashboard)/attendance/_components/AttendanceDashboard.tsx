@@ -15,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Employee } from "@/types/types";
 
 interface Attendance {
   date: string;
@@ -24,8 +25,14 @@ interface Attendance {
 }
 
 interface AttendanceDashboardProps {
-  employee: EmployeeProfile;
+  employee: Employee;
   attendances: Attendance[];
+  selectedMonth: any;
+  setSelectedMonth: any;
+  selectedYear: any;
+  setSelectedYear: any;
+  selectedStatus: any;
+  setSelectedStatus: any;
 }
 
 const AttendanceDashboard: React.FC<AttendanceDashboardProps> = ({
