@@ -1,45 +1,51 @@
-import React from 'react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
+"use client";
 
-const attendanceData = [
-  { id: "362367282354", name: "Floyd Miles", department: "Design", loginTime: "10:30 am", logoutTime: "6:00 am" },
-  { id: "362367282354", name: "Floyd Miles", department: "Design", loginTime: "10:30 am", logoutTime: "6:00 am" },
-  { id: "362367282354", name: "Floyd Miles", department: "Design", loginTime: "10:30 am", logoutTime: "6:00 am" },
-  { id: "362367282354", name: "Floyd Miles", department: "Design", loginTime: "10:30 am", logoutTime: "6:00 am" },
-  { id: "362367282354", name: "Floyd Miles", department: "Design", loginTime: "10:30 am", logoutTime: "6:00 am" },
-  { id: "362367282354", name: "Floyd Miles", department: "Design", loginTime: "10:30 am", logoutTime: "6:00 am" },
-];
+import React from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Attendance } from "@/types/types";
 
-const AttendanceList = () => {
+type AttendanceListProps = {
+  attendances: Attendance;
+};
+
+export default function AttendanceList({ attendances }: AttendanceListProps) {
+  if (!attendances) {
+    return <h1>Opps</h1>;
+  }
   return (
-    <div className="p-4 rounded-lg bg-white">
-      <h1 className="text-2xl font-bold mb-4">Attendance List</h1>
-      <p className="mb-4">Date: 23 August 2024</p>
+    <div className="container mx-auto p-6">
+      <h1 className="mb-4 text-2xl font-bold">Attendance List</h1>
+      <p className="mb-4 text-sm text-gray-500">Date- {new Date().toLocaleDateString()}</p>
+
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Employee I'd</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Login In Time</TableHead>
-            <TableHead>Log Out Time</TableHead>
+            <TableHead className="text-gray-400">Employee ID</TableHead>
+            <TableHead className="text-gray-400">Name</TableHead>
+            <TableHead className="text-gray-400">Department</TableHead>
+            <TableHead className="text-gray-400">Log In Time</TableHead>
+            <TableHead className="text-gray-400">Log Out Time</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {attendanceData.map((employee, index) => (
-            <TableRow key={index}>
+          {attendances.employees.map((employee: any) => (
+            <TableRow key={employee.id}>
               <TableCell>{employee.id}</TableCell>
-              <TableCell>{employee.name}</TableCell>
+              <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>
               <TableCell>{employee.department}</TableCell>
-              <TableCell className="text-green-500">{employee.loginTime}</TableCell>
-              <TableCell className="text-red-500">{employee.logoutTime}</TableCell>
+              <TableCell className="text-green-500">{employee.check_in_time || "-"}</TableCell>
+              <TableCell className="text-red-500">{employee.check_out_time || "-"}</TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
     </div>
   );
-};
-
-export default AttendanceList;
+}

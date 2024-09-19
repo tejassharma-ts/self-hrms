@@ -1,22 +1,44 @@
-'use client'
-import { Bell, ChevronDown } from "lucide-react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Button } from "@/components/ui/button"
+"use client";
+import { Bell, ChevronDown } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Separator } from "@/components/ui/separator"
+} from "@/components/ui/dropdown-menu";
+import { Separator } from "@/components/ui/separator";
+import useAuthStore from "@/model/auth";
+import { toast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
+import { useClientAuth } from "@/context/auth-context";
 
 export default function Navbar() {
+  const { logout } = useAuthStore();
+  const router = useRouter();
+
+  async function onLogout() {
+    try {
+      await logout();
+      toast({
+        description: "You are logged out successfully",
+      });
+      return router.push("/register");
+    } catch (err) {
+      console.log("This is error", err);
+      toast({
+        description: "Something went wrong. Please try again later!",
+        variant: "destructive",
+      });
+    }
+  }
   return (
-    <nav className="flex items-center relative z-50 justify-end p-4 bg-slate-50">
+    <nav className="sticky top-0 z-50 flex w-full items-center justify-end bg-slate-50">
       <div className="flex items-center space-x-4">
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />
-          <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+          <span className="absolute right-0 top-0 h-2 w-2 rounded-full bg-red-500" />
           <span className="sr-only">Notifications</span>
         </Button>
         <Separator orientation="vertical" className="h-8" />
@@ -33,13 +55,11 @@ export default function Navbar() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
-                Logout
-              </DropdownMenuItem>
+              <DropdownMenuItem onClick={onLogout}>Logout</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
       </div>
     </nav>
-  )
+  );
 }

@@ -1,23 +1,28 @@
-import Navbar from "@/components/navbar";
-import Sidebar from "@/components/sidebar";
-import React from "react";
+import { Layout, LayoutBody, LayoutHeader } from "@/components/custom/layout";
+import MainLayout from "@/components/custom/main-layout";
+import { LocationProvider } from "@/context/location-context";
+import { UserNav } from "@/components/UserNav";
+import { AuthProvider } from "@/context/auth-context";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-    return (
-        <div className="h-full w-screen bg-white grid grid-cols-[1fr] lg:grid-cols-[0.8fr_3.2fr] xl:grid-cols-[0.6fr_3.4fr] relative">
-            <div className="fixed h-full bg-white lg:static z-20">
-                <Sidebar />
-            </div>
-
-            <div className="fixed w-full bg-white z-10 lg:col-span-2">
-                <Navbar />
-            </div>
-
-            <div className="mt-20 bg-slate-50 lg:mt-0 overflow-y-scroll h-screen lg:col-start-2 lg:col-end-3 xl:col-start-2 xl:col-end-4">
-                {children}
-            </div>
-        </div>
-    );
+  return (
+    <LocationProvider>
+      <AuthProvider>
+        <MainLayout>
+          <Layout>
+            <LayoutHeader sticky>
+              <div className="ml-auto">
+                <div className="ml-auto">
+                  <UserNav />
+                </div>
+              </div>
+            </LayoutHeader>
+            <LayoutBody>{children}</LayoutBody>
+          </Layout>
+        </MainLayout>
+      </AuthProvider>
+    </LocationProvider>
+  );
 };
 
 export default DashboardLayout;

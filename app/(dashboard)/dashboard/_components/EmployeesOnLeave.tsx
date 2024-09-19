@@ -1,89 +1,79 @@
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { getFullName } from "@/lib/utils";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { LeaveRequest } from "@/types/dashboard";
+import { getFullbackName } from "@/lib/utils";
+import { formatISODate } from "@/lib/utils";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
 
-const employees = [
-  {
-    name: "Esthera Jackson",
-    role: "Designer",
-    duration: "4 days",
-    leaveType: "Sick Leave",
-    leaveEnd: "14/06/21",
-    time: "Full Day",
-    avatar: "https://randomuser.me/api/portraits/women/44.jpg",
-  },
-  {
-    name: "John Doe",
-    role: "Developer",
-    duration: "2 days",
-    leaveType: "Vacation",
-    leaveEnd: "12/06/21",
-    time: "Half Day",
-    avatar: "https://randomuser.me/api/portraits/men/32.jpg",
-  },
-  {
-    name: "Jane Smith",
-    role: "Project Manager",
-    duration: "3 days",
-    leaveType: "Personal Leave",
-    leaveEnd: "16/06/21",
-    time: "Full Day",
-    avatar: "https://randomuser.me/api/portraits/women/68.jpg",
-  },
-  {
-    name: "Michael Brown",
-    role: "QA Engineer",
-    duration: "1 day",
-    leaveType: "Sick Leave",
-    leaveEnd: "11/06/21",
-    time: "Full Day",
-    avatar: "https://randomuser.me/api/portraits/men/22.jpg",
-  },
-  // Add more employee data here if needed
-];
+type EmployeesOnLeaveProps = {
+  leavesRequest: LeaveRequest[];
+};
 
-export default function EmployeesOnLeave() {
+export default async function EmployeesOnLeave({ leavesRequest }: EmployeesOnLeaveProps) {
   return (
-    <div className="p-6 h-[300px] bg-white rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-4">
+    <div className="h-[300px] rounded-lg bg-white p-6 shadow-md">
+      <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-bold">Employees On Leave</h2>
-        <a href="#" className="text-sm text-black">
+        <Link href="/leave" className={buttonVariants({ variant: "ghost", size: "sm" })}>
           View more
-        </a>
+        </Link>
       </div>
       <div className="overflow-x-auto">
-        <div className="max-h-56 overflow-y-auto">
-          <table className="min-w-full bg-white">
-            <thead className="sticky z-50 top-0 bg-white">
-              <tr>
-                <th className="py-2 px-4 text-left text-sm font-medium text-gray-500">Name</th>
-                <th className="py-2 px-4 text-left text-sm font-medium text-gray-500">Duration</th>
-                <th className="py-2 px-4 text-left text-sm font-medium text-gray-500">Leave Type</th>
-                <th className="py-2 px-4 text-left text-sm font-medium text-gray-500">Leave End</th>
-                <th className="py-2 px-4 text-left text-sm font-medium text-gray-500">Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {employees.map((employee, index) => (
-                <tr key={index} className="border-t">
-                  <td className="py-2 px-4 flex items-center">
-                    <Avatar className="mr-2">
-                      <AvatarImage src={employee.avatar} alt={`${employee.name} Avatar`} />
-                      <AvatarFallback>{employee.name.split(" ").map(n => n[0]).join("")}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="text-sm font-medium text-gray-900">{employee.name}</div>
-                      <div className="text-sm text-gray-500">{employee.role}</div>
+        <div className="max-h-56">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[200px]">Name</TableHead>
+                <TableHead>Duration</TableHead>
+                <TableHead>Leave Type</TableHead>
+                <TableHead>Leave Start</TableHead>
+                <TableHead>Leave End</TableHead>
+                <TableHead className="text-right">Time</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {leavesRequest.map((request) => (
+                <TableRow key={request.id}>
+                  <TableCell className="py-2.5 font-medium">
+                    <div className="flex items-center">
+                      <Avatar className="mr-2">
+                        <AvatarImage
+                          src={request.employee.profile_picture}
+                          alt={getFullName(request.employee.first_name, request.employee.last_name)}
+                        />
+                        <AvatarFallback>
+                          {getFullbackName(request.employee.first_name, request.employee.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div className="font-medium">
+                          {getFullName(request.employee.first_name, request.employee.last_name)}
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          {request.employee.department}
+                        </div>
+                      </div>
                     </div>
-                  </td>
-                  <td className="py-2 px-4 text-sm text-gray-900">{employee.duration}</td>
-                  <td className="py-2 px-4 text-sm text-gray-900">{employee.leaveType}</td>
-                  <td className="py-2 px-4 text-sm text-gray-900">{employee.leaveEnd}</td>
-                  <td className="py-2 px-4 text-sm text-gray-900">{employee.time}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell>-</TableCell>
+                  <TableCell>{request.leave_type}</TableCell>
+                  <TableCell className="text-right">{formatISODate(request.applied_at)}</TableCell>
+                  <TableCell>{formatISODate(request.end_date)}</TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>
-  )
+  );
 }
