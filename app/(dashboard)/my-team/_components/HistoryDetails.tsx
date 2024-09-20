@@ -8,17 +8,18 @@ import {
   Deductions,
   Employee,
   EmployeeAttendance,
-  expense,
+  ExpensesDetails,
   LeavesResponse,
+  Payroll,
 } from "@/types/types";
 import { LeaveRequestTable } from "@/app/(dashboard)/my-team/_components/LeaveRequestTable";
 import { AttendanceTable } from "@/app/(dashboard)/my-team/_components/AttendanceTable";
 import { BonusTable } from "@/app/(dashboard)/my-team/_components/BonusTable";
 import { DeductionsTable } from "@/app/(dashboard)/my-team/_components/DeductionsTable";
 import { HistoryExpensesTable } from "@/app/(dashboard)/my-team/_components/HistoryExpensesTable";
-import { PayrollOverviewTable } from "@/app/(dashboard)/payroll/_components/PayrollOverviewTable";
 import { MonthFilter } from "@/components/MonthFilter";
 import { YearFilter } from "@/components/YearFilter";
+import { HistoryPayrollTable } from "@/app/(dashboard)/my-team/_components/HistoryPayrollTable";
 
 export const HistoryDetails = ({
   attendance,
@@ -34,8 +35,8 @@ export const HistoryDetails = ({
   leaves: LeavesResponse;
   bonuses: Bonuses;
   deductions: Deductions;
-  expenses: expense[];
-  payrollData: any;
+  expenses: ExpensesDetails[];
+  payrollData: Payroll;
 }) => {
   const employeeId = employeeProfile.id;
   const searchParams = useSearchParams();
@@ -61,7 +62,7 @@ export const HistoryDetails = ({
         {category === "bonus" && <BonusTable bonuses={bonuses} />}
         {category === "deduction" && <DeductionsTable deductions={deductions} />}
         {category === "expense" && <HistoryExpensesTable expenses={expenses} />}
-        {category === "payroll" && <PayrollOverviewTable payrollData={payrollData} />}
+        {category === "payroll" && <HistoryPayrollTable payrollData={payrollData} />}
       </div>
     </div>
   );

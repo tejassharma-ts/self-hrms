@@ -1,10 +1,14 @@
 "use client";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { History, Landmark, Phone, User, Wallet } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { History, Landmark, Phone, User, Wallet } from "lucide-react";
 
 export const TabsCard = ({ employeeId }: { employeeId: string }) => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentTab = searchParams.get("tab");
+
   const tabLinks = [
     {
       name: "Person Details",
@@ -32,10 +36,6 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
       href: `/my-team/employee-profile/${employeeId}/?tab=history&category=leaves`,
     },
   ];
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentTab = searchParams.get("tab");
 
   const handleTabClick = (href: string) => {
     router.replace(href);
