@@ -1,7 +1,8 @@
-"use client";
 
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+
+
+"use client";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +17,6 @@ import {
   FormDescription,
   FormMessage,
 } from "@/components/ui/form";
-import { CalendarIcon } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -26,11 +26,8 @@ import {
 } from "@/components/ui/select";
 import { PasswordInput } from "@/app/(auth)/auth/_components/PasswordInput";
 import { apiCaller } from "@/lib/auth";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Icons } from "@/components/Icons";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import useEmployeeStore from "@/model/employee";
@@ -40,8 +37,12 @@ const employeeSchema = z.object({
   last_name: z.string().max(50, "Last name must be 50 characters or less"),
   password: z.string(),
   email: z.string().email("Invalid email address"),
+  official_email: z.string().email("Invalid email address"),
   phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
+  official_phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
+  emergency_phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
   address: z.string(),
+  Permanent_address: z.string(),
   date_of_birth: z.string(),
   position: z.string().max(100, "Position must be 100 characters or less"),
   salary: z.number().positive("Salary must be a positive number"),
@@ -54,6 +55,7 @@ const employeeSchema = z.object({
   pan_number: z.string().max(10, "PAN number must be 10 characters"),
   gender: z.string().max(25, "Gender must be 25 characters or less"),
   profile_picture: z.any(),
+
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -62,6 +64,9 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
   const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [autoPassword, setAutoPassword] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState("");
+
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace, refresh } = useRouter();
@@ -69,30 +74,34 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
-      first_name: "John",
-      last_name: "Doe",
-      password: "cosmonaut",
-      email: "john.doe@example.com",
-      phone_number: "1234567890",
-      address: "123 Main St, Anytown, AN 12345",
-      date_of_birth: "1990-01-01",
-      position: "Software Developer",
-      salary: 75000,
+      first_name: "",
+      last_name: "",
+      password: "",
+      email: "",
+      official_email: "",
+      phone_number: "",
+      official_phone_number: "",
+      emergency_phone_number: "",
+      address: "",
+      Permanent_address: "",
+      date_of_birth: "",
+      position: "",
+      salary: 7000,
       is_hr: false,
-      department: "Engineering",
-      bank_name: "National Bank",
-      account_number: "1234567890123456",
-      ifsc_code: "NATL0001234",
-      aadhar_number: "123456789012",
-      pan_number: "ABCDE1234F",
-      gender: "male",
+      department: "",
+      bank_name: "",
+      account_number: "",
+      ifsc_code: "",
+      aadhar_number: "",
+      pan_number: "",
+      gender: "",
     },
   });
 
   async function onSubmit(data: EmployeeFormValues) {
     try {
       setIsLoading(true);
-      const res = await apiCaller.post("api/companies-app/company/add-employee/", {
+      const res = await apiCaller.post("/api/companies-app/company/add-employee/", {
         ...data,
         company_id: authUser?.employee_profile.company.id || authCompany?.id,
       });
@@ -109,6 +118,18 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (autoPassword) {
+      const { first_name, date_of_birth } = form.getValues();
+      if (first_name && date_of_birth) {
+        const dob = new Date(date_of_birth).toISOString().split("T")[0].replace(/-/g, "");
+        setGeneratedPassword(`${first_name.toLowerCase()}${dob}`);
+        form.setValue("password", `${first_name.toLowerCase()}${dob}`);
+      }
+    }
+  }, [autoPassword, form.getValues, form.setValue]);
+
 
   return (
     <div className="mx-auto mt-10 max-w-4xl rounded-lg bg-white p-8 shadow-md">
@@ -151,9 +172,31 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Employee password</FormLabel>
+                      <FormLabel>
+                        Employee Password
+                        <input
+                          type="checkbox"
+                          checked={autoPassword}
+                          onChange={() => setAutoPassword(!autoPassword)}
+                          className="ms-2"
+                        />
+                        Auto Password
+                      </FormLabel>
                       <FormControl>
-                        <PasswordInput {...field} />
+                        <PasswordInput {...field} value={autoPassword ? generatedPassword : field.value} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date Of Birth</FormLabel>
+                      <FormControl>
+                        <Input type="date" placeholder="Select Date" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -191,12 +234,41 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <FormField
                   control={form.control}
+                  name="official_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Official E-mail</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Official Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Personal E-mail</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Email" {...field} />
+                        <Input placeholder="Enter Personal Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="official_phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Official Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Official Phone Number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -207,9 +279,22 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                   name="phone_number"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>Personal Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Phone Number" {...field} />
+                        <Input placeholder="Enter Personal Phone Number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="emergency_phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Emergency Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Emergency Phone Number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -221,6 +306,19 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
             {/* Address Section */}
             <div>
               <h2 className="mb-4 text-lg font-semibold">Address</h2>
+              <FormField
+                control={form.control}
+                name="Permanent_address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Permanent Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="address"
@@ -302,115 +400,8 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                 />
               </div>
             </div>
-
-            {/* Bank Details Section */}
-            <div>
-              <h2 className="mb-4 text-lg font-semibold">Bank Details</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="bank_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bank Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Bank Name" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="account_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Account Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="ifsc_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>IFSC Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter IFSC Code" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Document Details Section */}
-            <div>
-              <h2 className="mb-4 text-lg font-semibold">Document Details</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="aadhar_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Aadhar Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Aadhar Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="pan_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>PAN Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter PAN Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
           </div>
-
-          {/* <FormField */}
-          {/*   control={form.control} */}
-          {/*   name="profile_picture" */}
-          {/*   render={({ field: { value, onChange, ...field } }) => ( */}
-          {/*     <FormItem> */}
-          {/*       <FormLabel>Profile Picture</FormLabel> */}
-          {/*       <FormControl> */}
-          {/*         <Input */}
-          {/*           placeholder="" */}
-          {/*           value={value?.fileName} */}
-          {/*           id="file" */}
-          {/*           type="file" */}
-          {/*           {...field} */}
-          {/*           onChange={(event) => { */}
-          {/*             if (!event.target.files) return; */}
-          {/*             onChange(event.target.files[0]); */}
-          {/*           }} */}
-          {/*         /> */}
-          {/*       </FormControl> */}
-          {/*       <FormMessage /> */}
-          {/*     </FormItem> */}
-          {/*   )} */}
-          {/* /> */}
-
-          <Button type="submit" disabled={isLoading} className="mt-2">
-            {isLoading && <Icons.loader />}
-            Save and Continue
-          </Button>
+          <Button type="submit" disabled={isLoading} className="mt-2">{isLoading && <Icons.loader />}Save and Continue</Button>
         </form>
       </Form>
     </div>
@@ -418,3 +409,4 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
 };
 
 export default AddNewEmployeeForm;
+

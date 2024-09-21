@@ -1,10 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircleIcon, ChevronRightIcon } from "lucide-react";
 import AddNewEmployeeForm from "./_components/AddNewEmployeeForm";
 import SalaryDetailsForm from "./_components/SalaryDetailsForm";
-import { CheckCircleIcon, ChevronRightIcon } from "lucide-react";
 import AddBankDetails from "./_components/AddBankdetails";
+import useEmployeeStore from "@/model/employee";
+
+interface AddBankDetailsProps {
+  employee_id: string | null;
+}
 
 export default function StepperForms() {
   const [forms, setForms] = useState({
@@ -13,6 +18,7 @@ export default function StepperForms() {
     salaryForm: false,
   });
   const [currentStep, setCurrentStep] = useState(1);
+  const { employee_id } = useEmployeeStore();
 
   const handleStepClick = (step: number) => {
     setCurrentStep(step);
@@ -50,7 +56,7 @@ export default function StepperForms() {
             </div>
           )}
           <span className={currentStep === 2 ? "font-semibold" : "text-gray-500"}>
-            Bank Details
+            Bank/KYC
           </span>
           <ChevronRightIcon className="h-5 w-5 text-gray-400" />
         </div>
@@ -71,9 +77,11 @@ export default function StepperForms() {
 
       <div className="mt-8">
         {currentStep === 1 && <AddNewEmployeeForm setForms={setForms} />}
-        {currentStep === 2 && <AddBankDetails />}
+        {currentStep === 2 && employee_id && <AddBankDetails employee_id={employee_id} />}
         {currentStep === 3 && <SalaryDetailsForm />}
       </div>
     </div>
   );
 }
+
+
