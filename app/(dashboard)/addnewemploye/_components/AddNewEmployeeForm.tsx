@@ -61,9 +61,6 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [autoPassword, setAutoPassword] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const { replace, refresh } = useRouter();
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
