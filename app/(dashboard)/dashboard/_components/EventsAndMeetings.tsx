@@ -7,6 +7,7 @@ import { formatISOToTime } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { cookies } from "next/headers";
+import { setRequestMeta } from "next/dist/server/request-meta";
 
 async function getAllMeetings() {
   try {
@@ -68,7 +69,7 @@ export default async function EventsAndMeetings() {
           )}
         </CardContent>
         {/* <CardFooter className="flex justify-center"> */}
-        <AddNewEvent />
+        {/* <AddNewEvent /> */}
         {/* </CardFooter> */}
       </Card>
     </>

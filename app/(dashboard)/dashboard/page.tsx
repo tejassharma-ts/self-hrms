@@ -1,16 +1,16 @@
 import { Suspense } from "react";
 import WelcomeCard from "./_components/WecomeCard";
 import NewHiresCard from "./_components/NewHiresCard";
-import EventsAndMeetings from "./_components/EventsAndMeetings";
-import ProjectAnalytics from "./_components/ProjectAnalytics";
-import Project from "./_components/Project";
+// import EventsAndMeetings from "./_components/EventsAndMeetings";
+// import ProjectAnalytics from "./_components/ProjectAnalytics";
+// import Project from "./_components/Project";
 import NewHireSkeleton from "./_skeletons/NewHireSkeleton";
 import EmployeeStatus from "./_components/EmployeeStatus";
 import EmployeeStatusSkeleton from "./_skeletons/EmployeeStatusSkeleton";
 import RequestWithEmployeeLeave from "./_components/RequestWithEmployeeLeave";
 import RequestWithEmployeeLeaveSkeleton from "./_skeletons/RequestWithEmployeeLeaveSkeleton";
-import ProjectAnalyticsSkeleton from "./_skeletons/ProjectAnalytics";
-// import MeetingCard from "@/app/(dashboard)/dashboard/_components/MeetingCard";
+// import ProjectAnalyticsSkeleton from "./_skeletons/ProjectAnalytics";
+import MeetingCard from "@/app/(dashboard)/dashboard/_components/MeetingCard";
 
 export const dynamic = "force-dynamic";
 
@@ -31,18 +31,18 @@ export default function GridCards() {
       <Suspense fallback={<RequestWithEmployeeLeaveSkeleton />}>
         <RequestWithEmployeeLeave />
       </Suspense>
-      <div className="col-span-3 mb-4">
-        <EventsAndMeetings />
+      <div className="col-span-4 mb-4">
+        <MeetingCard />
+        {/* <EventsAndMeetings /> */}
       </div>
-      <div className="col-span-5 mb-4">
-        <Suspense fallback={<ProjectAnalyticsSkeleton />}>
-          <ProjectAnalytics />
-        </Suspense>
-      </div>
-      <div className="col-span-3 mb-4">
-        <Project />
-      </div>
-      {/* <MeetingCard /> */}
+      {/* <div className="col-span-5 mb-4"> */}
+      {/*   <Suspense fallback={<ProjectAnalyticsSkeleton />}> */}
+      {/*     <ProjectAnalytics /> */}
+      {/*   </Suspense> */}
+      {/* </div> */}
+      {/* <div className="col-span-3 mb-4"> */}
+      {/*   <Project /> */}
+      {/* </div> */}
     </div>
   );
 }

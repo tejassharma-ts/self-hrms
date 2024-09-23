@@ -10,11 +10,17 @@ import { toast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
+import { parse, format } from "date-fns";
+
+type AttendanceTiming = {
+  check_in_time: string | null;
+  check_out_time: string | null;
+};
 
 export default function WelcomeCard() {
   const [attendanceLoading, setAttendanceLoading] = useState(false);
   const { authCompany, authUser, isLoading } = useClientAuth();
-  const [attendanceTiming, setAttendanceTiming] = useState({
+  const [attendanceTiming, setAttendanceTiming] = useState<AttendanceTiming>({
     check_in_time: null,
     check_out_time: null,
   });
@@ -22,17 +28,27 @@ export default function WelcomeCard() {
     "Checked In" | "Checkout Out" | "Not Checked In" | null
   >(null);
 
+  const formatTime = (timeString: string) => {
+    const cleanedTime = timeString.split(".")[0];
+    const parsedTime = parse(cleanedTime, "HH:mm:ss", new Date());
+
+    return format(parsedTime, "hh:mm a");
+  };
+
   useEffect(() => {
     async function getAttendance() {
       try {
-        const res = await apiCaller.get("/api/attendance_app/attendance/", {
+        const res = await apiCaller.get("/api/attendance_app/login-time/", {
           params: {
             employee_id: authUser?.employee_profile.id,
           },
         });
+        const checkInTime = res.data?.check_in_time ? formatTime(res.data.check_in_time) : null;
+        const checkOutTime = res.data?.check_out_time ? formatTime(res.data.check_out_time) : null;
+
         setAttendanceTiming({
-          check_in_time: res.data?.check_in_time || "8:30",
-          check_out_time: res.data?.check_out_time || "10:50",
+          check_in_time: checkInTime,
+          check_out_time: checkOutTime,
         });
       } catch (err) {
         console.log(err);
@@ -44,15 +60,6 @@ export default function WelcomeCard() {
       getAttendance();
     }
   }, [authUser]);
-
-  useEffect(() => {
-    if (
-      (attendanceStatus && attendanceStatus === "Checked In") ||
-      attendanceStatus === "Checkout Out"
-    ) {
-      console.log("Get attendace timing");
-    }
-  }, [attendanceStatus]);
 
   if (isLoading) {
     return <WelcomeCardSkeleton />;
@@ -98,20 +105,35 @@ export default function WelcomeCard() {
         variant: "destructive",
       });
     } finally {
+      try {
+        const res = await apiCaller.get("/api/attendance_app/login-time/", {
+          params: {
+            employee_id: authUser?.employee_profile.id,
+          },
+        });
+        const checkInTime = res.data?.check_in_time ? formatTime(res.data.check_in_time) : null;
+        const checkOutTime = res.data?.check_out_time ? formatTime(res.data.check_out_time) : null;
+        setAttendanceTiming({
+          check_in_time: checkInTime,
+          check_out_time: checkOutTime,
+        });
+      } catch (err) {
+        console.log("Error");
+      }
       setAttendanceLoading(false);
     }
   }
 
   function renderAttendanceStatus() {
     if (authUser) {
-      if (attendanceStatus === "Not Checked In")
+      if (!attendanceTiming.check_in_time && !attendanceTiming.check_out_time)
         return (
           <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
             <span className="mr-2">{attendanceLoading && <Icons.loader />}</span>
             Check in
           </Button>
         );
-      else if (attendanceStatus === "Checked In") {
+      else if (attendanceTiming.check_in_time && !attendanceTiming.check_out_time) {
         return (
           <div className="flex flex-col space-y-2 text-sm text-white">
             <h1>Checked in: {attendanceTiming.check_in_time}</h1>
@@ -125,9 +147,14 @@ export default function WelcomeCard() {
         // TODO: get the attendance timing
         return (
           <div className="text-white">
-            <div className="flex flex-col space-y-1">
-              <span>Checked In: {attendanceTiming.check_in_time}</span>
-              <span>Checked Out: {attendanceTiming.check_out_time}</span>
+            <div className="flex flex-col space-y-1 text-sm">
+              <p>
+                Checked In: <span className="font-semibold">{attendanceTiming.check_in_time}</span>
+              </p>
+              <p>
+                Checked Out:{" "}
+                <span className="font-semibold">{attendanceTiming.check_out_time}</span>
+              </p>
             </div>
           </div>
         );

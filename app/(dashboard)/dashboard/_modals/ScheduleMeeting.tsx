@@ -28,7 +28,6 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Icons } from "@/components/Icons";
-import { useRouter } from "next/navigation";
 import { apiCaller } from "@/lib/auth";
 import MultipleSelector from "@/components/ui/multi-select";
 
@@ -52,9 +51,14 @@ const eventSchema = z.object({
   }),
 });
 
-export default function ScheduleMeeting({ setShowDialog }: { setShowDialog: any }) {
+export default function ScheduleMeeting({
+  setShowDialog,
+  setMeetings,
+}: {
+  setShowDialog: any;
+  setMeetings: any;
+}) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const form = useForm<z.infer<typeof eventSchema>>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
@@ -71,13 +75,13 @@ export default function ScheduleMeeting({ setShowDialog }: { setShowDialog: any 
     try {
       const teamIDs = values.team.map((team) => team.id);
       setIsLoading(true);
-      await apiCaller.post("/api/employees-app/event-meetings/", {
+      const res = await apiCaller.post("/api/employees-app/event-meetings/", {
         ...values,
         team: teamIDs,
       });
 
       setShowDialog(false);
-      router.refresh();
+      setMeetings((pre: any) => [...pre, res.data]);
     } catch (err) {
       console.log("err", err);
     } finally {

@@ -13,11 +13,11 @@ import ScheduleMeeting from "./ScheduleMeeting";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 
-export default function AddNewEvent() {
+export default function AddNewEvent({ setMeetings }: { setMeetings: any }) {
   const [showDialog, setShowDialog] = useState(false);
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
-      <DialogTrigger asChild className="absolute -bottom-8 left-1/2 -translate-x-1/2">
+      <DialogTrigger asChild>
         <Button variant="outline">
           <Icons.add className="mr-2 size-4" />
           Add new Event
@@ -27,7 +27,7 @@ export default function AddNewEvent() {
         <DialogHeader>
           <DialogTitle>Schedule Meeting</DialogTitle>
           <DialogDescription>
-            <ScheduleMeeting setShowDialog={setShowDialog} />
+            <ScheduleMeeting setShowDialog={setShowDialog} setMeetings={setMeetings} />
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

@@ -24,7 +24,7 @@ type AuthProviderProps = {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const router = useRouter();
   const { logout } = useAuthStore();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [authCompany, setAuthCompany] = useState<CompanyAccount | null>(null);
   const [authUser, setAuthUser] = useState<UserAccount | null>(null);
 
