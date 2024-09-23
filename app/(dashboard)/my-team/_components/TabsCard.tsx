@@ -42,14 +42,14 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
   };
 
   return (
-    <Card className={"ml-4 h-[18rem] w-[18rem]"}>
-      <CardContent className="w-[18rem]">
+    <Card className={"ml-2 max-h-[16rem]"}>
+      <CardContent className="w-[10rem] px-1 py-2">
         <div className="flex flex-col items-start gap-y-6">
           {tabLinks.map((tab) => (
             <button
               onClick={() => handleTabClick(tab.href)}
               key={tab.name}
-              className={`flex cursor-pointer items-center gap-x-2 text-lg font-bold ${
+              className={`flex cursor-pointer items-center gap-x-2 text-nowrap text-sm font-bold ${
                 currentTab === tab.href.split("=")[1] ? "text-black" : "text-gray-500"
               } hover:text-black`}>
               <span>{tab.icon}</span>

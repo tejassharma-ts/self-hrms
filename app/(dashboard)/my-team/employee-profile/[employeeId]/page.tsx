@@ -197,9 +197,9 @@ const EmployeeProfilePage = async ({
 
   return (
     <div>
-      <Card className="flex h-[calc(100vh-10rem)] w-screen overflow-y-scroll">
+      <Card className="flex h-[calc(100vh-10rem)] w-full overflow-y-scroll">
         <TabsCard employeeId={employeeId} />
-        <div className="min-w-[80rem]">
+        <div className="min-w-[55rem]">
           <CardContent>
             <EmployeeProfile employeeProfile={employeeProfile} />
           </CardContent>
