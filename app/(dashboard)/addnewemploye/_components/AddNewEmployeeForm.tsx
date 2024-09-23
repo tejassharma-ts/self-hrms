@@ -1,6 +1,3 @@
-
-
-
 "use client";
 import { useEffect, useState } from "react";
 import { z } from "zod";
@@ -60,11 +57,19 @@ const employeeSchema = z.object({
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
+interface AddNewEmployeeFormProps {
+  onComplete: () => void;
+}
+
+
+
+
+const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForms: any }) => {
   const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [autoPassword, setAutoPassword] = useState(false);
+  const [dobRequired, setDobRequired] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
 
   const pathname = usePathname();
@@ -109,6 +114,7 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
       toast({
         description: "Employee successfully added",
       });
+      onComplete();
     } catch (err) {
       toast({
         description: "Something went very wrong",
@@ -122,13 +128,19 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
   useEffect(() => {
     if (autoPassword) {
       const { first_name, date_of_birth } = form.getValues();
-      if (first_name && date_of_birth) {
-        const dob = new Date(date_of_birth).toISOString().split("T")[0].replace(/-/g, "");
-        setGeneratedPassword(`${first_name.toLowerCase()}${dob}`);
-        form.setValue("password", `${first_name.toLowerCase()}${dob}`);
+      if (!date_of_birth) {
+        setDobRequired(true);
+        return;
       }
+      setDobRequired(false);
+      const dob = new Date(date_of_birth).toISOString().split("T")[0].replace(/-/g, "");
+      setGeneratedPassword(`${first_name.toLowerCase()}${dob}`);
+      form.setValue("password", `${first_name.toLowerCase()}${dob}`);
+    } else {
+      setDobRequired(false);
     }
   }, [autoPassword, form.getValues, form.setValue]);
+
 
 
   return (
@@ -194,6 +206,9 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                   name="date_of_birth"
                   render={({ field }) => (
                     <FormItem>
+                      {dobRequired && (
+                        <p className="text-red-600 text-sm">Please select a date of birth to use auto password.</p>
+                      )}
                       <FormLabel>Date Of Birth</FormLabel>
                       <FormControl>
                         <Input type="date" placeholder="Select Date" {...field} />
@@ -202,6 +217,7 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                     </FormItem>
                   )}
                 />
+
 
                 <FormField
                   control={form.control}

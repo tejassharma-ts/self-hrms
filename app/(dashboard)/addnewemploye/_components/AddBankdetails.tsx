@@ -31,9 +31,10 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
 interface AddBankDetailsProps {
     employee_id: string;
+    onComplete: () => void;
 }
 
-const AddBankDetails = ({ employee_id }: AddBankDetailsProps) => {
+const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
     const [filePreviews, setFilePreviews] = useState<Record<string, string | ArrayBuffer | null>>({});
     const [employeeData, setEmployeeData] = useState<EmployeeFormValues | null>(null);
     const [isBankKycDone, setIsBankKycDone] = useState(false);
@@ -124,6 +125,7 @@ const AddBankDetails = ({ employee_id }: AddBankDetailsProps) => {
             });
 
             console.log('Employee Bank details updated successfully:', response);
+            onComplete();
 
         } catch (error) {
             toast({
