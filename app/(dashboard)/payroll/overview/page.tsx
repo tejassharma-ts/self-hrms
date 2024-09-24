@@ -18,7 +18,7 @@ async function getPayrollOverview() {
           .join("; "),
       },
     });
-    return res.data;
+    return res.data.results.payrolls;
   } catch (err) {
     throw new Error(`Error getPayroll Overview: ${err}`);
   }
@@ -26,6 +26,7 @@ async function getPayrollOverview() {
 
 const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
   const payrollData: Payroll[] = await getPayrollOverview();
+
   return (
     <div className={"container w-full"}>
       <PayrollOverviewHeader
