@@ -27,81 +27,111 @@ import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Icons } from "@/components/Icons";
 import useEmployeeStore from "@/model/employee";
+import { EmployeeProfileDetail } from "@/types/types";
+import { useRouter } from "next/navigation";
 
 const employeeSchema = z.object({
-  first_name: z.string().max(50, "First name must be 50 characters or less"),
-  last_name: z.string().max(50, "Last name must be 50 characters or less"),
-  password: z.string(),
-  email: z.string().email("Invalid email address"),
-  official_email: z.string().email("Invalid email address"),
-  phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
-  official_phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
-  emergency_phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
-  address: z.string(),
-  Permanent_address: z.string(),
-  date_of_birth: z.string(),
-  position: z.string().max(100, "Position must be 100 characters or less"),
-  salary: z.number().positive("Salary must be a positive number"),
-  is_hr: z.boolean().default(false),
-  department: z.string().max(100, "Department must be 100 characters or less"),
-  bank_name: z.string().max(100, "Bank name must be 100 characters or less"),
-  account_number: z.string().max(17, "Account number must be 17 characters or less"),
-  ifsc_code: z.string().max(12, "IFSC code must be 12 characters or less"),
-  aadhar_number: z.string().max(12, "Aadhar number must be 12 digits"),
-  pan_number: z.string().max(10, "PAN number must be 10 characters"),
-  gender: z.string().max(25, "Gender must be 25 characters or less"),
-  profile_picture: z.any(),
+  first_name: z.string().max(50, "First name must be 50 characters or less").optional(),
+  last_name: z.string().max(50, "Last name must be 50 characters or less").optional(),
+  password: z.string().optional(),
+  email: z.string().email("Invalid email address").optional(),
+  official_email: z.string().email("Invalid email address").optional(),
+  phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
+  official_phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
+  emergency_phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
+  address: z.string().optional(),
+  permanent_address: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  position: z.string().max(100, "Position must be 100 characters or less").optional(),
+  salary: z.string().optional(),
+  is_hr: z.boolean().default(false).optional(),
+  department: z.string().max(100, "Department must be 100 characters or less").optional(),
+  bank_name: z.string().max(100, "Bank name must be 100 characters or less").optional(),
+  account_number: z.string().max(17, "Account number must be 17 characters or less").optional(),
+  ifsc_code: z.string().max(12, "IFSC code must be 12 characters or less").optional(),
+  aadhar_number: z.string().max(12, "Aadhar number must be 12 digits").optional(),
+  pan_number: z.string().max(10, "PAN number must be 10 characters").optional(),
+  gender: z.string().max(25, "Gender must be 25 characters or less").optional(),
+  profile_picture: z.any().optional(),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForms: any }) => {
+const AddNewEmployeeForm = ({
+  onComplete,
+  setForms,
+  employee,
+}: {
+  onComplete: any;
+  setForms: any;
+  employee?: EmployeeProfileDetail;
+}) => {
   const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [autoPassword, setAutoPassword] = useState(false);
   const [dobRequired, setDobRequired] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
+  const router = useRouter();
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      password: "",
-      email: "",
-      official_email: "",
-      phone_number: "",
-      official_phone_number: "",
-      emergency_phone_number: "",
-      address: "",
-      Permanent_address: "",
-      date_of_birth: "",
-      position: "",
-      salary: 7000,
-      is_hr: false,
-      department: "",
-      bank_name: "",
-      account_number: "",
-      ifsc_code: "",
-      aadhar_number: "",
-      pan_number: "",
-      gender: "",
+      first_name: employee?.first_name || undefined,
+      last_name: employee?.last_name || undefined,
+      password: employee?.password || undefined,
+      email: employee?.email || undefined,
+      official_email: employee?.official_email || undefined,
+      phone_number: employee?.phone_number || undefined,
+      official_phone_number: employee?.official_phone_number || undefined,
+      emergency_phone_number: employee?.emergency_phone_number || undefined,
+      address: employee?.address || undefined,
+      permanent_address: employee?.permanent_address || undefined,
+      date_of_birth: employee?.date_of_birth || undefined,
+      position: employee?.position || undefined,
+      salary: employee?.salary || undefined,
+      is_hr: employee?.is_hr || false,
+      department: employee?.department || undefined,
+      bank_name: employee?.bank_name || undefined,
+      account_number: employee?.account_number || undefined,
+      ifsc_code: employee?.ifsc_code || undefined,
+      aadhar_number: employee?.aadhar_number || undefined,
+      pan_number: employee?.pan_number || undefined,
+      gender: employee?.gender || undefined,
     },
   });
 
   async function onSubmit(data: EmployeeFormValues) {
     try {
       setIsLoading(true);
-      const res = await apiCaller.post("/api/companies-app/company/add-employee/", {
-        ...data,
-        company_id: authUser?.employee_profile.company.id || authCompany?.id,
-      });
-      setEmployeeId(res.data.id);
-      toast({
-        description: "Employee successfully added",
-      });
+      if (!employee) {
+        const res = await apiCaller.post("/api/companies-app/company/add-employee/", {
+          ...data,
+          company_id: authUser?.employee_profile.company.id || authCompany?.id,
+        });
+        setEmployeeId(res.data.id);
+        toast({
+          description: "Employee successfully added",
+        });
+      } else {
+        const res = await apiCaller.patch(
+          "/api/companies-app/company/add-employee/",
+          {
+            ...data,
+          },
+          {
+            params: {
+              employee_id: employee.id,
+            },
+          },
+        );
+        setEmployeeId(res.data.id);
+        toast({
+          description: "Employee successfully added",
+        });
+      }
       onComplete();
+      router.refresh();
     } catch (err) {
       toast({
         description: "Something went very wrong",
@@ -376,12 +406,7 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
                     <FormItem>
                       <FormLabel>Salary</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter Salary"
-                          {...field}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                        />
+                        <Input placeholder="Enter Salary" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -406,7 +431,8 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
             </div>
           </div>
           <Button type="submit" disabled={isLoading} className="mt-2">
-            {isLoading && <Icons.loader />}Save and Continue
+            {isLoading && <Icons.loader />}
+            {!employee ? "Save and Continue" : "Update and Continue"}
           </Button>
         </form>
       </Form>

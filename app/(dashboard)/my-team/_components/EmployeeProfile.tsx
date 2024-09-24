@@ -26,7 +26,7 @@ export const EmployeeProfile = ({ employeeProfile }: { employeeProfile: any }) =
               </div>
             </div>
           </div>
-          <EditButton />
+          <EditButton employeeID={employeeProfile.id} />
         </div>
       </CardContent>
     </Card>
