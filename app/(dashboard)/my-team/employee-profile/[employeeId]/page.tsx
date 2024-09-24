@@ -151,6 +151,7 @@ const EmployeeProfilePage = async ({
 }: {
   searchParams: EmployeeProfileSearchParams;
   params: params;
+
 }) => {
   const { month, year, tab } = searchParams;
   const monthNumber = month && getMonthNumber(month);
@@ -206,6 +207,7 @@ const EmployeeProfilePage = async ({
           </CardContent>
           {tab === "person-details" && (
             <>
+              <>p</>
               <CardContent>
                 <EmployeePersonalInformation employeeProfile={employeeProfile} />
               </CardContent>

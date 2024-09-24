@@ -26,6 +26,7 @@ import { apiCaller } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Icons } from "@/components/Icons";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import useEmployeeStore from "@/model/employee";
 
 const employeeSchema = z.object({
@@ -51,17 +52,29 @@ const employeeSchema = z.object({
   pan_number: z.string().max(10, "PAN number must be 10 characters"),
   gender: z.string().max(25, "Gender must be 25 characters or less"),
   profile_picture: z.any(),
+
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
+interface AddNewEmployeeFormProps {
+  onComplete: () => void;
+}
+
+
+
+
 const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForms: any }) => {
-  const { setEmployeeId } = useEmployeeStore();
+  const { setEmployeeId, setEmployeeEditId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [autoPassword, setAutoPassword] = useState(false);
   const [dobRequired, setDobRequired] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace, refresh } = useRouter();
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -128,6 +141,8 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
     }
   }, [autoPassword, form.getValues, form.setValue]);
 
+
+
   return (
     <div className="mx-auto mt-10 max-w-4xl rounded-lg bg-white p-8 shadow-md">
       <Form {...form}>
@@ -180,10 +195,7 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
                         Auto Password
                       </FormLabel>
                       <FormControl>
-                        <PasswordInput
-                          {...field}
-                          value={autoPassword ? generatedPassword : field.value}
-                        />
+                        <PasswordInput {...field} value={autoPassword ? generatedPassword : field.value} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -195,9 +207,7 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
                   render={({ field }) => (
                     <FormItem>
                       {dobRequired && (
-                        <p className="text-sm text-red-600">
-                          Please select a date of birth to use auto password.
-                        </p>
+                        <p className="text-red-600 text-sm">Please select a date of birth to use auto password.</p>
                       )}
                       <FormLabel>Date Of Birth</FormLabel>
                       <FormControl>
@@ -207,6 +217,7 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
                     </FormItem>
                   )}
                 />
+
 
                 <FormField
                   control={form.control}
@@ -263,6 +274,7 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
                     </FormItem>
                   )}
                 />
+
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <FormField
@@ -405,9 +417,7 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
               </div>
             </div>
           </div>
-          <Button type="submit" disabled={isLoading} className="mt-2">
-            {isLoading && <Icons.loader />}Save and Continue
-          </Button>
+          <Button type="submit" disabled={isLoading} className="mt-2">{isLoading && <Icons.loader />}Save and Continue</Button>
         </form>
       </Form>
     </div>
@@ -415,3 +425,4 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
 };
 
 export default AddNewEmployeeForm;
+

@@ -6,7 +6,7 @@ export const EditButton = () => {
   return (
     <Button
       className={"flex gap-x-1 border bg-transparent text-sm text-black hover:bg-transparent"}>
-      <p>Edit</p>
+      <a href="/addnewemploye">Edit</a>
       <span>
         <PencilLineIcon height={16} width={16} />
       </span>
