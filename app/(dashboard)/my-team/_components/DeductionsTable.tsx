@@ -11,7 +11,6 @@ import {
 import { deductionsTableHead } from "@/app/(dashboard)/my-team/constants";
 
 export const DeductionsTable = ({ deductions }: { deductions: Deductions }) => {
-  console.table(deductions.deductions);
   return (
     <div className="w-full rounded-md border">
       <Table>
@@ -25,15 +24,6 @@ export const DeductionsTable = ({ deductions }: { deductions: Deductions }) => {
         <TableBody>
           {deductions.deductions.map((deduction, index) => (
             <TableRow key={index}>
-              <TableCell className="whitespace-nowrap">{deduction.employee}</TableCell>
-
-              <TableCell className="whitespace-nowrap">{deduction.amount}</TableCell>
-              <TableCell className="whitespace-nowrap">{deduction.date_applied}</TableCell>
-              <TableCell className="whitespace-nowrap">
-                {deduction?.payroll_period || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap">{deduction.reason}</TableCell>
-              <TableCell className="whitespace-nowrap">{deduction.company}</TableCell>
               <TableCell className="whitespace-nowrap">
                 {Array.isArray(deduction.deduction_types)
                   ? deduction.deduction_types
@@ -45,6 +35,8 @@ export const DeductionsTable = ({ deductions }: { deductions: Deductions }) => {
                       .join(", ")
                   : "N/A"}
               </TableCell>
+              <TableCell className="whitespace-nowrap">{deduction.amount}</TableCell>
+              <TableCell className="whitespace-nowrap">{deduction.date_applied}</TableCell>
             </TableRow>
           ))}
         </TableBody>
