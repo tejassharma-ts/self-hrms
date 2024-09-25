@@ -14,6 +14,7 @@ type ProfilesProps = {
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
+
 export default function Profiles({ profiles, attendances }: ProfilesProps) {
   const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(false);
