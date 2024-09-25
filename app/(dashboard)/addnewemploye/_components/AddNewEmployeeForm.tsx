@@ -28,6 +28,7 @@ import { useClientAuth } from "@/context/auth-context";
 import { Icons } from "@/components/Icons";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import useEmployeeStore from "@/model/employee";
+import SalaryDetailsForm from "./SalaryDetailsForm";
 
 const employeeSchema = z.object({
   first_name: z.string().max(50, "First name must be 50 characters or less"),
@@ -420,6 +421,8 @@ const AddNewEmployeeForm = ({ onComplete, setForms }: { onComplete: any; setForm
           <Button type="submit" disabled={isLoading} className="mt-2">{isLoading && <Icons.loader />}Save and Continue</Button>
         </form>
       </Form>
+      <SalaryDetailsForm />
+
     </div>
   );
 };

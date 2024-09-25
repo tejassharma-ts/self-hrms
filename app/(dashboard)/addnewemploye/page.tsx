@@ -13,8 +13,7 @@ export default function StepperForms() {
     bankForm: false,
     salaryForm: false,
   });
-  const { employee_id, employeeEditId } = useEmployeeStore();
-  { console.log("wwwwwwwwwwwwwwwwww", employeeEditId) }
+  const { employee_id } = useEmployeeStore();
 
   const handleStepClick = (step: number) => {
     if (step <= currentStep) {

@@ -13,10 +13,11 @@ import { Icons } from '@/components/Icons';
 import { toast } from '@/hooks/use-toast';
 
 const employeeSchema = z.object({
+
+    first_name: z.string().min(1, 'Bank Name is required'),
     aadhar_number: z.string().optional(),
-    pan_number: z.string().min(1, 'PAN Number is required'),
-    bank_name: z.string().min(1, 'Bank Name is required'),
     account_number: z.string().min(1, 'Account Number is required'),
+    pan_number: z.string().min(1, 'PAN Number is required'),
     ifsc_code: z.string().min(1, 'IFSC Code is required'),
     is_bank_kyc_done: z.boolean(),
     pan_card_image: z.instanceof(File).optional(),
@@ -44,9 +45,10 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
     const form = useForm<EmployeeFormValues>({
         resolver: zodResolver(employeeSchema),
         defaultValues: {
+
             aadhar_number: '',
             pan_number: '',
-            bank_name: '',
+            first_name: '',
             account_number: '',
             ifsc_code: '',
             is_bank_kyc_done: false, // Default value set to false
@@ -102,9 +104,9 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
 
             // Creating a FormData object
             const formData = new FormData();
+            formData.append('first_name', data.first_name || '');
             formData.append('aadhar_number', data.aadhar_number || '');
             formData.append('pan_number', data.pan_number || '');
-            formData.append('bank_name', data.bank_name || '');
             formData.append('account_number', data.account_number || '');
             formData.append('ifsc_code', data.ifsc_code || '');
             formData.append('is_bank_kyc_done', String(data.is_bank_kyc_done));
@@ -142,110 +144,118 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
 
 
     const isFormDisabled = isBankKycDone;
+    const pan_card_image = "pan_card_image"; // Ensure this is a string representing the field name
+    const aadhaar_card_front_image = "aadhaar_card_front_image"; // Ensure this is a string representing the field name
+    const aadhaar_card_back_image = "aadhaar_card_back_image"; // Ensure this is a string representing the field name
+
 
     return (
         <div className="p-8 bg-white rounded-lg shadow-md max-w-4xl mx-auto mt-10">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 mb-8">
-                        <FormField
-                            control={form.control}
-                            name="bank_name"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Bank Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter Bank Name" {...field} disabled={isFormDisabled} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="account_number"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Account Number</FormLabel>
-                                    <PasswordInput placeholder="Enter Account Number" {...field} disabled={isFormDisabled} />
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="ifsc_code"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>IFSC Code</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter IFSC Code" {...field} disabled={isFormDisabled} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="aadhar_number"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Aadhaar Number</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter Aadhaar Number" {...field} disabled={isFormDisabled} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="pan_number"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>PAN Number</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter PAN Number" {...field} disabled={isFormDisabled} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="uan_number"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>UAN Number</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Enter UAN Number" {...field} disabled={isFormDisabled} />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        {['pan_card_image', 'aadhaar_card_front_image', 'aadhaar_card_back_image', 'passbook_back_image', 'passbook_port_image'].map((name) => (
+                    <div className="flex">
+                        <p className='w-40 font-semibold'>Bank details</p>
+                        <div className='grid grid-cols-1 gap-6 sm:grid-cols-1 mb-8 w-full'>
+
                             <FormField
-                                key={name}
                                 control={form.control}
-                                name={name as keyof EmployeeFormValues}
+                                name="first_name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>{name.replace(/_/g, ' ')}</FormLabel>
+                                        <FormLabel>Account Holder Name</FormLabel>
                                         <FormControl>
-                                            <div className="flex items-center space-x-4">
-                                                <Input
-                                                    type="file"
-                                                    onChange={(e) => handleFileChange(name, e)}
-                                                    onBlur={field.onBlur}
-                                                    ref={field.ref}
-                                                    disabled={isFormDisabled}
-                                                />
-                                                {filePreviews[name] && (
+                                            <Input placeholder="Enter Account name" {...field} disabled={isFormDisabled} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="account_number"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Account Number</FormLabel>
+                                        <PasswordInput placeholder="Enter Account Number" {...field} disabled={isFormDisabled} />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="ifsc_code"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>IFSC Code</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Enter IFSC Code" {...field} disabled={isFormDisabled} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+
+
+                    </div>
+
+
+                    <div className="flex">
+                        <p className='w-40 font-semibold'>Upload Documents</p>
+                        <div className='grid grid-cols-1 gap-6 sm:grid-cols-1 mb-8 w-full'>
+                            <FormField
+                                control={form.control}
+                                name="pan_number"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>PAN Number</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="BKGRY4756t" {...field} disabled={isFormDisabled} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="pan_card_image"
+                                render={({ field }) => (
+                                    <FormItem className="mb-4">
+                                        <FormLabel>{field.name.replace(/_/g, ' ')}</FormLabel>
+                                        <FormControl>
+                                            <div>
+                                                <div className="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition">
+
+                                                    <div className="flex flex-col items-center justify-center">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="w-12 h-12 text-gray-400"
+                                                            fill="none"
+                                                            viewBox="0 0 24 24"
+                                                            stroke="currentColor"
+                                                        >
+                                                            <path
+                                                                strokeLinecap="round"
+                                                                strokeLinejoin="round"
+                                                                strokeWidth={2}
+                                                                d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1m-7-4v-8m0 8l-2.29-2.29M12 16l2.29-2.29M12 4v4"
+                                                            />
+                                                        </svg>
+                                                        <Input className='border-none ms-10 cursor-pointer'
+                                                            type="file"
+                                                            onChange={(e) => handleFileChange(pan_card_image, e)}
+                                                            onBlur={field.onBlur}
+                                                            ref={field.ref}
+                                                            disabled={isFormDisabled}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                {filePreviews['pan_card_image'] && (
                                                     <img
-                                                        src={filePreviews[name] as string}
-                                                        alt={`${name.replace(/_/g, ' ')} Preview`}
-                                                        className="w-10 h-10 object-cover border rounded"
+                                                        src={filePreviews['pan_card_image'] as string}
+                                                        alt="Pan Card Image Preview"
+                                                        className="w-20 h-20 object-cover mt-4 border border-gray-300 rounded-lg"
                                                     />
                                                 )}
                                             </div>
@@ -254,12 +264,124 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                     </FormItem>
                                 )}
                             />
-                        ))}
+
+
+                            <FormField
+                                control={form.control}
+                                name="aadhar_number"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Aadhar Number</FormLabel>
+                                        <PasswordInput placeholder="**** **** **** ****" {...field} disabled={isFormDisabled} />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+
+                            <div className="flex justify-between">
+                                <FormField
+                                    control={form.control}
+                                    name="aadhaar_card_front_image"
+                                    render={({ field }) => (
+                                        <FormItem className="mb-4">
+                                            <FormLabel>{field.name.replace(/_/g, ' ')}</FormLabel>
+                                            <FormControl>
+                                                <div>
+                                                    <div className="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition">
+
+                                                        <div className="flex flex-col items-center justify-center">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="w-12 h-12 text-gray-400"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={2}
+                                                                    d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1m-7-4v-8m0 8l-2.29-2.29M12 16l2.29-2.29M12 4v4"
+                                                                />
+                                                            </svg>
+                                                            <Input className='border-none ms-10 cursor-pointer'
+                                                                type="file"
+                                                                onChange={(e) => handleFileChange(aadhaar_card_front_image, e)}
+                                                                onBlur={field.onBlur}
+                                                                ref={field.ref}
+                                                                disabled={isFormDisabled}
+                                                            />                                                        </div>
+                                                    </div>
+                                                    {filePreviews['pan_card_image'] && (
+                                                        <img
+                                                            src={filePreviews['pan_card_image'] as string}
+                                                            alt="Pan Card Image Preview"
+                                                            className="w-20 h-20 object-cover mt-4 border border-gray-300 rounded-lg"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="aadhaar_card_back_image"
+                                    render={({ field }) => (
+                                        <FormItem className="mb-4">
+                                            <FormLabel>{field.name.replace(/_/g, ' ')}</FormLabel>
+                                            <FormControl>
+                                                <div>
+                                                    <div className="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition">
+
+                                                        <div className="flex flex-col items-center justify-center">
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                className="w-12 h-12 text-gray-400"
+                                                                fill="none"
+                                                                viewBox="0 0 24 24"
+                                                                stroke="currentColor"
+                                                            >
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={2}
+                                                                    d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1m-7-4v-8m0 8l-2.29-2.29M12 16l2.29-2.29M12 4v4"
+                                                                />
+                                                            </svg>
+                                                            <Input className='border-none ms-10 cursor-pointer'
+                                                                type="file"
+                                                                onChange={(e) => handleFileChange(aadhaar_card_back_image, e)}
+                                                                onBlur={field.onBlur}
+                                                                ref={field.ref}
+                                                                disabled={isFormDisabled}
+                                                            />                                                        </div>
+                                                    </div>
+                                                    {filePreviews['pan_card_image'] && (
+                                                        <img
+                                                            src={filePreviews['pan_card_image'] as string}
+                                                            alt="Pan Card Image Preview"
+                                                            className="w-20 h-20 object-cover mt-4 border border-gray-300 rounded-lg"
+                                                        />
+                                                    )}
+                                                </div>
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                            </div>
+                        </div>
                     </div>
-                    <Button type="submit" disabled={isFormDisabled} className="mt-2">{isLoading && <Icons.loader />}Save and Continue</Button>
+                    <Button type="submit" disabled={isFormDisabled} className="mb-5 float-end">{isLoading && <Icons.loader />}Save and Continue</Button>
                 </form>
             </Form>
-        </div>
+
+
+        </div >
     );
 };
 
