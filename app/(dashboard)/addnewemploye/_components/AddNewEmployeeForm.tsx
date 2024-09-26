@@ -29,6 +29,7 @@ import { Icons } from "@/components/Icons";
 import useEmployeeStore from "@/model/employee";
 import { EmployeeProfileDetail } from "@/types/types";
 import { useRouter } from "next/navigation";
+import { Switch } from "@/components/ui/switch";
 
 const employeeSchema = z.object({
   first_name: z.string().max(50, "First name must be 50 characters or less").optional(),
@@ -151,8 +152,8 @@ const AddNewEmployeeForm = ({
       }
       setDobRequired(false);
       const dob = new Date(date_of_birth).toISOString().split("T")[0].replace(/-/g, "");
-      setGeneratedPassword(`${first_name.toLowerCase()}${dob}`);
-      form.setValue("password", `${first_name.toLowerCase()}${dob}`);
+      setGeneratedPassword(`${first_name?.toLowerCase()}${dob}`);
+      form.setValue("password", `${first_name?.toLowerCase()}${dob}`);
     } else {
       setDobRequired(false);
     }
@@ -342,7 +343,7 @@ const AddNewEmployeeForm = ({
               <h2 className="mb-4 text-lg font-semibold">Address</h2>
               <FormField
                 control={form.control}
-                name="Permanent_address"
+                name="permanent_address"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Permanent Address</FormLabel>
@@ -416,14 +417,16 @@ const AddNewEmployeeForm = ({
                   control={form.control}
                   name="is_hr"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <input type="checkbox" checked={field.value} onChange={field.onChange} />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Is HR</FormLabel>
-                        <FormDescription>Check if this employee is part of HR</FormDescription>
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="">HR Department</FormLabel>
+                        <FormDescription className="text-xs">
+                          Enable this option if the employee belongs to the HR department
+                        </FormDescription>
                       </div>
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
                     </FormItem>
                   )}
                 />
