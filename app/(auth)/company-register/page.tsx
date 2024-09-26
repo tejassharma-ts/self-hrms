@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Icons } from "@/components/Icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -28,19 +28,40 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { apiCaller } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { Image } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
   company_name: z.string().min(1, "Company name is required"),
   address: z.string().min(1, "Address is required"),
   company_website_url: z.string().url("Invalid URL"),
-  company_logo: z.any(),
+  company_logo: z
+    .any()
+    .refine((file) => file instanceof File, "Please upload a file")
+    .refine((file) => file?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine(
+      (file) => ACCEPTED_IMAGE_TYPES.includes(file?.type),
+      "Only .jpg, .jpeg, .png and .webp formats are supported.",
+    ),
   industry: z.string().min(1, "Industry is required"),
 });
 
 export default function CompanyProfile() {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -49,7 +70,7 @@ export default function CompanyProfile() {
       address: "Lucknow Gol Road",
       company_website_url:
         "http://127.0.0.1:8000/admin/user/useraccount/53db3179-2c0e-40b1-8856-db872e03b2d1/change/",
-      company_logo: "",
+      company_logo: undefined,
       industry: "",
     },
   });
@@ -142,31 +163,47 @@ export default function CompanyProfile() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="company_logo"
-              render={({ field: { value, onChange, ...field } }) => (
-                <FormItem>
-                  <FormLabel>Company Logo</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder=""
-                      value={value?.fileName}
-                      id="file"
-                      type="file"
-                      {...field}
-                      onChange={(event) => {
-                        if (!event.target.files) return;
-                        onChange(event.target.files[0]);
-                      }}
-                    />
-                  </FormControl>
-                  <FormDescription>Upload your company logo</FormDescription>
-                  <FormMessage />
-                </FormItem>
+            <div>
+              <FormField
+                control={form.control}
+                name="company_logo"
+                render={({ field: { value, onChange, ...field } }) => (
+                  <FormItem>
+                    <FormLabel>Company Logo</FormLabel>
+                    <FormControl>
+                      <Input
+                        accept={ACCEPTED_IMAGE_TYPES.join(",")}
+                        id="file"
+                        type="file"
+                        {...field}
+                        onChange={(event) => {
+                          const file = event.target.files?.[0];
+                          if (file) {
+                            onChange(file);
+                            setPreviewUrl(URL.createObjectURL(file));
+                          }
+                        }}
+                      />
+                    </FormControl>
+                    <FormDescription>Upload your company logo</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {previewUrl ? (
+                <div className="mt-2 flex items-center justify-center rounded-md border border-gray-300 p-2">
+                  <Avatar>
+                    <AvatarImage src={previewUrl} alt="@shadcn" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </div>
+              ) : (
+                <div className="mt-2 flex h-40 items-center justify-center rounded-md border border-gray-300 p-2 text-gray-500">
+                  <Image size={24} className="mr-2" />
+                  <span>No image selected</span>
+                </div>
               )}
-            />
-
+            </div>
             <FormField
               control={form.control}
               name="industry"

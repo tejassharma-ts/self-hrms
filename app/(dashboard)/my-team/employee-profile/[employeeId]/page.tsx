@@ -25,6 +25,91 @@ type params = {
   employeeId: string;
 };
 
+type SearchParams = {
+  tab?: string;
+  month?: string;
+  year?: number;
+};
+
+async function fetchEmployeeData(employeeId: string, month?: number, year?: number) {
+  const [employeeProfile, leaves, attendance, bonuses, deductions, expenses, payroll] =
+    await Promise.all([
+      apiCaller.get<Employee>("/api/companies-app/company/employee-detail/", {
+        params: { employee_id: employeeId },
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+      }),
+      apiCaller.get<LeavesResponse>("/api/companies-app/company/leaves/", {
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get("/api/companies-app/employee/attendance/", {
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get<Bonuses>("/api/companies-app/employee-bonus-get/", {
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get<Deductions>("/api/companies-app/employee-deduction-get/", {
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get("/api/payroll_app/expenses-details/", {
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+        params: { employee_id: employeeId, month, year },
+      }),
+      apiCaller.get("/api/payroll_app/payrolls/", {
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+        params: { employee_id: employeeId, month, year },
+      }),
+    ]);
+
+  return {
+    employeeProfile: employeeProfile.data,
+    leaves: leaves.data,
+    attendance: attendance.data,
+    bonuses: bonuses.data,
+    deductions: deductions.data,
+    expenses: expenses.data,
+    payroll: payroll.data,
+  };
+}
+
 interface EmployeeProfileSearchParams {
   tab: string;
   month: string;
@@ -141,6 +226,7 @@ async function getLeavesOfEmployee({ employeeId, month, year }: EmployeeProfileA
     });
     return res.data;
   } catch (err) {
+
     throw new Error(`Error getLeavesOfEmployee: ${err}`);
   }
 }

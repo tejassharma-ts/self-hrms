@@ -1,13 +1,8 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmployeeDetailsCardHeader } from "@/app/(dashboard)/my-team/_components/EmployeeDetailsCardHeader";
-import { EmployeeProfile } from "@/types/types";
 
-export const EmployeeAddressDetails = ({
-  employeeProfile,
-}: {
-  employeeProfile: EmployeeProfile;
-}) => {
+export const EmployeeAddressDetails = ({ employeeProfile }: { employeeProfile: any }) => {
   return (
     <Card className="w-full border">
       <EmployeeDetailsCardHeader heading={"Contact Details"} />

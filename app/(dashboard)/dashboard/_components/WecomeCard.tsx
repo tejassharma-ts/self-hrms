@@ -136,7 +136,7 @@ export default function WelcomeCard() {
       else if (attendanceTiming.check_in_time && !attendanceTiming.check_out_time) {
         return (
           <div className="flex flex-col space-y-2 text-sm text-white">
-            <h1>Checked in: {attendanceTiming.check_in_time}</h1>
+            <h1>Checked in: <span className="font-semibold">{attendanceTiming.check_in_time}</span></h1>
             <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
               <span className="mr-2">{attendanceLoading && <Icons.loader />}</span>
               Check out
@@ -167,7 +167,7 @@ export default function WelcomeCard() {
       <CardContent className="relative z-10 flex h-full flex-col p-6">
         <div className="flex-grow">
           <h2 className="text-2xl font-bold text-white">{greet()}</h2>
-          <p className="mb-6 text-sm text-white">{formatTodaysDate()}</p>
+          <p className="text-sm text-white">{formatTodaysDate()}</p>
         </div>
         {renderAttendanceStatus()}
       </CardContent>

@@ -1,31 +1,37 @@
-
-'use client';
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { PasswordInput } from '@/app/(auth)/auth/_components/PasswordInput';
-import { apiCaller } from '@/lib/auth';
-import { Icons } from '@/components/Icons';
-import { toast } from '@/hooks/use-toast';
+"use client";
+import { useState } from "react";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+    Form,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormControl,
+    FormMessage,
+} from "@/components/ui/form";
+import { PasswordInput } from "@/app/(auth)/auth/_components/PasswordInput";
+import { apiCaller } from "@/lib/auth";
+import { Icons } from "@/components/Icons";
+import { toast } from "@/hooks/use-toast";
+import { EmployeeProfileDetail } from "@/types/types";
+import { headers } from "next/headers";
 
 const employeeSchema = z.object({
-
-    first_name: z.string().min(1, 'Bank Name is required'),
+    bank_name: z.string().min(1, "Bank Name is required"),
     aadhar_number: z.string().optional(),
-    account_number: z.string().min(1, 'Account Number is required'),
-    pan_number: z.string().min(1, 'PAN Number is required'),
-    ifsc_code: z.string().min(1, 'IFSC Code is required'),
+    account_number: z.string().min(1, "Account Number is required"),
+    pan_number: z.string().min(1, "PAN Number is required"),
+    ifsc_code: z.string().min(1, "IFSC Code is required"),
     is_bank_kyc_done: z.boolean(),
-    pan_card_image: z.instanceof(File).optional(),
-    aadhaar_card_front_image: z.instanceof(File).optional(),
-    aadhaar_card_back_image: z.instanceof(File).optional(),
-    passbook_back_image: z.instanceof(File).optional(),
-    passbook_port_image: z.instanceof(File).optional(),
-    uan_number: z.string().optional(),
+    pan_card_image: z.union([z.instanceof(File), z.string()]).optional(),
+    aadhaar_card_front_image: z.union([z.instanceof(File), z.string()]).optional(),
+    aadhaar_card_back_image: z.union([z.instanceof(File), z.string()]).optional(),
+    passbook_back_image: z.union([z.instanceof(File), z.string()]).optional(),
+    passbook_port_image: z.union([z.instanceof(File), z.string()]).optional(),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -33,57 +39,31 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 interface AddBankDetailsProps {
     employee_id: string;
     onComplete: () => void;
+    employee?: EmployeeProfileDetail;
 }
 
-const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
+const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsProps) => {
     const [filePreviews, setFilePreviews] = useState<Record<string, string | ArrayBuffer | null>>({});
     const [employeeData, setEmployeeData] = useState<EmployeeFormValues | null>(null);
     const [isBankKycDone, setIsBankKycDone] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-
     const form = useForm<EmployeeFormValues>({
         resolver: zodResolver(employeeSchema),
         defaultValues: {
-
-            aadhar_number: '',
-            pan_number: '',
-            first_name: '',
-            account_number: '',
-            ifsc_code: '',
-            is_bank_kyc_done: false, // Default value set to false
-            pan_card_image: undefined,
-            aadhaar_card_front_image: undefined,
-            aadhaar_card_back_image: undefined,
-            passbook_back_image: undefined,
-            passbook_port_image: undefined,
-            uan_number: '',
+            aadhar_number: employee?.aadhar_number || "",
+            pan_number: employee?.pan_number || "",
+            bank_name: employee?.bank_name || "",
+            account_number: employee?.account_number || "",
+            ifsc_code: employee?.ifsc_code || "",
+            is_bank_kyc_done: employee?.is_bank_kyc_done || false,
+            pan_card_image: employee?.pan_card_image || undefined,
+            aadhaar_card_front_image: employee?.aadhaar_card_front_image || undefined,
+            aadhaar_card_back_image: employee?.aadhaar_card_back_image || undefined,
+            passbook_back_image: employee?.passbook_back_image || undefined,
+            passbook_port_image: employee?.passbook_port_image || undefined,
         },
     });
-
-    // useEffect(() => {
-    //     const fetchEmployeeData = async () => {
-    //         try {
-    //             const response = await apiCaller.get(`api/companies-app/company/add-employee/?employee_id=${employee_id}`);
-    //             const data = response.data;
-    //             console.log('employee_id:', employee_id); // Debugging line
-    //             form.reset({
-    //                 aadhar_number: data.aadhar_number || '',
-    //                 pan_number: data.pan_number || '',
-    //                 bank_name: data.bank_name || '',
-    //                 account_number: data.account_number || '',
-    //                 ifsc_code: data.ifsc_code || '',
-    //                 is_bank_kyc_done: data.is_bank_kyc_done,
-    //                 uan_number: data.uan_number || '',
-    //             });
-    //             setEmployeeData(data);
-    //             setIsBankKycDone(data.is_bank_kyc_done); // Update KYC status
-    //         } catch (error) {
-    //             console.error('Error fetching employee data:', error);
-    //         }
-    //     };
-    //     fetchEmployeeData();
-    // }, [employee_id, form]);
 
     const handleFileChange = (field: string, event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
@@ -97,74 +77,76 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
         }
     };
 
-
     const onSubmit = async (data: EmployeeFormValues) => {
         try {
             setIsLoading(true);
 
-            // Creating a FormData object
             const formData = new FormData();
-            formData.append('first_name', data.first_name || '');
-            formData.append('aadhar_number', data.aadhar_number || '');
-            formData.append('pan_number', data.pan_number || '');
-            formData.append('account_number', data.account_number || '');
-            formData.append('ifsc_code', data.ifsc_code || '');
-            formData.append('is_bank_kyc_done', String(data.is_bank_kyc_done));
-            formData.append('uan_number', data.uan_number || '');
+            formData.append("bank_name", data.bank_name || "");
+            formData.append("aadhar_number", data.aadhar_number || "");
+            formData.append("pan_number", data.pan_number || "");
+            formData.append("account_number", data.account_number || "");
+            formData.append("ifsc_code", data.ifsc_code || "");
+            formData.append("is_bank_kyc_done", String(data.is_bank_kyc_done));
 
-            // Append images if they exist
-            if (data.pan_card_image) formData.append('pan_card_image', data.pan_card_image);
-            if (data.aadhaar_card_front_image) formData.append('aadhaar_card_front_image', data.aadhaar_card_front_image);
-            if (data.aadhaar_card_back_image) formData.append('aadhaar_card_back_image', data.aadhaar_card_back_image);
-            if (data.passbook_back_image) formData.append('passbook_back_image', data.passbook_back_image);
-            if (data.passbook_port_image) formData.append('passbook_port_image', data.passbook_port_image);
+            if (data.pan_card_image) formData.append("pan_card_image", data.pan_card_image);
+            if (data.aadhaar_card_front_image)
+                formData.append("aadhaar_card_front_image", data.aadhaar_card_front_image);
+            if (data.aadhaar_card_back_image)
+                formData.append("aadhaar_card_back_image", data.aadhaar_card_back_image);
+            if (data.passbook_back_image)
+                formData.append("passbook_back_image", data.passbook_back_image);
+            if (data.passbook_port_image)
+                formData.append("passbook_port_image", data.passbook_port_image);
 
             // Sending a PATCH request with the formData
-            const response = await apiCaller.patch(`api/companies-app/company/add-employee/?employee_id=${employee_id}`, formData);
+            const response = await apiCaller.patch(
+                `api/companies-app/company/add-employee/?employee_id=${employee_id}`,
+                formData,
+            );
 
             toast({
                 description: "Employee Bank details updated successfully",
             });
 
-            console.log('Employee Bank details updated successfully:', response);
+            console.log("Employee Bank details updated successfully:", response);
             onComplete();
-
         } catch (error) {
             toast({
                 description: "Something went wrong while updating employee details",
                 variant: "destructive",
             });
 
-            console.error('Error updating employee details:', error);
-
+            console.error("Error updating employee details:", error);
         } finally {
             setIsLoading(false);
         }
     };
 
-
     const isFormDisabled = isBankKycDone;
-    const pan_card_image = "pan_card_image"; // Ensure this is a string representing the field name
-    const aadhaar_card_front_image = "aadhaar_card_front_image"; // Ensure this is a string representing the field name
-    const aadhaar_card_back_image = "aadhaar_card_back_image"; // Ensure this is a string representing the field name
-
+    const pan_card_image = "pan_card_image";
+    const aadhaar_card_front_image = "aadhaar_card_front_image";
+    const aadhaar_card_back_image = "aadhaar_card_back_image";
 
     return (
-        <div className="p-8 bg-white rounded-lg shadow-md max-w-4xl mx-auto mt-10">
+        <div className="mx-auto mt-10 max-w-4xl rounded-lg bg-white p-8 shadow-md">
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)}>
                     <div className="flex">
-                        <p className='w-40 font-semibold'>Bank details</p>
-                        <div className='grid grid-cols-1 gap-6 sm:grid-cols-1 mb-8 w-full'>
-
+                        <p className="w-40 font-semibold">Bank details</p>
+                        <div className="mb-8 grid w-full grid-cols-1 gap-6 sm:grid-cols-1">
                             <FormField
                                 control={form.control}
-                                name="first_name"
+                                name="bank_name"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Account Holder Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Enter Account name" {...field} disabled={isFormDisabled} />
+                                            <Input
+                                                placeholder="Enter Account name"
+                                                {...field}
+                                                disabled={isFormDisabled}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -176,7 +158,11 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Account Number</FormLabel>
-                                        <PasswordInput placeholder="Enter Account Number" {...field} disabled={isFormDisabled} />
+                                        <PasswordInput
+                                            placeholder="Enter Account Number"
+                                            {...field}
+                                            disabled={isFormDisabled}
+                                        />
                                         <FormMessage />
                                     </FormItem>
                                 )}
@@ -195,14 +181,11 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                 )}
                             />
                         </div>
-
-
                     </div>
 
-
                     <div className="flex">
-                        <p className='w-40 font-semibold'>Upload Documents</p>
-                        <div className='grid grid-cols-1 gap-6 sm:grid-cols-1 mb-8 w-full'>
+                        <p className="w-40 font-semibold">Upload Documents</p>
+                        <div className="mb-8 grid w-full grid-cols-1 gap-6 sm:grid-cols-1">
                             <FormField
                                 control={form.control}
                                 name="pan_number"
@@ -222,19 +205,17 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                 name="pan_card_image"
                                 render={({ field }) => (
                                     <FormItem className="mb-4">
-                                        <FormLabel>{field.name.replace(/_/g, ' ')}</FormLabel>
+                                        <FormLabel>{field.name.replace(/_/g, " ")}</FormLabel>
                                         <FormControl>
                                             <div>
-                                                <div className="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition">
-
+                                                <div className="flex h-48 w-72 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition hover:border-gray-400">
                                                     <div className="flex flex-col items-center justify-center">
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
-                                                            className="w-12 h-12 text-gray-400"
+                                                            className="h-12 w-12 text-gray-400"
                                                             fill="none"
                                                             viewBox="0 0 24 24"
-                                                            stroke="currentColor"
-                                                        >
+                                                            stroke="currentColor">
                                                             <path
                                                                 strokeLinecap="round"
                                                                 strokeLinejoin="round"
@@ -242,7 +223,8 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                                                 d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1m-7-4v-8m0 8l-2.29-2.29M12 16l2.29-2.29M12 4v4"
                                                             />
                                                         </svg>
-                                                        <Input className='border-none ms-10 cursor-pointer'
+                                                        <Input
+                                                            className="ms-10 cursor-pointer border-none"
                                                             type="file"
                                                             onChange={(e) => handleFileChange(pan_card_image, e)}
                                                             onBlur={field.onBlur}
@@ -251,11 +233,11 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                                         />
                                                     </div>
                                                 </div>
-                                                {filePreviews['pan_card_image'] && (
+                                                {filePreviews["pan_card_image"] && (
                                                     <img
-                                                        src={filePreviews['pan_card_image'] as string}
+                                                        src={filePreviews["pan_card_image"] as string}
                                                         alt="Pan Card Image Preview"
-                                                        className="w-20 h-20 object-cover mt-4 border border-gray-300 rounded-lg"
+                                                        className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
                                                     />
                                                 )}
                                             </div>
@@ -265,19 +247,21 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                 )}
                             />
 
-
                             <FormField
                                 control={form.control}
                                 name="aadhar_number"
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Aadhar Number</FormLabel>
-                                        <PasswordInput placeholder="**** **** **** ****" {...field} disabled={isFormDisabled} />
+                                        <PasswordInput
+                                            placeholder="**** **** **** ****"
+                                            {...field}
+                                            disabled={isFormDisabled}
+                                        />
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-
 
                             <div className="flex justify-between">
                                 <FormField
@@ -285,19 +269,17 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                     name="aadhaar_card_front_image"
                                     render={({ field }) => (
                                         <FormItem className="mb-4">
-                                            <FormLabel>{field.name.replace(/_/g, ' ')}</FormLabel>
+                                            <FormLabel>{field.name.replace(/_/g, " ")}</FormLabel>
                                             <FormControl>
                                                 <div>
-                                                    <div className="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition">
-
+                                                    <div className="flex h-48 w-72 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition hover:border-gray-400">
                                                         <div className="flex flex-col items-center justify-center">
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
-                                                                className="w-12 h-12 text-gray-400"
+                                                                className="h-12 w-12 text-gray-400"
                                                                 fill="none"
                                                                 viewBox="0 0 24 24"
-                                                                stroke="currentColor"
-                                                            >
+                                                                stroke="currentColor">
                                                                 <path
                                                                     strokeLinecap="round"
                                                                     strokeLinejoin="round"
@@ -305,19 +287,21 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                                                     d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1m-7-4v-8m0 8l-2.29-2.29M12 16l2.29-2.29M12 4v4"
                                                                 />
                                                             </svg>
-                                                            <Input className='border-none ms-10 cursor-pointer'
+                                                            <Input
+                                                                className="ms-10 cursor-pointer border-none"
                                                                 type="file"
                                                                 onChange={(e) => handleFileChange(aadhaar_card_front_image, e)}
                                                                 onBlur={field.onBlur}
                                                                 ref={field.ref}
                                                                 disabled={isFormDisabled}
-                                                            />                                                        </div>
+                                                            />{" "}
+                                                        </div>
                                                     </div>
-                                                    {filePreviews['pan_card_image'] && (
+                                                    {filePreviews["aadhaar_card_front_image"] && (
                                                         <img
-                                                            src={filePreviews['pan_card_image'] as string}
+                                                            src={filePreviews["aadhaar_card_front_image"] as string}
                                                             alt="Pan Card Image Preview"
-                                                            className="w-20 h-20 object-cover mt-4 border border-gray-300 rounded-lg"
+                                                            className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
                                                         />
                                                     )}
                                                 </div>
@@ -331,19 +315,17 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                     name="aadhaar_card_back_image"
                                     render={({ field }) => (
                                         <FormItem className="mb-4">
-                                            <FormLabel>{field.name.replace(/_/g, ' ')}</FormLabel>
+                                            <FormLabel>{field.name.replace(/_/g, " ")}</FormLabel>
                                             <FormControl>
                                                 <div>
-                                                    <div className="flex flex-col items-center justify-center w-72 h-48 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 transition">
-
+                                                    <div className="flex h-48 w-72 cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition hover:border-gray-400">
                                                         <div className="flex flex-col items-center justify-center">
                                                             <svg
                                                                 xmlns="http://www.w3.org/2000/svg"
-                                                                className="w-12 h-12 text-gray-400"
+                                                                className="h-12 w-12 text-gray-400"
                                                                 fill="none"
                                                                 viewBox="0 0 24 24"
-                                                                stroke="currentColor"
-                                                            >
+                                                                stroke="currentColor">
                                                                 <path
                                                                     strokeLinecap="round"
                                                                     strokeLinejoin="round"
@@ -351,19 +333,21 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                                                     d="M3 16v-1a4 4 0 014-4h10a4 4 0 014 4v1m-7-4v-8m0 8l-2.29-2.29M12 16l2.29-2.29M12 4v4"
                                                                 />
                                                             </svg>
-                                                            <Input className='border-none ms-10 cursor-pointer'
+                                                            <Input
+                                                                className="ms-10 cursor-pointer border-none"
                                                                 type="file"
                                                                 onChange={(e) => handleFileChange(aadhaar_card_back_image, e)}
                                                                 onBlur={field.onBlur}
                                                                 ref={field.ref}
                                                                 disabled={isFormDisabled}
-                                                            />                                                        </div>
+                                                            />{" "}
+                                                        </div>
                                                     </div>
-                                                    {filePreviews['pan_card_image'] && (
+                                                    {filePreviews["aadhaar_card_back_image"] && (
                                                         <img
-                                                            src={filePreviews['pan_card_image'] as string}
+                                                            src={filePreviews["aadhaar_card_back_image"] as string}
                                                             alt="Pan Card Image Preview"
-                                                            className="w-20 h-20 object-cover mt-4 border border-gray-300 rounded-lg"
+                                                            className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
                                                         />
                                                     )}
                                                 </div>
@@ -372,18 +356,16 @@ const AddBankDetails = ({ employee_id, onComplete }: AddBankDetailsProps) => {
                                         </FormItem>
                                     )}
                                 />
-
                             </div>
+                            <Button type="submit" disabled={isLoading} className="mb-5 justify-self-start">
+                                {isLoading && <Icons.loader />}Save and Continue
+                            </Button>
                         </div>
                     </div>
-                    <Button type="submit" disabled={isFormDisabled} className="mb-5 float-end">{isLoading && <Icons.loader />}Save and Continue</Button>
                 </form>
             </Form>
-
-
-        </div >
+        </div>
     );
 };
 
 export default AddBankDetails;
-

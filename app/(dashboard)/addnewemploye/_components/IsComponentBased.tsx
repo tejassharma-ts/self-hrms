@@ -20,8 +20,10 @@ import { toast } from "@/hooks/use-toast";
 import useEmployeeStore from "@/model/employee";
 import { Icons } from "@/components/Icons";
 
-const GrossSalarySchema = z.object({
-  gross_salary: z.string(),
+const ComponentSalarySchema = z.object({
+  basic_salary: z.string(),
+  hra: z.string(),
+  allowances: z.string(),
   medical: z.string(),
   lta: z.string(),
   gratuity: z.string().optional(),
@@ -34,16 +36,18 @@ const GrossSalarySchema = z.object({
   has_pf: z.boolean().optional(),
 });
 
-type GrossSalaryFormValues = z.infer<typeof GrossSalarySchema>;
+type ComponentSalaryFormValues = z.infer<typeof ComponentSalarySchema>;
 
-const IsGrossBased = () => {
+const IsComponentBased = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { employee_id } = useEmployeeStore();
 
-  const form = useForm<GrossSalaryFormValues>({
-    resolver: zodResolver(GrossSalarySchema),
+  const form = useForm<ComponentSalaryFormValues>({
+    resolver: zodResolver(ComponentSalarySchema),
     defaultValues: {
-      gross_salary: "",
+      basic_salary: "",
+      hra: "",
+      allowances: "",
       medical: "",
       lta: "",
       gratuity: "",
@@ -57,14 +61,16 @@ const IsGrossBased = () => {
     },
   });
 
-  async function onSubmit(data: GrossSalaryFormValues) {
+  async function onSubmit(data: ComponentSalaryFormValues) {
     try {
       setIsLoading(true);
 
       const requestBody = {
         employee: employee_id,
-        is_gross_based: true,
-        gross_salary: parseFloat(data.gross_salary),
+        is_component_based: true,
+        basic_salary: parseFloat(data.basic_salary),
+        hra: parseFloat(data.hra || "0"),
+        allowances: parseFloat(data.hra || "0"),
         medical: parseFloat(data.medical),
         lta: parseFloat(data.lta),
         gratuity: parseFloat(data.gratuity || "0"),
@@ -79,7 +85,7 @@ const IsGrossBased = () => {
 
       await apiCaller.post("/api/payroll_app/salary-structures/", requestBody);
       toast({
-        description: "Salary successfully added",
+        description: "Component-based salary successfully added",
       });
     } catch (err) {
       console.error(err);
@@ -98,12 +104,36 @@ const IsGrossBased = () => {
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
           <FormField
             control={form.control}
-            name="gross_salary"
+            name="basic_salary"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Gross Salary</FormLabel>
+                <FormLabel>Basic Salary</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter gross salary" {...field} />
+                  <Input placeholder="Enter basic salary" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="hra"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>HRA</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter HRA" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="allowances"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Allowance</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter  allowance" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -115,7 +145,7 @@ const IsGrossBased = () => {
               <FormItem>
                 <FormLabel>Medical</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter medical " {...field} />
+                  <Input placeholder="Enter medical" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -127,7 +157,7 @@ const IsGrossBased = () => {
               <FormItem>
                 <FormLabel>LTA</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter LTA" {...field} />
+                  <Input placeholder="Enter lta" {...field} />
                 </FormControl>
               </FormItem>
             )}
@@ -261,13 +291,13 @@ const IsGrossBased = () => {
                 <FormControl>
                   <input
                     type="checkbox"
-                    id="has_esi"
+                    id="has_pf"
                     checked={field.value}
                     onChange={field.onChange}
                   />
                 </FormControl>
                 <div className="space-y-1 leading-none">
-                  <FormLabel htmlFor="has_esi">PF</FormLabel>
+                  <FormLabel htmlFor="">pf</FormLabel>
                 </div>
               </FormItem>
             )}
@@ -283,4 +313,4 @@ const IsGrossBased = () => {
     </Form>
   );
 };
-export default IsGrossBased;
+export default IsComponentBased;

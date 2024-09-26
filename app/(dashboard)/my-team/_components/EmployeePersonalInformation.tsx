@@ -1,13 +1,8 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { EmployeeDetailsCardHeader } from "@/app/(dashboard)/my-team/_components/EmployeeDetailsCardHeader";
-import { EmployeeProfile } from "@/types/types";
 
-export const EmployeePersonalInformation = ({
-  employeeProfile,
-}: {
-  employeeProfile: EmployeeProfile;
-}) => {
+export const EmployeePersonalInformation = ({ employeeProfile }: { employeeProfile: any }) => {
   const personalInformationFields = [
     {
       name: "Name",

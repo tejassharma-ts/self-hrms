@@ -5,6 +5,7 @@ import { getFullName } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
 import { cookies } from "next/headers";
 import { format } from "date-fns";
+import { YearMonthSelector } from "./YearMonthSelector";
 
 async function getNewHire() {
   try {
@@ -32,9 +33,10 @@ export default async function NewHiresCard() {
   return (
     <Card className="mx-auto h-48 w-full max-w-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 px-4">
-        <CardTitle className="flex items-center justify-between text-[21px] font-bold w-full">
+        <CardTitle className="flex w-full items-center justify-between text-[21px] font-bold">
           <span>New Hires</span>
-          <span className="text-xs">{format(new Date(), "MMMM, yyyy")}</span>
+          <YearMonthSelector />
+          {/* <span className="text-xs">{format(new Date(), "MMMM, yyyy")}</span> */}
         </CardTitle>
       </CardHeader>
       <CardContent>

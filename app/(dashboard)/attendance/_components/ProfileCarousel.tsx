@@ -143,17 +143,17 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({
   return (
     <div className="">
       <div className="mb-4 flex gap-4">
-        <Select onValueChange={setFilter}>
+        <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="w-fit gap-2 rounded-full bg-black text-white">
             <SelectValue placeholder="Filter" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Departments</SelectItem>
-            {uniqueDepartments.map((dept: any) => (
-              <SelectItem key={dept} value={dept}>
-                {dept}
-              </SelectItem>
-            ))}
+            {/* {uniqueDepartments.map((dept: any) => ( */}
+            {/*   <SelectItem key={dept} value={dept}> */}
+            {/*     {dept} */}
+            {/*   </SelectItem> */}
+            {/* ))} */}
           </SelectContent>
         </Select>
       </div>
