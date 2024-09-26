@@ -24,6 +24,12 @@ export const getMonthNumber = (month: string) => {
   if (month) return months.indexOf(month) + 1;
 };
 
+export const getMonthNameFromNumber = (monthNumber: number) => {
+  if (monthNumber) {
+    return months[monthNumber];
+  }
+};
+
 export function formatTodaysDate() {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = [

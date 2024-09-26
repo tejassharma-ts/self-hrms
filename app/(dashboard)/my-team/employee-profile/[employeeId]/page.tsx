@@ -19,101 +19,17 @@ import {
   Payroll,
 } from "@/types/types";
 import { getMonthNumber } from "@/lib/utils";
-import { cookies } from "next/headers";
+import { leaveData } from "@/app/(dashboard)/my-team/_data/dummyData";
 
 type params = {
   employeeId: string;
 };
 
-type SearchParams = {
-  tab?: string;
-  month?: string;
-  year?: number;
-};
-
-async function fetchEmployeeData(employeeId: string, month?: number, year?: number) {
-  const [employeeProfile, leaves, attendance, bonuses, deductions, expenses, payroll] =
-    await Promise.all([
-      apiCaller.get<Employee>("/api/companies-app/company/employee-detail/", {
-        params: { employee_id: employeeId },
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-      }),
-      apiCaller.get<LeavesResponse>("/api/companies-app/company/leaves/", {
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-        params: { employee_id: employeeId, month, year },
-      }),
-      apiCaller.get("/api/companies-app/employee/attendance/", {
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-        params: { employee_id: employeeId, month, year },
-      }),
-      apiCaller.get<Bonuses>("/api/companies-app/employee-bonus-get/", {
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-        params: { employee_id: employeeId, month, year },
-      }),
-      apiCaller.get<Deductions>("/api/companies-app/employee-deduction-get/", {
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-        params: { employee_id: employeeId, month, year },
-      }),
-      apiCaller.get("/api/payroll_app/expenses-details/", {
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-        params: { employee_id: employeeId, month, year },
-      }),
-      apiCaller.get("/api/payroll_app/payrolls/", {
-        headers: {
-          Cookie: cookies()
-            .getAll()
-            .map(({ name, value }) => `${name}=${value}`)
-            .join("; "),
-        },
-        params: { employee_id: employeeId, month, year },
-      }),
-    ]);
-
-  return {
-    employeeProfile: employeeProfile.data,
-    leaves: leaves.data,
-    attendance: attendance.data,
-    bonuses: bonuses.data,
-    deductions: deductions.data,
-    expenses: expenses.data,
-    payroll: payroll.data,
-  };
-}
-
 interface EmployeeProfileSearchParams {
   tab: string;
   month: string;
   year: number;
+  category?: string;
 }
 
 interface EmployeeProfileApiProps {
@@ -226,8 +142,8 @@ async function getLeavesOfEmployee({ employeeId, month, year }: EmployeeProfileA
     });
     return res.data;
   } catch (err) {
-
-    throw new Error(`Error getLeavesOfEmployee: ${err}`);
+    // TODO: Uncomment this once API starts working.
+    // throw new Error("Error getting leaves of employee");
   }
 }
 
@@ -237,7 +153,6 @@ const EmployeeProfilePage = async ({
 }: {
   searchParams: EmployeeProfileSearchParams;
   params: params;
-
 }) => {
   const { month, year, tab } = searchParams;
   const monthNumber = month && getMonthNumber(month);
@@ -252,36 +167,18 @@ const EmployeeProfilePage = async ({
     month: updatedMonth,
     year: updatedYear,
   });
-  const leaves: LeavesResponse = await getLeavesOfEmployee({
-    employeeId,
-    month: updatedMonth,
-    year: updatedYear,
-  });
-  const attendance = await getEmployeeAttendance({
-    employeeId,
-    month: updatedMonth,
-    year: updatedYear,
-  });
-  const bonuses: Bonuses = await getEmployeeBonus({
-    employeeId,
-    month: updatedMonth,
-    year: updatedYear,
-  });
-  const deductions: Deductions = await getEmployeeDeductions({
-    employeeId,
-    month: updatedMonth,
-    year: updatedYear,
-  });
-  const expenses: ExpensesDetails[] = await getEmployeeExpenses({
-    employeeId,
-    month: updatedMonth,
-    year: updatedYear,
-  });
-  const payroll: Payroll = await getEmployeePayroll({
-    employeeId,
-    month: updatedMonth,
-    year: updatedYear,
-  });
+  let historyData = null;
+  if (tab === "history") {
+    const [leaves, attendance, bonuses, deductions, expenses, payroll] = await Promise.all([
+      getLeavesOfEmployee({ employeeId, month: updatedMonth, year: updatedYear }),
+      getEmployeeAttendance({ employeeId, month: updatedMonth, year: updatedYear }),
+      getEmployeeBonus({ employeeId, month: updatedMonth, year: updatedYear }),
+      getEmployeeDeductions({ employeeId, month: updatedMonth, year: updatedYear }),
+      getEmployeeExpenses({ employeeId, month: updatedMonth, year: updatedYear }),
+      getEmployeePayroll({ employeeId, month: updatedMonth, year: updatedYear }),
+    ]);
+    historyData = { leaves, attendance, bonuses, deductions, expenses, payroll };
+  }
 
   return (
     <div>
@@ -315,16 +212,16 @@ const EmployeeProfilePage = async ({
               <AccountDetails employeeProfile={employeeProfile} />
             </CardContent>
           )}
-          {tab === "history" && (
+          {tab === "history" && historyData && (
             <CardContent>
               <HistoryDetails
-                expenses={expenses}
-                deductions={deductions}
-                bonuses={bonuses}
-                attendance={attendance}
-                leaves={leaves}
+                expenses={historyData?.expenses}
+                deductions={historyData?.deductions}
+                bonuses={historyData?.bonuses}
+                attendance={historyData?.attendance}
+                leaves={historyData.leaves ? historyData.leaves : leaveData}
                 employeeProfile={employeeProfile}
-                payrollData={payroll}
+                payrollData={historyData?.payroll}
               />
             </CardContent>
           )}

@@ -23,7 +23,7 @@ export const HistoryTabs = ({ employeeId }: { employeeId: string }) => {
   ];
 
   const handleTabClick = (href: string) => {
-    router.push(href);
+    router.replace(href);
   };
 
   const handleTableClick = () => {
@@ -41,7 +41,7 @@ export const HistoryTabs = ({ employeeId }: { employeeId: string }) => {
           <Button
             key={index}
             className={`border bg-transparent ${
-              currentCategory === button.href.split("category=")[1]
+              currentCategory === button.name.toLowerCase()
                 ? "bg-black text-white"
                 : "text-gray-400 hover:bg-transparent"
             }`}
@@ -56,7 +56,7 @@ export const HistoryTabs = ({ employeeId }: { employeeId: string }) => {
             onClick={handleTableClick}
             className={cn(
               "bg-transparent text-black hover:bg-transparent",
-              currentAttendanceView === "table" && "bg-black text-white",
+              currentAttendanceView === "table" && "bg-black text-white hover:bg-black",
             )}>
             <AlignJustify />
           </Button>
@@ -64,7 +64,7 @@ export const HistoryTabs = ({ employeeId }: { employeeId: string }) => {
             onClick={handleCalendarClick}
             className={cn(
               "bg-transparent text-black hover:bg-transparent",
-              currentAttendanceView === "calendar" && "bg-black text-white",
+              currentAttendanceView === "calendar" && "bg-black text-white hover:bg-black",
             )}>
             <CalendarDays />
           </Button>
