@@ -19,10 +19,10 @@ async function getCompany() {
   } catch (_) {}
 }
 async function CompanyProfileLayout({ children }: { children: ReactNode }) {
-  const company = await getCompany();
-  if (company) {
-    redirect("/dashboard");
-  }
+  // const company = await getCompany();
+  // if (company) {
+  //   redirect("/dashboard");
+  // }
   return <AuthProvider>{children}</AuthProvider>;
 }
 
