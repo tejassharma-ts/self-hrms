@@ -45,10 +45,26 @@ export const HistoryDetails = ({
   return (
     <div className={"container"}>
       <div className={"flex items-center justify-between"}>
-        <h1 className={"text-2xl font-bold"}>
-          Leave Balance for september : {leaves.employee_leave_stats.total_leaves_per_year}
-        </h1>
-        <div className={"flex gap-x-2"}>
+        {category === "leaves" && (
+          <div>
+            <h1 className={"text-nowrap text-xl font-bold"}>
+              Casual Leave balance : {leaves?.employee_leave_stats.total_casual_leaves}
+            </h1>
+            <h1 className={"text-nowrap text-xl font-bold"}>
+              Privilege Leave Balance : {leaves?.employee_leave_stats.privilege_leave_balance}
+            </h1>
+            <h1 className={"text-nowrap text-xl font-bold"}>
+              Sick Leave Balance : {leaves?.employee_leave_stats.sick_leave_balance}
+            </h1>
+            <h1 className={"text-nowrap text-xl font-bold"}>
+              Total Sick leaves : {leaves?.employee_leave_stats.total_sick_leaves}
+            </h1>
+            <h1 className={"text-nowrap text-xl font-bold"}>
+              Used privilege leaves : {leaves?.employee_leave_stats.used_privilege_leaves}
+            </h1>
+          </div>
+        )}
+        <div className={"flex w-full justify-end gap-x-2"}>
           <MonthFilter />
           <YearFilter />
         </div>
@@ -56,7 +72,7 @@ export const HistoryDetails = ({
       <HistoryTabs employeeId={employeeId} />
       <div className={"max-w-[70rem]"}>
         {category === "leaves" && (
-          <LeaveRequestTable leaveRequestTableData={leaves.leaves_request} />
+          <LeaveRequestTable leaveRequestTableData={leaves?.leaves_request} />
         )}
         {category === "attendance" && <AttendanceTable attendance={attendance} />}
         {category === "bonus" && <BonusTable bonuses={bonuses} />}

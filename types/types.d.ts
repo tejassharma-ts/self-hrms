@@ -31,9 +31,9 @@ interface Employee {
   last_name: string;
   profile_picture: string;
   department: string;
-  position: string;
+  position?: string;
   email: string;
-  name: string;
+  phone_number?: string;
 }
 
 interface expense {
@@ -104,14 +104,20 @@ type LeaveRequest = {
   status: "Pending" | "Approved" | "Rejected";
   applied_at: string;
   reviewed_at: string | null;
+  leave_duration: number | null;
   rejection_reason: string | null;
   company: string;
   reviewer: string | null;
 };
 
 type EmployeeLeaveStats = {
-  total_leaves_per_year: number;
-  used_leaves: number;
+  total_casual_leaves: number;
+  casual_leave_balance: number;
+  total_sick_leaves: number;
+  sick_leave_balance: number;
+  privilege_leave_balance: number;
+  total_privilege_leaves: number;
+  used_privilege_leaves: number;
 };
 
 type LeavesResponse = {
@@ -121,7 +127,6 @@ type LeavesResponse = {
 };
 
 type Attendance = {
-  employees: any;
   employee: string;
   company: string;
   date: string;
@@ -193,8 +198,6 @@ interface Payroll {
   company: string;
   salary_structure: string;
   bonus?: string;
-  basic_salary?: string;
-  slip_sent_status: boolean;
   monthly_bonus?: string;
 }
 
@@ -232,47 +235,3 @@ interface ExpensesDetails extends expense {
   rejection_reason: string | null;
   company: string;
 }
-
-type EmployeeProfileDetail = {
-  id: string;
-  company_name: string;
-  company_lat: string;
-  company_long: string;
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
-  phone_number: string;
-  address: string | null;
-  date_of_birth: string;
-  position: string;
-  date_joined: string;
-  salary: string;
-  is_active: boolean;
-  is_hr: boolean;
-  created_at: string;
-  updated_at: string;
-  department: string;
-  profile_picture: string | null;
-  bank_name: string | null;
-  account_number: string | null;
-  ifsc_code: string | null;
-  aadhar_number: string | null;
-  pan_number: string | null;
-  gender: string | null;
-  total_leaves_per_year: number;
-  used_leaves: number;
-  is_bank_kyc_done: boolean;
-  pan_card_image: string | null;
-  aadhaar_card_front_image: string | null;
-  aadhaar_card_back_image: string | null;
-  passbook_back_image: string | null;
-  passbook_port_image: string | null;
-  emergency_phone_number: string | null;
-  official_phone_number: string | null;
-  official_email: string | null;
-  uan_number: string | null;
-  user: string;
-  company: string;
-  permanent_address: string | null;
-};

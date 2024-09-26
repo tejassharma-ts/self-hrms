@@ -8,7 +8,6 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const currentTab = searchParams.get("tab");
-
   const tabLinks = [
     {
       name: "Person Details",
@@ -50,7 +49,9 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
               onClick={() => handleTabClick(tab.href)}
               key={tab.name}
               className={`flex cursor-pointer items-center gap-x-2 text-nowrap text-sm font-bold ${
-                currentTab === tab.href.split("=")[1] ? "text-black" : "text-gray-500"
+                currentTab === tab.href.split("=")[1]?.split("&")[0]
+                  ? "text-black"
+                  : "text-gray-500"
               } hover:text-black`}>
               <span>{tab.icon}</span>
               <p>{tab.name}</p>

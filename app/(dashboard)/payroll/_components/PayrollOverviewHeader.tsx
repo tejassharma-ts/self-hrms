@@ -3,6 +3,7 @@ import { BonusesAndDeductionsCard } from "../_components/BonusesAndDeductionsCar
 import { PencilLine } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExpenseCard } from "@/app/(dashboard)/expenses/_components/ExpenseCard";
+import { getMonthNameFromNumber } from "@/lib/utils";
 
 export const PayrollOverviewHeader = ({
   totalDeductions,
@@ -11,6 +12,10 @@ export const PayrollOverviewHeader = ({
   totalDeductions: string | null;
   bonus?: string;
 }): React.ReactNode => {
+  const currentDate = new Date().getDate();
+  const currentMonthNumber = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const currentMonthName = getMonthNameFromNumber(currentMonthNumber);
   return (
     <>
       <div className={"mb-10 grid grid-cols-4 gap-4"}>
@@ -20,14 +25,15 @@ export const PayrollOverviewHeader = ({
           }>
           <CardContent className="flex h-full flex-col justify-between p-6">
             <div className={"flex items-center gap-x-2"}>
-              <h2 className="text-md font-semibold text-gray-400">Upcoming Payroll</h2>
+              <h2 className="text-md font-semibold text-gray-400">This Month's Payroll</h2>
               <span className={"cursor-pointer text-white"}>
                 <PencilLine />
               </span>
             </div>
 
             <h2 className="mb-2 text-xl font-bold text-white">
-              September 1st , <span className={"text-lg opacity-35"}>2024</span>
+              {currentMonthName} {currentDate} ,{" "}
+              <span className={"text-lg opacity-35"}>{currentYear}</span>
             </h2>
           </CardContent>
         </Card>
