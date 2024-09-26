@@ -17,16 +17,15 @@ import { PasswordInput } from "@/app/(auth)/auth/_components/PasswordInput";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { toast } from "@/hooks/use-toast";
-import { EmployeeProfileDetail } from "@/types/types";
 import { headers } from "next/headers";
 
 const employeeSchema = z.object({
-  bank_name: z.string().min(1, "Bank Name is required"),
+  bank_name: z.string().min(1, "Bank Name is required").optional(),
   aadhar_number: z.string().optional(),
-  account_number: z.string().min(1, "Account Number is required"),
-  pan_number: z.string().min(1, "PAN Number is required"),
-  ifsc_code: z.string().min(1, "IFSC Code is required"),
-  is_bank_kyc_done: z.boolean(),
+  account_number: z.string().min(1, "Account Number is required").optional(),
+  pan_number: z.string().min(1, "PAN Number is required").optional(),
+  ifsc_code: z.string().min(1, "IFSC Code is required").optional(),
+  is_bank_kyc_done: z.boolean().optional(),
   pan_card_image: z.union([z.instanceof(File), z.string()]).optional(),
   aadhaar_card_front_image: z.union([z.instanceof(File), z.string()]).optional(),
   aadhaar_card_back_image: z.union([z.instanceof(File), z.string()]).optional(),
@@ -39,7 +38,7 @@ type EmployeeFormValues = z.infer<typeof employeeSchema>;
 interface AddBankDetailsProps {
   employee_id: string;
   onComplete: () => void;
-  employee?: EmployeeProfileDetail;
+  employee?: any;
 }
 
 const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsProps) => {

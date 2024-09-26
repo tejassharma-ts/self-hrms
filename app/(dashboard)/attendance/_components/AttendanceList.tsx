@@ -12,7 +12,7 @@ import {
 import { Attendance } from "@/types/types";
 
 type AttendanceListProps = {
-  attendances: Attendance;
+  attendances: any;
 };
 
 export default function AttendanceList({ attendances }: AttendanceListProps) {

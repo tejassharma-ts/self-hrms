@@ -21,11 +21,11 @@ import useEmployeeStore from "@/model/employee";
 import { Icons } from "@/components/Icons";
 
 const ComponentSalarySchema = z.object({
-  basic_salary: z.string(),
-  hra: z.string(),
-  allowances: z.string(),
-  medical: z.string(),
-  lta: z.string(),
+  basic_salary: z.string().optional(),
+  hra: z.string().optional(),
+  allowances: z.string().optional(),
+  medical: z.string().optional(),
+  lta: z.string().optional(),
   gratuity: z.string().optional(),
   has_bonus: z.boolean().optional(),
   has_conveyance: z.boolean().optional(),
@@ -38,26 +38,26 @@ const ComponentSalarySchema = z.object({
 
 type ComponentSalaryFormValues = z.infer<typeof ComponentSalarySchema>;
 
-const IsComponentBased = () => {
+const IsComponentBased = ({ salaryStructure }: { salaryStructure: any }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { employee_id } = useEmployeeStore();
 
   const form = useForm<ComponentSalaryFormValues>({
     resolver: zodResolver(ComponentSalarySchema),
     defaultValues: {
-      basic_salary: "",
-      hra: "",
-      allowances: "",
-      medical: "",
-      lta: "",
-      gratuity: "",
-      has_bonus: false,
-      has_conveyance: false,
-      has_hra: false,
-      has_allowances: false,
-      has_special_allowance: false,
-      has_esi: false,
-      has_pf: false,
+      basic_salary: salaryStructure?.basic_salary || "",
+      hra: salaryStructure?.hra || "",
+      allowances: salaryStructure?.allowances || "",
+      medical: salaryStructure?.medical || "",
+      lta: salaryStructure?.lta || "",
+      gratuity: salaryStructure?.gratuity || "",
+      has_bonus: salaryStructure?.has_bonus || false,
+      has_conveyance: salaryStructure?.has_conveyance || false,
+      has_hra: salaryStructure?.has_hra || false,
+      has_allowances: salaryStructure?.has_allowances || false,
+      has_special_allowance: salaryStructure?.has_special_allowance || false,
+      has_esi: salaryStructure?.has_esi || false,
+      has_pf: salaryStructure?.has_pf || false,
     },
   });
 
@@ -68,12 +68,12 @@ const IsComponentBased = () => {
       const requestBody = {
         employee: employee_id,
         is_component_based: true,
-        basic_salary: parseFloat(data.basic_salary),
-        hra: parseFloat(data.hra || "0"),
-        allowances: parseFloat(data.hra || "0"),
-        medical: parseFloat(data.medical),
-        lta: parseFloat(data.lta),
-        gratuity: parseFloat(data.gratuity || "0"),
+        basic_salary: data.basic_salary,
+        hra: data.hra || "0",
+        allowances: data.hra || "0",
+        medical: data.medical,
+        lta: data.lta,
+        gratuity: data.gratuity || "0",
         has_bonus: data.has_bonus,
         has_conveyance: data.has_conveyance,
         has_hra: data.has_hra,

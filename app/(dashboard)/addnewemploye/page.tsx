@@ -26,13 +26,34 @@ async function getEmployeeProfile(employeeID: string) {
     console.log("err", err);
   }
 }
+
+async function getSalaryStructure(employeeID: string) {
+  try {
+    const res = await apiCaller("/api/payroll_app/detail-salary-structures/", {
+      params: {
+        employee_id: employeeID,
+      },
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log(err);
+  }
+}
 export default async function NewEmployeePage({ searchParams }: NewEmployeePageProps) {
   const { employeeID } = searchParams;
 
   let employee;
+  let salaryStructure;
   if (employeeID) {
     employee = await getEmployeeProfile(employeeID);
+    salaryStructure = await getSalaryStructure(employeeID);
   }
 
-  return <StepperForms employee={employee} />;
+  return <StepperForms employee={employee} salaryStructure={salaryStructure} />;
 }

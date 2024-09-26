@@ -25,7 +25,7 @@ interface Attendance {
 }
 
 interface AttendanceDashboardProps {
-  employee: Employee;
+  employee: any;
   attendances: Attendance[];
   selectedMonth: any;
   setSelectedMonth: any;

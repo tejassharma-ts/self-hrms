@@ -6,9 +6,14 @@ import AddNewEmployeeForm from "./AddNewEmployeeForm";
 import SalaryDetailsForm from ".//SalaryDetailsForm";
 import AddBankDetails from "./AddBankdetails";
 import useEmployeeStore from "@/model/employee";
-import { EmployeeProfile, EmployeeProfileDetail } from "@/types/types";
 
-export default function StepperForms({ employee }: { employee?: EmployeeProfileDetail }) {
+export default function StepperForms({
+  employee,
+  salaryStructure,
+}: {
+  employee?: any;
+  salaryStructure?: any;
+}) {
   const [currentStep, setCurrentStep] = useState(1);
   const [formsCompleted, setFormsCompleted] = useState({
     employeeForm: false,
@@ -102,7 +107,7 @@ export default function StepperForms({ employee }: { employee?: EmployeeProfileD
             employee={employee}
           />
         )}
-        {currentStep === 3 && <SalaryDetailsForm />}
+        {currentStep === 3 && <SalaryDetailsForm salaryStructure={salaryStructure} />}
       </div>
     </div>
   );

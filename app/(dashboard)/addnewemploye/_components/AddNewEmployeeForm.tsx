@@ -27,7 +27,6 @@ import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Icons } from "@/components/Icons";
 import useEmployeeStore from "@/model/employee";
-import { EmployeeProfileDetail } from "@/types/types";
 import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
 
@@ -72,7 +71,7 @@ const AddNewEmployeeForm = ({
 }: {
   onComplete: any;
   setForms: any;
-  employee?: EmployeeProfileDetail;
+  employee?: any;
 }) => {
   const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();

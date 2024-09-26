@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 async function getPayrollOverview() {
   try {
-    const res = await apiCaller.get<Payroll[]>("/api/payroll_app/payrolls/", {
+    const res = await apiCaller.get("/api/payroll_app/payrolls/", {
       headers: {
         Cookie: cookies()
           .getAll()
@@ -25,7 +25,7 @@ async function getPayrollOverview() {
 }
 
 const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
-  const payrollData: Payroll[] = await getPayrollOverview();
+  const payrollData: any = await getPayrollOverview();
 
   return (
     <div className={"container w-full"}>
