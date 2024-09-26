@@ -11,13 +11,13 @@ export const EmployeeDocuments = ({ employeeProfile }: { employeeProfile: any })
           <div className={"flex w-1/2 flex-col items-start gap-y-10"}>
             <div className={"mx-10 flex flex-col gap-y-2 font-semibold"}>
               <h3 className={"text-gray-500"}>Pan Card Details</h3>
-              <p>{employeeProfile.pan_number}</p>
+              <p>{employeeProfile.pan_number || "N/A"}</p>
             </div>
           </div>
           <div className={"flex w-1/2 flex-col items-start gap-y-10"}>
             <div className={"mx-10 flex flex-col gap-y-2 font-semibold"}>
               <h3 className={"text-gray-500"}>Aadhar Card Details</h3>
-              <p>{employeeProfile.aadhar_number}</p>
+              <p>{employeeProfile.aadhar_number || "N/A"}</p>
             </div>
           </div>
         </div>

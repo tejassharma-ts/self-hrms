@@ -37,13 +37,14 @@ const PayrollHistoryPage = async ({
 }): Promise<React.ReactNode> => {
   const { year, id } = searchParams;
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");
-  const payrollData: Payroll[] = await getPayroll({ year, id });
+  const payrollData: any = await getPayroll({ year, id });
+
   return (
     <div className={"container w-full"}>
-      <PayrollHeader payrollData={payrollData} />
+      <PayrollHeader payrollData={payrollData.results.payrolls} />
       {!showPayrollHistory ? (
         <div>
-          <PayrollTable payrollData={payrollData} />
+          <PayrollTable payrollData={payrollData.results.payrolls} />
         </div>
       ) : (
         <div>

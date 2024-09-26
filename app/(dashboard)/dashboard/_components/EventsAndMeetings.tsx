@@ -1,4 +1,4 @@
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddNewEvent from "../_modals/AddNewEvent";
 // import { getAuthCookies } from "@/lib/server/api";
@@ -7,6 +7,7 @@ import { formatISOToTime } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
 import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
 import { cookies } from "next/headers";
+import { setRequestMeta } from "next/dist/server/request-meta";
 
 async function getAllMeetings() {
   try {
@@ -39,17 +40,19 @@ export default async function EventsAndMeetings() {
 
   return (
     <>
-      <Card className="h-[407px] w-full max-w-md">
+      <Card className="relative w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Events and Meetings</CardTitle>
         </CardHeader>
         <CardContent>
           {meetings.length ? (
-            <ScrollArea className="h-[230px] pr-4">
+            <ScrollArea className="h-[150px] pr-4">
               {meetings.map((meeting, index) => (
                 <div key={index} className="mb-4 flex items-center justify-between">
                   <div>
-                    <h3 className="text-sm font-medium">{meeting.title}</h3>
+                    <a href={meeting.add_link} className="text-sm font-medium">
+                      {meeting.title}
+                    </a>
                     <p className="text-xs text-muted-foreground">{meeting.description}</p>
                   </div>
                   <span className="text-xs font-medium">{formatISOToTime(meeting.date)}</span>
@@ -65,9 +68,9 @@ export default async function EventsAndMeetings() {
             </EmptyPlaceholder>
           )}
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <AddNewEvent />
-        </CardFooter>
+        {/* <CardFooter className="flex justify-center"> */}
+        {/* <AddNewEvent /> */}
+        {/* </CardFooter> */}
       </Card>
     </>
   );

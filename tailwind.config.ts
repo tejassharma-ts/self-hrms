@@ -83,7 +83,16 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), "prettier-plugin-tailwindcss"],
+  plugins: [
+    function ({ addVariant }: { addVariant: any }) {
+      // addVariant("not-first", "&:not(:first-child)");
+      addVariant("child", "& > *");
+      // Select all child except first one
+      addVariant("sa-not-first", "&>*:not(:first-child)");
+    },
+    require("tailwindcss-animate"),
+    "prettier-plugin-tailwindcss",
+  ],
 } satisfies Config;
 
 export default config;

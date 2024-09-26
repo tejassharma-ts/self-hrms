@@ -1,15 +1,20 @@
-import React from "react";
+"use client";
+
 import { PencilLineIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
-export const EditButton = () => {
+export const EditButton = ({ employeeID }: { employeeID: string }) => {
   return (
     <Button
-      className={"flex gap-x-1 border bg-transparent text-sm text-black hover:bg-transparent"}>
+      className={
+        "relative flex gap-x-1 border bg-transparent text-sm text-black hover:bg-transparent"
+      }>
       <p>Edit</p>
       <span>
         <PencilLineIcon height={16} width={16} />
       </span>
+      <Link href={`/addnewemploye?employeeID=${employeeID}`} className="absolute inset-0" />
     </Button>
   );
 };

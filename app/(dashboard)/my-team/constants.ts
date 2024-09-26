@@ -6,31 +6,9 @@ export const leaveRequestTableHead = [
   "Status",
 ];
 
-export const attendanceTableHead = [
-  "Employee",
-  "Company",
-  "Date",
-  "Check In Time",
-  "Check out Time",
-  "Status",
-  "Latitude",
-  "Longitude",
-];
+export const attendanceTableHead = ["Date", "Check In Time", "Check out Time", "Status"];
 
-export const bonusTableHead = [
-  "Employee",
-  "Bonus Types",
-  "Amount",
-  "Reason",
-  "Date Awarded",
-  "Company",
-];
-export const deductionsTableHead = [
-  "Employee",
-  "Amount",
-  "Date Applied",
-  "Payroll Period",
-  "Reason",
-  "Company",
-  "Deduction Type",
-];
+export const bonusTableHead = ["Bonus", "Amount", "Payout Date"];
+
+export const deductionsTableHead = ["Deduction", "Amount", "Payout Date"];
+export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];

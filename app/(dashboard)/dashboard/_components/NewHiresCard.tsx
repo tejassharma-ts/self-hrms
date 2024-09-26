@@ -1,10 +1,11 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NewHire } from "@/types/dashboard";
 import { getFullName } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
 import { cookies } from "next/headers";
+import { format } from "date-fns";
+import { YearMonthSelector } from "./YearMonthSelector";
 
 async function getNewHire() {
   try {
@@ -32,10 +33,11 @@ export default async function NewHiresCard() {
   return (
     <Card className="mx-auto h-48 w-full max-w-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 px-4">
-        <CardTitle className="text-[21px] font-bold">New Hires</CardTitle>
-        <Button variant="ghost" className="text-[11px]">
-          View more
-        </Button>
+        <CardTitle className="flex w-full items-center justify-between text-[21px] font-bold">
+          <span>New Hires</span>
+          <YearMonthSelector />
+          {/* <span className="text-xs">{format(new Date(), "MMMM, yyyy")}</span> */}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-28 w-full pr-4">
@@ -47,9 +49,10 @@ export default async function NewHiresCard() {
                 </h3>
                 <p className="text-sm text-gray-500">{seeker.position}</p>
               </div>
-              {/* <Button variant="outline" size="sm" className="h-7 px-5"> */}
-              {/*   Send */}
-              {/* </Button> */}
+              <div className="flex flex-col space-y-1 text-xs">
+                <span className="font-medium">Joined in</span>
+                <span>{format(new Date(seeker.date_joined), "MMMM do, yyyy")}</span>
+              </div>
             </div>
           ))}
         </ScrollArea>

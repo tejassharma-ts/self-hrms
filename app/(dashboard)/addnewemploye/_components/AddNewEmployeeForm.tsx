@@ -1,7 +1,5 @@
 "use client";
-
-import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -16,7 +14,6 @@ import {
   FormDescription,
   FormMessage,
 } from "@/components/ui/form";
-import { CalendarIcon } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -26,76 +23,122 @@ import {
 } from "@/components/ui/select";
 import { PasswordInput } from "@/app/(auth)/auth/_components/PasswordInput";
 import { apiCaller } from "@/lib/auth";
-import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
 import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Icons } from "@/components/Icons";
 import useEmployeeStore from "@/model/employee";
+import { useRouter } from "next/navigation";
+import { Switch } from "@/components/ui/switch";
 
 const employeeSchema = z.object({
-  first_name: z.string().max(50, "First name must be 50 characters or less"),
-  last_name: z.string().max(50, "Last name must be 50 characters or less"),
-  password: z.string(),
-  email: z.string().email("Invalid email address"),
-  phone_number: z.string().max(10, "Phone number must be 10 digits or less"),
-  address: z.string(),
-  date_of_birth: z.string(),
-  position: z.string().max(100, "Position must be 100 characters or less"),
-  salary: z.number().positive("Salary must be a positive number"),
-  is_hr: z.boolean().default(false),
-  department: z.string().max(100, "Department must be 100 characters or less"),
-  bank_name: z.string().max(100, "Bank name must be 100 characters or less"),
-  account_number: z.string().max(17, "Account number must be 17 characters or less"),
-  ifsc_code: z.string().max(12, "IFSC code must be 12 characters or less"),
-  aadhar_number: z.string().max(12, "Aadhar number must be 12 digits"),
-  pan_number: z.string().max(10, "PAN number must be 10 characters"),
-  gender: z.string().max(25, "Gender must be 25 characters or less"),
-  profile_picture: z.any(),
+  first_name: z.string().max(50, "First name must be 50 characters or less").optional(),
+  last_name: z.string().max(50, "Last name must be 50 characters or less").optional(),
+  password: z.string().optional(),
+  email: z.string().email("Invalid email address").optional(),
+  official_email: z.string().email("Invalid email address").optional(),
+  phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
+  official_phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
+  emergency_phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
+  address: z.string().optional(),
+  permanent_address: z.string().optional(),
+  date_of_birth: z.string().optional(),
+  position: z.string().max(100, "Position must be 100 characters or less").optional(),
+  salary: z.string().optional(),
+  is_hr: z.boolean().default(false).optional(),
+  department: z.string().max(100, "Department must be 100 characters or less").optional(),
+  bank_name: z.string().max(100, "Bank name must be 100 characters or less").optional(),
+  account_number: z.string().max(17, "Account number must be 17 characters or less").optional(),
+  ifsc_code: z.string().max(12, "IFSC code must be 12 characters or less").optional(),
+  aadhar_number: z.string().max(12, "Aadhar number must be 12 digits").optional(),
+  pan_number: z.string().max(10, "PAN number must be 10 characters").optional(),
+  gender: z.string().max(25, "Gender must be 25 characters or less").optional(),
+  profile_picture: z.any().optional(),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
 
-const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
+interface AddNewEmployeeFormProps {
+  onComplete: () => void;
+}
+
+
+
+
+const AddNewEmployeeForm = ({
+  onComplete,
+  setForms,
+  employee,
+}: {
+  onComplete: any;
+  setForms: any;
+  employee?: any;
+}) => {
   const { setEmployeeId } = useEmployeeStore();
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [autoPassword, setAutoPassword] = useState(false);
+  const [dobRequired, setDobRequired] = useState(false);
+  const [generatedPassword, setGeneratedPassword] = useState("");
+  const router = useRouter();
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
-      first_name: "John",
-      last_name: "Doe",
-      password: "cosmonaut",
-      email: "john.doe@example.com",
-      phone_number: "1234567890",
-      address: "123 Main St, Anytown, AN 12345",
-      date_of_birth: "1990-01-01",
-      position: "Software Developer",
-      salary: 75000,
-      is_hr: false,
-      department: "Engineering",
-      bank_name: "National Bank",
-      account_number: "1234567890123456",
-      ifsc_code: "NATL0001234",
-      aadhar_number: "123456789012",
-      pan_number: "ABCDE1234F",
-      gender: "male",
+      first_name: employee?.first_name || undefined,
+      last_name: employee?.last_name || undefined,
+      password: employee?.password || undefined,
+      email: employee?.email || undefined,
+      official_email: employee?.official_email || undefined,
+      phone_number: employee?.phone_number || undefined,
+      official_phone_number: employee?.official_phone_number || undefined,
+      emergency_phone_number: employee?.emergency_phone_number || undefined,
+      address: employee?.address || undefined,
+      permanent_address: employee?.permanent_address || undefined,
+      date_of_birth: employee?.date_of_birth || undefined,
+      position: employee?.position || undefined,
+      salary: employee?.salary || undefined,
+      is_hr: employee?.is_hr || false,
+      department: employee?.department || undefined,
+      bank_name: employee?.bank_name || undefined,
+      account_number: employee?.account_number || undefined,
+      ifsc_code: employee?.ifsc_code || undefined,
+      aadhar_number: employee?.aadhar_number || undefined,
+      pan_number: employee?.pan_number || undefined,
+      gender: employee?.gender || undefined,
     },
   });
 
   async function onSubmit(data: EmployeeFormValues) {
     try {
       setIsLoading(true);
-      const res = await apiCaller.post("api/companies-app/company/add-employee/", {
-        ...data,
-        company_id: authUser?.employee_profile.company.id || authCompany?.id,
-      });
-      setEmployeeId(res.data.id);
-      toast({
-        description: "Employee successfully added",
-      });
+      if (!employee) {
+        const res = await apiCaller.post("/api/companies-app/company/add-employee/", {
+          ...data,
+          company_id: authUser?.employee_profile.company.id || authCompany?.id,
+        });
+        setEmployeeId(res.data.id);
+        toast({
+          description: "Employee successfully added",
+        });
+      } else {
+        const res = await apiCaller.patch(
+          "/api/companies-app/company/add-employee/",
+          {
+            ...data,
+          },
+          {
+            params: {
+              employee_id: employee.id,
+            },
+          },
+        );
+        setEmployeeId(res.data.id);
+        toast({
+          description: "Employee successfully added",
+        });
+      }
+      onComplete();
+      router.refresh();
     } catch (err) {
       toast({
         description: "Something went very wrong",
@@ -105,6 +148,24 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
       setIsLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (autoPassword) {
+      const { first_name, date_of_birth } = form.getValues();
+      if (!date_of_birth) {
+        setDobRequired(true);
+        return;
+      }
+      setDobRequired(false);
+      const dob = new Date(date_of_birth).toISOString().split("T")[0].replace(/-/g, "");
+      setGeneratedPassword(`${first_name?.toLowerCase()}${dob}`);
+      form.setValue("password", `${first_name?.toLowerCase()}${dob}`);
+    } else {
+      setDobRequired(false);
+    }
+  }, [autoPassword, form.getValues, form.setValue]);
+
+
 
   return (
     <div className="mx-auto mt-10 max-w-4xl rounded-lg bg-white p-8 shadow-md">
@@ -147,14 +208,40 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Employee password</FormLabel>
+                      <FormLabel>
+                        Employee Password
+                        <input
+                          type="checkbox"
+                          checked={autoPassword}
+                          onChange={() => setAutoPassword(!autoPassword)}
+                          className="ms-2"
+                        />
+                        Auto Password
+                      </FormLabel>
                       <FormControl>
-                        <PasswordInput {...field} />
+                        <PasswordInput {...field} value={autoPassword ? generatedPassword : field.value} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
+                <FormField
+                  control={form.control}
+                  name="date_of_birth"
+                  render={({ field }) => (
+                    <FormItem>
+                      {dobRequired && (
+                        <p className="text-red-600 text-sm">Please select a date of birth to use auto password.</p>
+                      )}
+                      <FormLabel>Date Of Birth</FormLabel>
+                      <FormControl>
+                        <Input type="date" placeholder="Select Date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
 
                 <FormField
                   control={form.control}
@@ -187,12 +274,41 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <FormField
                   control={form.control}
+                  name="official_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Official E-mail</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Official Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel>Personal E-mail</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Email" {...field} />
+                        <Input placeholder="Enter Personal Email" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <FormField
+                  control={form.control}
+                  name="official_phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Official Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Official Phone Number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -203,9 +319,22 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                   name="phone_number"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>Personal Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Phone Number" {...field} />
+                        <Input placeholder="Enter Personal Phone Number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="emergency_phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Emergency Phone Number</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter Emergency Phone Number" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -217,6 +346,19 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
             {/* Address Section */}
             <div>
               <h2 className="mb-4 text-lg font-semibold">Address</h2>
+              <FormField
+                control={form.control}
+                name="permanent_address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Permanent Address</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter Address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               <FormField
                 control={form.control}
                 name="address"
@@ -270,12 +412,7 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                     <FormItem>
                       <FormLabel>Salary</FormLabel>
                       <FormControl>
-                        <Input
-                          type="number"
-                          placeholder="Enter Salary"
-                          {...field}
-                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                        />
+                        <Input placeholder="Enter Salary" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -285,132 +422,33 @@ const AddNewEmployeeForm = ({ setForms }: { setForms: any }) => {
                   control={form.control}
                   name="is_hr"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center space-x-3 space-y-0 rounded-md border p-4">
-                      <FormControl>
-                        <input type="checkbox" checked={field.value} onChange={field.onChange} />
-                      </FormControl>
-                      <div className="space-y-1 leading-none">
-                        <FormLabel>Is HR</FormLabel>
-                        <FormDescription>Check if this employee is part of HR</FormDescription>
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                      <div className="space-y-0.5">
+                        <FormLabel className="">HR Department</FormLabel>
+                        <FormDescription className="text-xs">
+                          Enable this option if the employee belongs to the HR department
+                        </FormDescription>
                       </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Bank Details Section */}
-            <div>
-              <h2 className="mb-4 text-lg font-semibold">Bank Details</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="bank_name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Bank Name</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Bank Name" {...field} />
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="account_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Account Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Account Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="ifsc_code"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>IFSC Code</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter IFSC Code" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
-
-            {/* Document Details Section */}
-            <div>
-              <h2 className="mb-4 text-lg font-semibold">Document Details</h2>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <FormField
-                  control={form.control}
-                  name="aadhar_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Aadhar Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Aadhar Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="pan_number"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>PAN Number</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter PAN Number" {...field} />
-                      </FormControl>
-                      <FormMessage />
                     </FormItem>
                   )}
                 />
               </div>
             </div>
           </div>
-
-          {/* <FormField */}
-          {/*   control={form.control} */}
-          {/*   name="profile_picture" */}
-          {/*   render={({ field: { value, onChange, ...field } }) => ( */}
-          {/*     <FormItem> */}
-          {/*       <FormLabel>Profile Picture</FormLabel> */}
-          {/*       <FormControl> */}
-          {/*         <Input */}
-          {/*           placeholder="" */}
-          {/*           value={value?.fileName} */}
-          {/*           id="file" */}
-          {/*           type="file" */}
-          {/*           {...field} */}
-          {/*           onChange={(event) => { */}
-          {/*             if (!event.target.files) return; */}
-          {/*             onChange(event.target.files[0]); */}
-          {/*           }} */}
-          {/*         /> */}
-          {/*       </FormControl> */}
-          {/*       <FormMessage /> */}
-          {/*     </FormItem> */}
-          {/*   )} */}
-          {/* /> */}
-
           <Button type="submit" disabled={isLoading} className="mt-2">
             {isLoading && <Icons.loader />}
-            Save and Continue
+            {!employee ? "Save and Continue" : "Update and Continue"}
           </Button>
         </form>
       </Form>
+      {/* <SalaryDetailsForm /> */}
+
     </div>
   );
 };
 
 export default AddNewEmployeeForm;
+
