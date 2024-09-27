@@ -28,7 +28,7 @@ export default function RegisterPage({ searchParams }: AuthPageProps) {
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="mx-auto hidden max-w-md pt-16 lg:block">
-        <div className="flex h-full flex-col justify-between space-y-1 py-10">
+        <div className="flex h-full flex-col justify-between space-y-1 pb-32 pt-10">
           <div>
             <h1 className="text-4xl font-semibold">Welcome to,</h1>
             <p className="max-w-md text-gray-500">
