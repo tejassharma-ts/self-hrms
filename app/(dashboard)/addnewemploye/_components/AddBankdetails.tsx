@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -56,11 +56,11 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
       account_number: employee?.account_number || "",
       ifsc_code: employee?.ifsc_code || "",
       is_bank_kyc_done: employee?.is_bank_kyc_done || false,
-      pan_card_image: employee?.pan_card_image || undefined,
-      aadhaar_card_front_image: employee?.aadhaar_card_front_image || undefined,
-      aadhaar_card_back_image: employee?.aadhaar_card_back_image || undefined,
-      passbook_back_image: employee?.passbook_back_image || undefined,
-      passbook_port_image: employee?.passbook_port_image || undefined,
+      pan_card_image: undefined,
+      aadhaar_card_front_image: undefined,
+      aadhaar_card_back_image: undefined,
+      passbook_back_image: undefined,
+      passbook_port_image: undefined,
     },
   });
 
@@ -232,12 +232,20 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                             />
                           </div>
                         </div>
-                        {filePreviews["pan_card_image"] && (
+                        {!filePreviews["pan_card_image"] && employee.pan_card_image ? (
                           <img
-                            src={filePreviews["pan_card_image"] as string}
+                            src={employee.pan_card_image}
                             alt="Pan Card Image Preview"
                             className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
                           />
+                        ) : (
+                          filePreviews["pan_card_image"] && (
+                            <img
+                              src={filePreviews["pan_card_image"] as string}
+                              alt="Pan Card Image Preview"
+                              className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
+                            />
+                          )
                         )}
                       </div>
                     </FormControl>
@@ -296,12 +304,21 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                               />{" "}
                             </div>
                           </div>
-                          {filePreviews["aadhaar_card_front_image"] && (
+                          {!filePreviews["aadhaar_card_front_image"] &&
+                          employee.aadhaar_card_front_image ? (
                             <img
-                              src={filePreviews["aadhaar_card_front_image"] as string}
-                              alt="Pan Card Image Preview"
+                              src={employee.aadhaar_card_front_image}
+                              alt="Aadhaar Card Front Image Preview"
                               className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
                             />
+                          ) : (
+                            filePreviews["aadhaar_card_front_image"] && (
+                              <img
+                                src={filePreviews["aadhaar_card_front_image"] as string}
+                                alt="Aadhaar Card Front Image Preview"
+                                className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
+                              />
+                            )
                           )}
                         </div>
                       </FormControl>
@@ -342,12 +359,21 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                               />{" "}
                             </div>
                           </div>
-                          {filePreviews["aadhaar_card_back_image"] && (
+                          {!filePreviews["aadhaar_card_back_image"] &&
+                          employee.aadhaar_card_back_image ? (
                             <img
-                              src={filePreviews["aadhaar_card_back_image"] as string}
-                              alt="Pan Card Image Preview"
+                              src={employee.aadhaar_card_back_image}
+                              alt="Aadhaar Card Back Image Preview"
                               className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
                             />
+                          ) : (
+                            filePreviews["aadhaar_card_back_image"] && (
+                              <img
+                                src={filePreviews["aadhaar_card_back_image"] as string}
+                                alt="Aadhaar Card Back Image Preview"
+                                className="mt-4 h-20 w-20 rounded-lg border border-gray-300 object-cover"
+                              />
+                            )
                           )}
                         </div>
                       </FormControl>

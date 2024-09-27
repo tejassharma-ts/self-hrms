@@ -170,7 +170,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
               <TableCell>
                 <span className="line-clamp-1 text-ellipsis">{col.reason}</span>
               </TableCell>
-              <TableCell>-</TableCell>
+              <TableCell>{col?.leave_duration || "-"}</TableCell>
               <TableCell className="capitalize">{col.status}</TableCell>
               <TableCell>
                 <LeaveRequestOption
