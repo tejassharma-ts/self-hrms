@@ -27,7 +27,7 @@ export default function NewHiresCard() {
             month: selectedMonth,
           },
         });
-        setNewHires(res.data.results);
+        setNewHires(res.data?.results || []);
       } catch (err) {
         console.log(err);
       } finally {
