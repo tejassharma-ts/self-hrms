@@ -15,6 +15,7 @@ type AuthPageProps = {
     token: string;
   };
 };
+
 export default function AuthPage({ searchParams }: AuthPageProps) {
   const aptForm = () => {
     if (searchParams.email || searchParams.company_email) {
