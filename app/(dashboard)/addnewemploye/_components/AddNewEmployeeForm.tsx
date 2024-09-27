@@ -150,21 +150,23 @@ const AddNewEmployeeForm = ({
   }
 
   useEffect(() => {
+    const { first_name, date_of_birth } = form.getValues();
+
     if (autoPassword) {
-      const { first_name, date_of_birth } = form.getValues();
       if (!date_of_birth) {
         setDobRequired(true);
         return;
       }
       setDobRequired(false);
+      const cleanedFirstName = first_name?.replace(/\s+/g, "");
       const dob = new Date(date_of_birth).toISOString().split("T")[0].replace(/-/g, "");
-      setGeneratedPassword(`${first_name?.toLowerCase()}${dob}`);
-      form.setValue("password", `${first_name?.toLowerCase()}${dob}`);
+      const generatedPassword = `${cleanedFirstName?.toLowerCase()}${dob}`;
+      setGeneratedPassword(generatedPassword);
+      form.setValue("password", generatedPassword);
     } else {
       setDobRequired(false);
     }
-  }, [autoPassword, form.getValues, form.setValue]);
-
+  }, [autoPassword, form.getValues, form.setValue, form.watch("date_of_birth")]);
 
 
   return (
