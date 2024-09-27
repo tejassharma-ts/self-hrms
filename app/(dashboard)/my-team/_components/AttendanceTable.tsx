@@ -73,6 +73,24 @@ const CalendarView = ({ attendance }: { attendance: EmployeeAttendance }) => {
             const isFirstColumn = index % 7 === 0;
             const isLastColumn = (index + 1) % 7 === 0;
 
+            const checkInHours =
+              attendanceForDate?.check_in_time &&
+              `${attendanceForDate?.check_in_time}`?.split(":")[0];
+            const checkInMinutes =
+              attendanceForDate?.check_in_time &&
+              `${attendanceForDate?.check_in_time}`?.split(":")[1];
+            const checkOutHours =
+              attendanceForDate?.check_out_time &&
+              `${attendanceForDate?.check_out_time}`?.split(":")[0];
+            const checkOutMinutes =
+              attendanceForDate?.check_out_time &&
+              `${attendanceForDate?.check_out_time}`?.split(":")[1];
+
+            const checkInTime =
+              checkInHours && checkInMinutes && checkInHours + ":" + checkInMinutes;
+            const checkOutTime =
+              checkOutHours && checkOutMinutes && checkOutHours + ":" + checkOutMinutes;
+
             return (
               <div
                 key={index}
@@ -89,12 +107,10 @@ const CalendarView = ({ attendance }: { attendance: EmployeeAttendance }) => {
                     <span className={"bg-inherit text-lg font-semibold text-red-500"}>Absent</span>
                   ) : (
                     <p className="absolute bottom-0 flex gap-x-4 pb-2 text-sm text-gray-400">
-                      <p className={"bg-green-200 text-green-500"}>
-                        {attendanceForDate.check_in_time || "N/A"}
-                      </p>
-                      <p className={"bg-red-200 text-red-500"}>
-                        {attendanceForDate.check_out_time || "N/A"}
-                      </p>
+                      <span className={"bg-green-200 text-green-500"}>{checkInTime || "N/A"}</span>
+                      <span className={"bg-red-200 text-red-500"}>
+                        {checkOutTime != null ? checkOutTime : "N/A"}
+                      </span>
                     </p>
                   )
                 ) : (

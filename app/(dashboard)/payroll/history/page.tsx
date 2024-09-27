@@ -39,12 +39,13 @@ const PayrollHistoryPage = async ({
   const showPayrollHistory: boolean = searchParams.hasOwnProperty("payroll-history");
   const payrollData: any = await getPayroll({ year, id });
 
+  console.log(payrollData.results);
   return (
     <div className={"container w-full"}>
-      <PayrollHeader payrollData={payrollData.results.payrolls} />
+      <PayrollHeader payrollData={payrollData?.results?.payrolls} />
       {!showPayrollHistory ? (
         <div>
-          <PayrollTable payrollData={payrollData.results.payrolls} />
+          <PayrollTable payrollData={payrollData?.results?.payrolls} />
         </div>
       ) : (
         <div>
