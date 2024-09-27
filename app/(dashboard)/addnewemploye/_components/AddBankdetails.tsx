@@ -139,10 +139,10 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                 name="bank_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Account Holder Name</FormLabel>
+                    <FormLabel>Bank name</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="Enter Account name"
+                        placeholder="Bank name"
                         {...field}
                         disabled={isFormDisabled}
                       />
@@ -232,7 +232,7 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                             />
                           </div>
                         </div>
-                        {!filePreviews["pan_card_image"] && employee.pan_card_image ? (
+                        {!filePreviews["pan_card_image"] && employee?.pan_card_image ? (
                           <img
                             src={employee.pan_card_image}
                             alt="Pan Card Image Preview"
@@ -305,7 +305,7 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                             </div>
                           </div>
                           {!filePreviews["aadhaar_card_front_image"] &&
-                          employee.aadhaar_card_front_image ? (
+                          employee?.aadhaar_card_front_image ? (
                             <img
                               src={employee.aadhaar_card_front_image}
                               alt="Aadhaar Card Front Image Preview"
@@ -360,7 +360,7 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                             </div>
                           </div>
                           {!filePreviews["aadhaar_card_back_image"] &&
-                          employee.aadhaar_card_back_image ? (
+                          employee?.aadhaar_card_back_image ? (
                             <img
                               src={employee.aadhaar_card_back_image}
                               alt="Aadhaar Card Back Image Preview"
