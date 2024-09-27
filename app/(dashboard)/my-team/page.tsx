@@ -50,7 +50,9 @@ export default function MyTeamPage({ searchParams }: MyTeamPageProps) {
           </Suspense>
         </TabsContent>
         <div className="absolute right-0 top-0 flex gap-4">
-          <Link href="/addnewemploye" className={buttonVariants({ variant: "secondary", size: "sm" })}>
+          <Link
+            href="/addnewemploye"
+            className={buttonVariants({ variant: "secondary", size: "sm" })}>
             Add Staff
           </Link>
           {/* <Link href="#" className={buttonVariants({ size: "sm" })}> */}

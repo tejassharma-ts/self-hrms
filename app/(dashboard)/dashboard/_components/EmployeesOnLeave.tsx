@@ -64,7 +64,7 @@ export default async function EmployeesOnLeave({ leavesRequest }: EmployeesOnLea
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>-</TableCell>
+                  <TableCell>{request.leave_duration}</TableCell>
                   <TableCell>{request.leave_type}</TableCell>
                   <TableCell className="text-right">{formatISODate(request.applied_at)}</TableCell>
                   <TableCell>{formatISODate(request.end_date)}</TableCell>

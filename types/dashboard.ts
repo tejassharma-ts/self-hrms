@@ -31,6 +31,7 @@ export type LeaveRequest = {
   reviewed_at: string | null;
   company: string;
   reviewer: string | null;
+  leave_duration: string | null;
 };
 
 export type LeavesDataApi = {

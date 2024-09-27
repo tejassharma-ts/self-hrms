@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { CheckCircleIcon, ChevronRightIcon } from "lucide-react";
 import AddNewEmployeeForm from "./AddNewEmployeeForm";
 import SalaryDetailsForm from ".//SalaryDetailsForm";
@@ -20,7 +20,13 @@ export default function StepperForms({
     bankForm: false,
     salaryForm: false,
   });
-  const { employee_id } = useEmployeeStore();
+  const { employee_id, setEmployeeId } = useEmployeeStore();
+
+  useEffect(() => {
+    if (employee) {
+      setEmployeeId(employee.id);
+    }
+  }, []);
 
   const handleStepClick = (step: number) => {
     if (employee || step <= currentStep) {

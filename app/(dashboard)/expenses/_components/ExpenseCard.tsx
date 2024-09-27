@@ -24,7 +24,7 @@ export const ExpenseCard = ({ heading, money, isLast }: IEachExpenseCardProps): 
         {isLast ? (
           <div className={"flex items-center justify-between"}>
             <h2 className="mb-2 text-2xl font-bold text-white">
-              {integerPart}
+              Rs. {integerPart}
               <span className={"text-xl opacity-35"}>.{decimalPart ? decimalPart : "00"}</span>
             </h2>
             <p className={"cursor-pointer text-white"}>
@@ -33,7 +33,7 @@ export const ExpenseCard = ({ heading, money, isLast }: IEachExpenseCardProps): 
           </div>
         ) : (
           <h2 className="mb-2 text-2xl font-bold">
-            {integerPart}
+            Rs. {integerPart}
             <span className={"text-xl opacity-35"}>.{decimalPart ? decimalPart : "00"}</span>
           </h2>
         )}
