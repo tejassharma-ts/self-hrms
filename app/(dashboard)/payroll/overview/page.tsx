@@ -30,8 +30,8 @@ const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
   return (
     <div className={"container w-full"}>
       <PayrollOverviewHeader
-        bonus={payrollData[0]?.bonus}
-        totalDeductions={payrollData[0]?.total_deductions}
+        bonus={payrollData[0]?.bonus || 0.0}
+        totalDeductions={payrollData[0]?.total_deductions || 0.0}
       />
       <div>
         <PayrollOverviewTable payrollData={payrollData} />

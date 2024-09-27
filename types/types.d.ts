@@ -187,7 +187,7 @@ interface Payroll {
   overtime_hours: string;
   overtime_pay: string;
   total_earnings: string;
-  total_deductions: string;
+  total_deductions: number;
   esi_contribution: string;
   pf_contribution: string;
   final_salary: string;
@@ -200,7 +200,7 @@ interface Payroll {
   updated_at: string;
   company: string;
   salary_structure: string;
-  bonus?: string;
+  bonus: number;
   monthly_bonus?: string;
 }
 
