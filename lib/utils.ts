@@ -25,9 +25,7 @@ export const getMonthNumber = (month: string) => {
 };
 
 export const getMonthNameFromNumber = (monthNumber: number) => {
-  if (monthNumber) {
-    return months[monthNumber - 1];
-  }
+  return months[monthNumber - 1];
 };
 
 export function formatTodaysDate() {

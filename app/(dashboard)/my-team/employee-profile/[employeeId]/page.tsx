@@ -190,7 +190,6 @@ const EmployeeProfilePage = async ({
           </CardContent>
           {tab === "person-details" && (
             <>
-              <>p</>
               <CardContent>
                 <EmployeePersonalInformation employeeProfile={employeeProfile} />
               </CardContent>
