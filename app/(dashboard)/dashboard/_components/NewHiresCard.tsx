@@ -9,7 +9,7 @@ import { YearMonthSelector } from "./YearMonthSelector";
 
 async function getNewHire() {
   try {
-    const res = await apiCaller.get<NewHire[]>("/api/companies-app/company/newly-hired/", {
+    const res = await apiCaller.get("/api/companies-app/company/newly-hired/", {
       headers: {
         Cookie: cookies()
           .getAll()
@@ -17,7 +17,7 @@ async function getNewHire() {
           .join("; "),
       },
     });
-    return res.data;
+    return res.data.results;
   } catch (err) {
     // console.log("err", err);
   }
@@ -41,7 +41,7 @@ export default async function NewHiresCard() {
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-28 w-full pr-4">
-          {newHires.map((seeker) => (
+          {newHires.map((seeker: any) => (
             <div key={seeker.id} className="mb-4 flex items-center justify-between last:mb-0">
               <div className="flex flex-col space-y-0.5">
                 <h3 className="font-semibold">
