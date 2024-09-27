@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,10 +11,12 @@ import { apiCaller } from "@/lib/auth";
 // import { getAuthCookies } from "@/lib/server/api";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getFullName } from "@/lib/utils";
+import { formatISODate, getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 
 type Staff = {
   id: string;
@@ -100,44 +103,55 @@ export default async function StaffDetails() {
         </TableHeader>
         <TableBody>
           {staffs.map((data, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                <Link href={`my-team/employee-profile/${data.id}/?tab=person-details`}>
-                  {getFullName(data.first_name, data.last_name)}
-                </Link>
-              </TableCell>
-              {/* <TableCell>{data.id}</TableCell> */}
-              <TableCell>{data.email}</TableCell>
-              <TableCell>{data.phone_number}</TableCell>
-              <TableCell>{data.address}</TableCell>
-              <TableCell>{data.date_of_birth}</TableCell>
-              <TableCell>{data.position}</TableCell>
-              <TableCell>{data.date_joined}</TableCell>
-              <TableCell>{data.salary}</TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.is_active} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.is_hr} disabled />
-              </TableCell>
-              <TableCell>{data.created_at}</TableCell>
-              <TableCell>{data.updated_at}</TableCell>
-              <TableCell>{data.department}</TableCell>
-              <TableCell>
-                <Avatar>
-                  <AvatarImage src={data.profile_picture} />
-                  <AvatarFallback>{data.first_name}</AvatarFallback>
-                </Avatar>
-              </TableCell>
-              <TableCell>{data.bank_name || "N/A"}</TableCell>
-              <TableCell>{data.account_number || "N/A"}</TableCell>
-              <TableCell>{data.ifsc_code || "N/A"}</TableCell>
-              <TableCell>{data.aadhar_number || "N/A"}</TableCell>
-              <TableCell>{data.pan_number || "N/A"}</TableCell>
-              <TableCell>{data.gender || "N/A"}</TableCell>
-              {/* <TableCell>{data.user}</TableCell> */}
-              {/* <TableCell>{data.company}</TableCell> */}
-            </TableRow>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TableRow key={index}>
+                    <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
+                    {/* <TableCell>{data.id}</TableCell> */}
+                    <TableCell>{data.email}</TableCell>
+                    <TableCell>{data.phone_number}</TableCell>
+                    <TableCell>{data.address}</TableCell>
+                    <TableCell>{data.date_of_birth}</TableCell>
+                    <TableCell>{data.position}</TableCell>
+                    <TableCell>{data.date_joined}</TableCell>
+                    <TableCell>{data.salary}</TableCell>
+                    <TableCell className="text-center">
+                      <Checkbox checked={data.is_active} disabled />
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Checkbox checked={data.is_hr} disabled />
+                    </TableCell>
+                    <TableCell>{formatISODate(data.created_at)}</TableCell>
+                    <TableCell>{formatISODate(data.updated_at)}</TableCell>
+                    <TableCell>{data.department}</TableCell>
+                    <TableCell>
+                      <Avatar>
+                        <AvatarImage src={data.profile_picture} />
+                        <AvatarFallback>{data.first_name}</AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell>{data.bank_name || "N/A"}</TableCell>
+                    <TableCell>{data.account_number || "N/A"}</TableCell>
+                    <TableCell>{data.ifsc_code || "N/A"}</TableCell>
+                    <TableCell>{data.aadhar_number || "N/A"}</TableCell>
+                    <TableCell>{data.pan_number || "N/A"}</TableCell>
+                    <TableCell>{data.gender || "N/A"}</TableCell>
+                    {/* <TableCell>{data.user}</TableCell> */}
+                    {/* <TableCell>{data.company}</TableCell> */}
+                  </TableRow>
+                </TooltipTrigger>
+                <TooltipContent align="end" asChild>
+                  <Button className="relative">
+                    Edit employee
+                    <Link
+                      href={`my-team/employee-profile/${data.id}/?tab=person-details`}
+                      className="absolute inset-0"
+                    />
+                  </Button>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
         </TableBody>
       </Table>
