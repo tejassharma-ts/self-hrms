@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -9,10 +9,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export function YearMonthSelector() {
+export function YearMonthSelector({
+  selectedYear,
+  selectedMonth,
+  setSelectedMonth,
+  setSelectedYear,
+}: {
+  selectedYear: any;
+  selectedMonth: any;
+  setSelectedYear: any;
+  setSelectedMonth: any;
+}) {
   const currentDate = new Date();
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
 
   const years = Array.from({ length: 10 }, (_, i) => new Date().getFullYear() - i);
   const months = [
