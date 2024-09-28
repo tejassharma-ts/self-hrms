@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { cn } from "@/lib/utils";
+import { cn, formatTime } from "@/lib/utils";
 import { attendanceTableHead, days } from "@/app/(dashboard)/my-team/constants";
 import { EmployeeAttendance } from "@/types/types";
 import {
@@ -28,8 +28,12 @@ const TableView = ({ attendance }: { attendance: EmployeeAttendance }) => {
           {attendance.attendances.map((attendance, index) => (
             <TableRow key={index}>
               <TableCell className="text-nowrap">{attendance.date}</TableCell>
-              <TableCell className="text-nowrap">{attendance?.check_in_time || "N/A"}</TableCell>
-              <TableCell className="text-nowrap">{attendance?.check_out_time || "N/A"}</TableCell>
+              <TableCell className="text-nowrap">
+                {formatTime(attendance?.check_in_time) || "N/A"}
+              </TableCell>
+              <TableCell className="text-nowrap">
+                {formatTime(attendance?.check_out_time) || "N/A"}
+              </TableCell>
               <TableCell className="text-nowrap">
                 <span
                   className={cn(

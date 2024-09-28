@@ -88,3 +88,16 @@ export function formatISOToTime(isoDate: string): string {
 
   return date.toLocaleTimeString(undefined, options);
 }
+
+export const formatTime = (time: any) => {
+  if (!time) return "-";
+  const today = new Date().toISOString().split("T")[0];
+  const dateTimeString = `${today}T${time}`;
+
+  const dateObject = new Date(dateTimeString);
+  return dateObject.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};
