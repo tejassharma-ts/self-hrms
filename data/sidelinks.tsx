@@ -86,11 +86,11 @@ export const sidelinks: SideLink[] = [
         href: "/payroll/history",
         icon: <Icons.history size={18} />,
       },
-      {
-        title: "Payroll Settings",
-        href: "/payroll/settings",
-        icon: <Icons.setting size={18} />,
-      },
+      // {
+      //   title: "Payroll Settings",
+      //   href: "/payroll/settings",
+      //   icon: <Icons.setting size={18} />,
+      // },
     ],
   },
   {

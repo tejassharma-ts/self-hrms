@@ -141,8 +141,8 @@ export default async function StaffDetails() {
                     {/* <TableCell>{data.company}</TableCell> */}
                   </TableRow>
                 </TooltipTrigger>
-                <TooltipContent align="end" asChild>
-                  <Button className="relative">
+                <TooltipContent align="end" asChild sideOffset={-10}>
+                  <Button className="relative" variant="ghost">
                     Edit employee
                     <Link
                       href={`my-team/employee-profile/${data.id}/?tab=person-details`}
