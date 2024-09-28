@@ -21,6 +21,7 @@ import { headers } from "next/headers";
 
 const employeeSchema = z.object({
   bank_name: z.string().min(1, "Bank Name is required").optional(),
+  account_holder_name: z.string().min(1, "Account holder name").optional(),
   aadhar_number: z.string().optional(),
   account_number: z.string().min(1, "Account Number is required").optional(),
   pan_number: z.string().min(1, "PAN Number is required").optional(),
@@ -50,9 +51,10 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     defaultValues: {
+      bank_name: employee?.bank_name || "",
+      account_holder_name: employee?.account_holder_name || "",
       aadhar_number: employee?.aadhar_number || "",
       pan_number: employee?.pan_number || "",
-      bank_name: employee?.bank_name || "",
       account_number: employee?.account_number || "",
       ifsc_code: employee?.ifsc_code || "",
       is_bank_kyc_done: employee?.is_bank_kyc_done || false,
@@ -82,6 +84,7 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
 
       const formData = new FormData();
       formData.append("bank_name", data.bank_name || "");
+      formData.append("account_holder_name", data.account_holder_name || "");
       formData.append("aadhar_number", data.aadhar_number || "");
       formData.append("pan_number", data.pan_number || "");
       formData.append("account_number", data.account_number || "");
@@ -141,8 +144,21 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                   <FormItem>
                     <FormLabel>Bank name</FormLabel>
                     <FormControl>
+                      <Input placeholder="Bank name" {...field} disabled={isFormDisabled} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="account_holder_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Bank name</FormLabel>
+                    <FormControl>
                       <Input
-                        placeholder="Bank name"
+                        placeholder="Account holder's name"
                         {...field}
                         disabled={isFormDisabled}
                       />
