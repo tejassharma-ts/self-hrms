@@ -29,49 +29,52 @@ export default async function EmployeesOnLeave({ leavesRequest }: EmployeesOnLea
       </div>
       <div className="overflow-x-auto">
         <div className="max-h-56">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[200px]">Name</TableHead>
-                <TableHead>Duration</TableHead>
-                <TableHead>Leave Type</TableHead>
-                <TableHead>Leave Start</TableHead>
-                <TableHead>Leave End</TableHead>
-                <TableHead className="text-right">Time</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leavesRequest.map((request) => (
-                <TableRow key={request.id}>
-                  <TableCell className="py-2.5 font-medium">
-                    <div className="flex items-center">
-                      <Avatar className="mr-2">
-                        <AvatarImage
-                          src={request.employee.profile_picture}
-                          alt={getFullName(request.employee.first_name, request.employee.last_name)}
-                        />
-                        <AvatarFallback>
-                          {getFullbackName(request.employee.first_name, request.employee.last_name)}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <div className="font-medium">
-                          {getFullName(request.employee.first_name, request.employee.last_name)}
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {request.employee.department}
-                        </div>
+          <TableBody>
+            {leavesRequest.map((request) => (
+              <TableRow key={request.id}>
+                <TableCell>{request.employee?.id || "N/A"}</TableCell>
+                <TableCell className="py-2.5 font-medium">
+                  <div className="flex items-center">
+                    <Avatar className="mr-2">
+                      <AvatarImage
+                        src={request.employee?.profile_picture || "/path/to/dummy-image.jpg"}
+                        alt={
+                          request.employee
+                            ? getFullName(request.employee.first_name, request.employee.last_name)
+                            : "Unknown Employee"
+                        }
+                      />
+                      <AvatarFallback>
+                        {request.employee
+                          ? getFullbackName(request.employee.first_name, request.employee.last_name)
+                          : "Unknown"}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <div className="font-medium">
+                        {request.employee
+                          ? getFullName(request.employee.first_name, request.employee.last_name)
+                          : "Unknown Employee"}
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        {request.employee?.department || "Unknown Department"}
                       </div>
                     </div>
-                  </TableCell>
-                  <TableCell>{request.leave_duration}</TableCell>
-                  <TableCell>{request.leave_type}</TableCell>
-                  <TableCell className="text-right">{formatISODate(request.applied_at)}</TableCell>
-                  <TableCell>{formatISODate(request.end_date)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                  </div>
+                </TableCell>
+                <TableCell>{request.employee?.department || "Unknown Department"}</TableCell>
+                <TableCell>{request.leave_type || "N/A"}</TableCell>
+                <TableCell>{request.start_date || "N/A"}</TableCell>
+                <TableCell>{request.end_date || "N/A"}</TableCell>
+                <TableCell>{request?.from_time || "-"}</TableCell>
+                <TableCell>{request?.end_time || "-"}</TableCell>
+                <TableCell className="text-right">
+                  {formatISODate(request.applied_at) || "N/A"}
+                </TableCell>
+                <TableCell>{formatISODate(request.end_date) || "N/A"}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
         </div>
       </div>
     </div>

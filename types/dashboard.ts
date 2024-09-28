@@ -11,6 +11,7 @@ export type NewHire = {
 };
 
 type EmployeeOnLeave = {
+  id: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -25,6 +26,8 @@ export type LeaveRequest = {
   leave_type: string;
   start_date: string;
   end_date: string;
+  from_time: string;
+  end_time: string;
   reason: string;
   status: "Approved" | "Rejected" | "Pending";
   applied_at: string;
