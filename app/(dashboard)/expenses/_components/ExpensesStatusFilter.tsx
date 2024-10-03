@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { statusValues } from "@/app/(dashboard)/expenses/_data/filterDataValues";
 
-export const StatusFilter = (): React.ReactNode => {
+const expensesStatusValues = ["credited", "pending", "rejected"];
+
+export const ExpensesStatusFilter = (): React.ReactNode => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const placeholder: string = "filter";
   const router = useRouter();
@@ -24,7 +25,7 @@ export const StatusFilter = (): React.ReactNode => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
 
     if (value !== "") {
-      current.set("status", value);
+      current.set("status", value === "credited" ? "approved" : value);
     } else {
       current.delete("status");
     }
@@ -46,7 +47,7 @@ export const StatusFilter = (): React.ReactNode => {
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          {statusValues.map((value: string) => (
+          {expensesStatusValues.map((value: string) => (
             <SelectItem key={value} value={value}>
               {value}
             </SelectItem>
