@@ -34,7 +34,7 @@ export const YearFilter = (): React.ReactNode => {
     const search = current.toString();
     const query = search ? `?${search}` : "";
 
-    router.push(`${pathname}${query}`);
+    router.replace(`${pathname}${query}`);
   };
   return (
     <Select onValueChange={handleValueChange} onOpenChange={(open) => setIsOpen(open)}>
