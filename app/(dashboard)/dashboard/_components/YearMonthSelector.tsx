@@ -39,11 +39,11 @@ export function YearMonthSelector({
   ];
 
   return (
-    <div className="flex space-x-4">
+    <div className="flex gap-4">
       <Select
         value={selectedYear.toString()}
         onValueChange={(value) => setSelectedYear(Number(value))}>
-        <SelectTrigger className="">
+        <SelectTrigger className="order-1">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
         <SelectContent>

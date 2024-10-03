@@ -149,11 +149,11 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All Departments</SelectItem>
-            {/* {uniqueDepartments.map((dept: any) => ( */}
-            {/*   <SelectItem key={dept} value={dept}> */}
-            {/*     {dept} */}
-            {/*   </SelectItem> */}
-            {/* ))} */}
+            {uniqueDepartments?.map((dept: any) => (
+              <SelectItem key={dept} value={dept}>
+                {dept}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>

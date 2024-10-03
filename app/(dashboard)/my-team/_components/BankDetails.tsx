@@ -12,6 +12,9 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
 import { getFullName } from "@/lib/utils";
 import { cookies } from "next/headers";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link"
+import { Button } from "@/components/ui/button";
 
 type Staff = {
   id: string;
@@ -86,17 +89,32 @@ export default async function BankDetails() {
         </TableHeader>
         <TableBody>
           {staffs.map((data, index) => (
-            <TableRow key={index}>
-              <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
-              <TableCell>{data.phone_number}</TableCell>
-              <TableCell>{data.position}</TableCell>
-              <TableCell>{data.department}</TableCell>
-              <TableCell>{data.bank_name || "N/A"}</TableCell>
-              <TableCell>{data.account_number || "N/A"}</TableCell>
-              <TableCell>{data.ifsc_code || "N/A"}</TableCell>
-              <TableCell>{data.aadhar_number || "N/A"}</TableCell>
-              <TableCell>{data.pan_number || "N/A"}</TableCell>
-            </TableRow>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TableRow key={index}>
+                    <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
+                    <TableCell>{data.phone_number}</TableCell>
+                    <TableCell>{data.position}</TableCell>
+                    <TableCell>{data.department}</TableCell>
+                    <TableCell>{data.bank_name || "N/A"}</TableCell>
+                    <TableCell>{data.account_number || "N/A"}</TableCell>
+                    <TableCell>{data.ifsc_code || "N/A"}</TableCell>
+                    <TableCell>{data.aadhar_number || "N/A"}</TableCell>
+                    <TableCell>{data.pan_number || "N/A"}</TableCell>
+                  </TableRow>
+                </TooltipTrigger>
+                <TooltipContent align="end" asChild sideOffset={-10}>
+                  <Button className="relative" variant="ghost">
+                    Edit employee
+                    <Link
+                      href={`my-team/employee-profile/${data.id}/?tab=person-details`}
+                      className="absolute inset-0"
+                    />
+                  </Button>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
         </TableBody>
       </Table>

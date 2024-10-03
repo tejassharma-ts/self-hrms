@@ -5,12 +5,22 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getFullName } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
-import { format } from "date-fns";
+import { format, getMonth } from "date-fns";
 import { YearMonthSelector } from "./YearMonthSelector";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
-export default function NewHiresCard() {
+export default function NewHiresCard({ className }: { className: string }) {
   const currentDate = new Date();
   const [newHires, setNewHires] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -42,23 +52,59 @@ export default function NewHiresCard() {
   }
 
   return (
-    <Card className="mx-auto h-48 w-full max-w-md">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-2 px-4">
-        <CardTitle className="flex w-full items-center justify-between text-[21px] font-bold">
-          <span>New Hires</span>
-          <YearMonthSelector
-            selectedYear={selectedYear}
-            selectedMonth={selectedMonth}
-            setSelectedYear={setSelectedYear}
-            setSelectedMonth={setSelectedMonth}
-          />
-          {/* <span className="text-xs">{format(new Date(), "MMMM, yyyy")}</span> */}
-        </CardTitle>
+    <Card className={cn("h-48 w-full", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-x-4">
+        <CardTitle className="flex w-full items-center justify-between">New Hires</CardTitle>
+        <YearMonthSelector
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          setSelectedYear={setSelectedYear}
+          setSelectedMonth={setSelectedMonth}
+        />
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="ghost" size="sm">
+              View all
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle className="mb-3 text-xl">List of new hires</DialogTitle>
+              {newHires.length ? (
+                <ScrollArea className="h-[350px]">
+                  <div className="pr-4">
+                    {newHires.map((seeker: any) => (
+                      <div
+                        key={seeker.id}
+                        className="mb-4 flex items-center justify-between last:mb-0">
+                        <div className="flex flex-col space-y-0.5">
+                          <h3 className="font-semibold">
+                            {getFullName(seeker.first_name, seeker.last_name)}
+                          </h3>
+                          <p className="text-sm text-gray-500">{seeker.position}</p>
+                        </div>
+                        <div className="flex flex-col space-y-1 text-xs">
+                          <span className="font-medium">Joined in</span>
+                          <span>{format(new Date(seeker.date_joined), "MMMM do, yyyy")}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+              ) : (
+                <h1 className="mt-2 text-lg font-medium text-gray-500">No new hires</h1>
+              )}
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
       </CardHeader>
       <CardContent>
-        {isLoading && <NewHiresSkeleton />}
-        {!isLoading && newHires.length && (
-          <ScrollArea className="h-28 w-full pr-4">
+        {isLoading ? (
+          <NewHiresSkeleton />
+        ) : newHires.length === 0 ? (
+          <h1 className="mt-2 text-lg font-medium text-gray-500">No new hires</h1>
+        ) : (
+          <ScrollArea className="h-20 w-full pr-4">
             {newHires.map((seeker: any) => (
               <div key={seeker.id} className="mb-4 flex items-center justify-between last:mb-0">
                 <div className="flex flex-col space-y-0.5">

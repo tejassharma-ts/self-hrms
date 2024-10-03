@@ -1,78 +1,121 @@
 "use client";
 
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import { MeetingDetailsTab } from "@/app/(dashboard)/dashboard/_components/MeetingDetailsTab";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { startOfWeek, eachDayOfInterval, format, addDays, setDate } from "date-fns";
+import {
+  startOfWeek,
+  eachDayOfInterval,
+  format,
+  addDays,
+  startOfMonth,
+  endOfMonth,
+  endOfWeek,
+  isSameMonth,
+  setDate,
+} from "date-fns";
 
-const calendarCarousel: { day: string; date: string }[] = [
-  { day: "MON", date: "2" },
-  { day: "TUE", date: "3" },
-  { day: "WED", date: "4" },
-  { day: "THU", date: "5" },
-  { day: "FRI", date: "6" },
-  { day: "SAT", date: "7" },
-];
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import { YearMonthSelector } from "./YearMonthSelector";
 
-const currentDate = new Date();
-const formattedDate = currentDate.toISOString().split("T")[0];
+export default function MeetingCard({ className }: { className: string }) {
+  const currentDate = new Date();
+  const [selectedDate, setSelectedDate] = useState(format(currentDate, "yyyy-MM-dd"));
+  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
 
-export default function MeetingCard() {
-  const [selectedDate, setSelectedDate] = useState(formattedDate);
-  const start = startOfWeek(new Date(), { weekStartsOn: 1 });
-  const saturday = addDays(start, 5);
-  const weekDates = eachDayOfInterval({ start, end: saturday }).map((date) =>
-    format(date, "EEEE, d"),
-  );
+  const getDatesPerWeekForCurrentMonth = useCallback(() => {
+    const today = new Date(selectedYear, selectedMonth - 1);
+    const firstDayOfMonth = startOfMonth(today); // Date Tue Oct 01 2024 00:00:00 GMT+0530 (India Standard Time)
+    const lastDayOfMonth = endOfMonth(today); // Date Thu Oct 31 2024 23:59:59 GMT+0530 (India Standard Time)
 
-  function handleDateClick(weekDay: string) {
-    let currentDate = new Date();
+    const result = [];
+    let currentWeekStart = startOfWeek(firstDayOfMonth, { weekStartsOn: 0 }); // Date Sun Sep 29 2024 00:00:00 GMT+0530 (India Standard Time) }
 
-    // TODO: fix typings
-    currentDate = setDate(currentDate, weekDay as never as number);
-    const formattedDate = format(currentDate, "yyyy-MM-dd");
+    while (currentWeekStart <= lastDayOfMonth) {
+      const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 0 }); // Date Sat Oct 5 2024 00:00:00 GMT+0530 (India Standard Time) }
 
+      const weekDates = eachDayOfInterval({ start: currentWeekStart, end: currentWeekEnd })
+        .filter((date) => isSameMonth(date, today))
+        .map((date) => format(date, "dd EEE"));
+
+      if (weekDates.length > 0) {
+        result.push(weekDates);
+      }
+
+      currentWeekStart = addDays(currentWeekEnd, 1);
+    }
+
+    return result;
+  }, [selectedMonth, selectedYear]);
+
+  function handleDateClick(currDate: string) {
+    const selectedDate = new Date(selectedYear, selectedMonth - 1);
+    const targetDate = setDate(selectedDate, parseInt(currDate, 10));
+    const formattedDate = format(targetDate, "yyyy-MM-dd");
     setSelectedDate(formattedDate);
   }
 
   return (
-    <div className="relative rounded-xl border">
-      <div className="inset-0 flex flex-col p-6">
-        <h1 className="border-b border-b-slate-400 pb-2 text-center text-lg font-bold">
-          {format(new Date(), "MMMM do, yyyy")}
-        </h1>
-        <ScrollArea>
-          <div className="mt-4 flex space-x-4">
-            {weekDates.map((eachDay, index) => {
-              const [weekName, weekDay] = eachDay.split(", ");
-              return (
-                <Card
-                  key={index}
-                  onClick={() => handleDateClick(weekDay)}
-                  className={cn(
-                    "inline-flex justify-center hover:bg-gray-200",
-                    selectedDate.split("-")[2] === weekDay && "bg-black hover:bg-black",
-                  )}>
-                  <CardContent
-                    className={cn(
-                      "flex cursor-pointer flex-col items-center justify-between p-4 text-gray-500",
-                      selectedDate.split("-")[2] === weekDay && "text-white",
-                    )}>
-                    <p className="text-sm font-semibold">{weekName}</p>
-                    <p className="mt-2 text-sm font-semibold">{weekDay}</p>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-          <ScrollBar orientation="horizontal" className="h-2" />
-        </ScrollArea>
-        <MeetingDetailsTab selectedDate={selectedDate} />
-      </div>
-    </div>
+    <Card className={cn("relative flex flex-col overflow-hidden", className)}>
+      <CardHeader>
+        <YearMonthSelector
+          selectedYear={selectedYear}
+          selectedMonth={selectedMonth}
+          setSelectedYear={(year: number) => {
+            setSelectedYear(year);
+            setSelectedDate("");
+          }}
+          setSelectedMonth={(month: number) => {
+            setSelectedMonth(month);
+            setSelectedDate("");
+          }}
+        />
+      </CardHeader>
+      <CardContent className="flex h-full flex-col">
+        <Carousel className="px-5">
+          <CarouselContent>
+            {getDatesPerWeekForCurrentMonth().map((week) =>
+              week.map((day, idx) => {
+                const [currDate, currDay] = day.split(" ");
+                return (
+                  <CarouselItem className="basis-[25%]">
+                    <Card
+                      key={idx}
+                      onClick={() => handleDateClick(currDate)}
+                      className={cn(
+                        "inline-flex justify-center hover:bg-gray-200",
+                        selectedDate.split("-")[2] === currDate && "bg-black hover:bg-black",
+                      )}>
+                      <CardContent
+                        className={cn(
+                          "flex cursor-pointer flex-col items-center justify-between p-4 text-gray-500",
+                          selectedDate.split("-")[2] === currDate && "text-white",
+                        )}>
+                        <p className="text-sm font-semibold">{currDay}</p>
+                        <p className="mt-2 text-sm font-semibold">{currDate}</p>
+                      </CardContent>
+                    </Card>
+                  </CarouselItem>
+                );
+              }),
+            )}
+          </CarouselContent>
+          <CarouselPrevious className="-left-5" variant="ghost" />
+          <CarouselNext className="-right-5" variant="ghost" />
+        </Carousel>
+        <MeetingDetailsTab selectedDate={selectedDate} className="relative h-full" />
+      </CardContent>
+    </Card>
   );
 }

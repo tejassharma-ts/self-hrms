@@ -80,8 +80,10 @@ export default function ScheduleMeeting({
         team: teamIDs,
       });
 
+      if (format(res.data.date, "yyy MM dd") === format(new Date(), "yyyy MM dd")) {
+        setMeetings((pre: any) => [...pre, res.data]);
+      }
       setShowDialog(false);
-      setMeetings((pre: any) => [...pre, res.data]);
     } catch (err) {
       console.log("err", err);
     } finally {

@@ -13,6 +13,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cookies } from "next/headers";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link"
+import { Button } from "@/components/ui/button";
 
 type EmployeeData = {
   id: string;
@@ -81,60 +84,75 @@ export default async function SalaryStructure() {
             <TableHead>Allowances</TableHead>
             <TableHead>Special Allowance</TableHead>
             <TableHead>Bonuses</TableHead>
-            <TableHead>Has Bonus</TableHead>
-            <TableHead>Has Conveyance</TableHead>
-            <TableHead>Has HRA</TableHead>
-            <TableHead>Has Allowances</TableHead>
-            <TableHead>Has Special Allowance</TableHead>
-            <TableHead>Has ESI</TableHead>
-            <TableHead>Has PF</TableHead>
-            <TableHead>Total CTC</TableHead>
+            {/* <TableHead>Has Bonus</TableHead> */}
+            {/* <TableHead>Has Conveyance</TableHead> */}
+            {/* <TableHead>Has HRA</TableHead> */}
+            {/* <TableHead>Has Allowances</TableHead> */}
+            {/* <TableHead>Has Special Allowance</TableHead> */}
+            {/* <TableHead>Has ESI</TableHead> */}
+            {/* <TableHead>Has PF</TableHead> */}
             <TableHead>Gross Monthly Salary</TableHead>
+            <TableHead>Total CTC</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {salaryStructure.map((data, index) => (
-            <TableRow key={index}>
-              <TableCell>
-                {getFullName(data.employee.first_name, data.employee.last_name)}
-              </TableCell>
-              <TableCell>{data.employee.position}</TableCell>
-              <TableCell>
-                <Avatar>
-                  <AvatarImage src={data.employee.profile_picture} />
-                  <AvatarFallback>{data.employee.first_name}</AvatarFallback>
-                </Avatar>
-              </TableCell>
-              <TableCell>{data.basic_salary}</TableCell>
-              <TableCell>{data.hra}</TableCell>
-              <TableCell>{data.conveyance}</TableCell>
-              <TableCell>{data.allowances}</TableCell>
-              <TableCell>{data.special_allowance}</TableCell>
-              <TableCell>{data.bonuses}</TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_bonus} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_conveyance} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_hra} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_allowances} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_special_allowance} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_esi} disabled />
-              </TableCell>
-              <TableCell className="text-center">
-                <Checkbox checked={data.has_pf} disabled />
-              </TableCell>
-              <TableCell>{data.total_ctc}</TableCell>
-              <TableCell>{data.gross_monthly_salary}</TableCell>
-            </TableRow>
+            <TooltipProvider delayDuration={0}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <TableRow key={index}>
+                    <TableCell>
+                      {getFullName(data.employee.first_name, data.employee.last_name)}
+                    </TableCell>
+                    <TableCell>{data.employee.position}</TableCell>
+                    <TableCell>
+                      <Avatar>
+                        <AvatarImage src={data.employee.profile_picture} />
+                        <AvatarFallback>{data.employee.first_name}</AvatarFallback>
+                      </Avatar>
+                    </TableCell>
+                    <TableCell>{data.basic_salary}</TableCell>
+                    <TableCell>{data.hra}</TableCell>
+                    <TableCell>{data.conveyance}</TableCell>
+                    <TableCell>{data.allowances}</TableCell>
+                    <TableCell>{data.special_allowance}</TableCell>
+                    <TableCell>{data.bonuses}</TableCell>
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_bonus} disabled /> */}
+                    {/* </TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_conveyance} disabled /> */}
+                    {/* </TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_hra} disabled /> */}
+                    {/* </TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_allowances} disabled /> */}
+                    {/* </TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_special_allowance} disabled /> */}
+                    {/* </TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_esi} disabled /> */}
+                    {/* </TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.has_pf} disabled /> */}
+                    {/* </TableCell> */}
+                    <TableCell>{data.gross_monthly_salary}</TableCell>
+                    <TableCell>{data.total_ctc}</TableCell>
+                  </TableRow>
+                </TooltipTrigger>
+                <TooltipContent align="end" asChild sideOffset={-10}>
+                  <Button className="relative" variant="ghost">
+                    Edit employee
+                    <Link
+                      href={`my-team/employee-profile/${data.id}/?tab=person-details`}
+                      className="absolute inset-0"
+                    />
+                  </Button>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ))}
         </TableBody>
       </Table>

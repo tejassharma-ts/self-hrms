@@ -85,7 +85,7 @@ export default async function StaffDetails() {
             <TableHead>Position</TableHead>
             <TableHead>Date Joined</TableHead>
             <TableHead>Salary</TableHead>
-            <TableHead>Is Active</TableHead>
+            {/* <TableHead>Is Active</TableHead> */}
             <TableHead>Is HR</TableHead>
             <TableHead>Created At</TableHead>
             <TableHead>Updated At</TableHead>
@@ -116,9 +116,9 @@ export default async function StaffDetails() {
                     <TableCell>{data.position}</TableCell>
                     <TableCell>{data.date_joined}</TableCell>
                     <TableCell>{data.salary}</TableCell>
-                    <TableCell className="text-center">
-                      <Checkbox checked={data.is_active} disabled />
-                    </TableCell>
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.is_active} disabled /> */}
+                    {/* </TableCell> */}
                     <TableCell className="text-center">
                       <Checkbox checked={data.is_hr} disabled />
                     </TableCell>
