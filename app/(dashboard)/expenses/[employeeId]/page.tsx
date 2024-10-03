@@ -90,8 +90,8 @@ const EmployeePage = async ({
                   ? "Pending"
                   : status === "rejected"
                     ? "Declined"
-                    : "Spend"}{" "}
-              Expenses
+                    : ""}{" "}
+              Expenses Record
             </h2>
             <div className={"flex items-center gap-x-4"}>
               <MonthFilter />

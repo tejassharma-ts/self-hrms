@@ -14,14 +14,16 @@ export const SpendExpensesHeader = ({
   employeeSpendData,
   employeeId,
 }: ISpendExpensesHeaderProps): React.ReactNode => {
-  console.log(employeeSpendData);
   return (
     <div className={"mb-10 flex justify-between"}>
       <Card className={cn("h-36 w-full max-w-md overflow-hidden border border-gray-200 shadow-lg")}>
         <CardContent className="flex h-full gap-x-4 p-6">
           <Avatar className={"w-2/8 h-full"}>
-            <AvatarImage src={`${employeeSpendData[0].employee.profile_picture}`} alt="@shadcn" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage
+              src={`${employeeSpendData[0]?.employee?.profile_picture}`}
+              alt="employee Profile picture"
+            />
+            <AvatarFallback>{employeeSpendData[0]?.employee?.first_name}</AvatarFallback>
           </Avatar>
           <div className={"flex flex-col gap-y-1"}>
             <h2>

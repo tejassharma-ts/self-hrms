@@ -173,8 +173,7 @@ interface Deductions {
 
 interface Payroll {
   [x: string]: ReactNode;
-  slip_sent_status: any;
-  slip_sent_status: boolean | undefined;
+  slip_sent_status?: boolean;
   id: string;
   hra: string;
   conveyance: string;
