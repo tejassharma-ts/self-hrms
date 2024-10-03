@@ -133,6 +133,7 @@ export default function CustomCalendar() {
         description: "Holiday has been added successfully",
       });
       setIsHolidayModalOpen(false);
+      fetchData();
     } catch (err) {
       toast({
         description: "Failed to add holiday. Please try again later!",
@@ -316,17 +317,40 @@ export default function CustomCalendar() {
           const event = events.find((event) => event.date === formattedDate);
 
           const isHoliday = event && event.date === formattedDate;
-          return (
+
+          return isHoliday ? (
+            <Dialog>
+              <DialogTrigger asChild>
+                <div
+                  key={day}
+                  className={cn(
+                    "relative flex h-32 w-full cursor-pointer items-center justify-center rounded-sm border border-dashed px-5 py-2",
+                    {
+                      "bg-black text-white": isHoliday,
+                    },
+                  )}>
+                  <span className="absolute left-2 top-2">{day + 1}</span>
+                  {event && <h1 className="text-center font-medium">{event.name}</h1>}
+                </div>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>{event.name}</DialogTitle>
+                  <DialogDescription>{event.description}</DialogDescription>
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
+          ) : (
             <div
               key={day}
+              onClick={() => {
+                setIsHolidayModalOpen(true);
+                form.setValue("date", new Date(formattedDate));
+              }}
               className={cn(
                 "relative flex h-32 w-full cursor-pointer items-center justify-center rounded-sm border border-dashed px-5 py-2",
-                {
-                  "bg-black text-white": isHoliday,
-                },
               )}>
               <span className="absolute left-2 top-2">{day + 1}</span>
-              {event && <h1 className="text-center font-medium">{event.name}</h1>}
             </div>
           );
         })}

@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { LeaveRequest } from "@/types/dashboard";
-import { getFullName } from "@/lib/utils";
+import { formatISODate, getFullName } from "@/lib/utils";
 import useSelectItems from "@/hooks/use-select-items";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import MultiSelector from "./MultiSelector";
@@ -34,7 +34,7 @@ type EmployeeLeaveRequestProps = {
 
 // TODO: fetch data from server
 const departments = ["Tech", "Management", "Marketing"];
-const leaveType = ['Sick', 'Casual', 'Annual', 'Maternity', 'Paternity'];
+const leaveType = ["Sick", "Casual", "Annual", "Maternity", "Paternity"];
 
 export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequestProps) {
   const [status, setStatus] = useState("");
@@ -102,7 +102,12 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
         <TableCaption>A list of employees as per requested filter.</TableCaption>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead>Name</TableHead>
+            <TableHead>
+              <div className="flex items-center space-x-2">
+                {/* <Checkbox checked={!!selectedLeaves.length} onCheckedChange={handleSelectAll} /> */}
+                <span>Name</span>
+              </div>
+            </TableHead>
             <TableHead>
               <MultiSelector
                 label="department"
@@ -141,6 +146,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                     <DropdownMenuRadioItem value="approved">Approved</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="rejected">Rejected</DropdownMenuRadioItem>
                     <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="">All Request</DropdownMenuRadioItem>
                   </DropdownMenuRadioGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -166,7 +172,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
               </TableCell>
               <TableCell>{col.employee.department}</TableCell>
               <TableCell>{col.leave_type}</TableCell>
-              <TableCell>{col.start_date}</TableCell>
+              <TableCell>{formatISODate(col.start_date)}</TableCell>
               <TableCell>
                 <span className="line-clamp-1 text-ellipsis">{col.reason}</span>
               </TableCell>

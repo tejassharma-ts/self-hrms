@@ -8,33 +8,29 @@ import NewHireSkeleton from "./_skeletons/NewHireSkeleton";
 import EmployeeStatus from "./_components/EmployeeStatus";
 import EmployeeStatusSkeleton from "./_skeletons/EmployeeStatusSkeleton";
 import RequestWithEmployeeLeave from "./_components/RequestWithEmployeeLeave";
+import PreviousPayrollCard from "./_components/PreviousPayrollCard";
 import RequestWithEmployeeLeaveSkeleton from "./_skeletons/RequestWithEmployeeLeaveSkeleton";
 // import ProjectAnalyticsSkeleton from "./_skeletons/ProjectAnalytics";
 import MeetingCard from "@/app/(dashboard)/dashboard/_components/MeetingCard";
+import EmployeesOnLeave from "./_components/EmployeesOnLeave";
 
 export const dynamic = "force-dynamic";
 
 export default function GridCards() {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-11">
-      <div className="col-span-3 mb-4">
-        <WelcomeCard />
+    <div className="mt-4">
+      <div className="grid grid-cols-12 grid-rows-[200px_180px_1fr] gap-4">
+        <WelcomeCard className="col-span-3" />
+        <EmployeeStatus className="col-span-2" />
+        <NewHiresCard className="col-span-5" />
+        <RequestWithEmployeeLeave className="col-span-4" />
+        <PreviousPayrollCard className="col-span-4" />
+        <MeetingCard className="col-span-4 row-span-3" />
+        <EmployeesOnLeave className="col-span-8 row-span-3" />
       </div>
-      <Suspense fallback={<EmployeeStatusSkeleton />}>
-        <EmployeeStatus />
-      </Suspense>
-      <div className="col-span-4 mb-4">
-        <Suspense fallback={<NewHireSkeleton />}>
-          <NewHiresCard />
-        </Suspense>
-      </div>
-      <Suspense fallback={<RequestWithEmployeeLeaveSkeleton />}>
-        <RequestWithEmployeeLeave />
-      </Suspense>
-      <div className="col-span-4 mb-4">
-        <MeetingCard />
-        {/* <EventsAndMeetings /> */}
-      </div>
+      {/* <div className="mb-4"> */}
+      {/* </div> */}
+      {/* <EventsAndMeetings /> */}
       {/* <div className="col-span-5 mb-4"> */}
       {/*   <Suspense fallback={<ProjectAnalyticsSkeleton />}> */}
       {/*     <ProjectAnalytics /> */}

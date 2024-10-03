@@ -3,6 +3,8 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import useLoaderStore from "@/model/loader";
+import { useLocation } from "@/context/location-context";
+import { usePathname } from "next/navigation";
 
 const LayoutContext = React.createContext<{
   fixed: boolean;
@@ -65,6 +67,8 @@ Header.displayName = "Header";
 
 const Body = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
+    const pathname = usePathname();
+
     // Check if Layout.Body is used within Layout
     const contextVal = React.useContext(LayoutContext);
     if (contextVal === null) {
@@ -78,6 +82,7 @@ const Body = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
         className={cn(
           "mt-0 px-4 py-2 md:overflow-hidden md:px-8",
           contextVal && contextVal.fixed && "flex-1",
+          pathname.startsWith("/dashboard") && "bg-[#f5f7fa]",
           className,
         )}
         {...props}

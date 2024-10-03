@@ -27,7 +27,7 @@ export type LeaveRequest = {
   start_date: string;
   end_date: string;
   from_time: string;
-  end_time: string;
+  to_time: string;
   reason: string;
   status: "Approved" | "Rejected" | "Pending";
   applied_at: string;

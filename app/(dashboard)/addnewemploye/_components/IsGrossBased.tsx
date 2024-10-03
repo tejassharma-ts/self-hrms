@@ -261,7 +261,7 @@ const IsGrossBased = ({ salaryStructure }: { salaryStructure: any }) => {
                 <FormControl>
                   <input
                     type="checkbox"
-                    id="has_esi"
+                    id="has_pf"
                     checked={field.value}
                     onChange={field.onChange}
                   />
@@ -273,12 +273,14 @@ const IsGrossBased = ({ salaryStructure }: { salaryStructure: any }) => {
             )}
           />
         </div>
-        <div className="flex justify-center">
-          <Button type="submit" className="mt-4" disabled={isLoading}>
-            {isLoading && <Icons.loader className="mr-2 h-4 w-4 animate-spin" />}
-            {isLoading ? "Saving..." : "Add Salary Details"}
-          </Button>
-        </div>
+        {!salaryStructure ? (
+          <div className="flex justify-center">
+            <Button type="submit" className="mt-4" disabled={isLoading}>
+              {isLoading && <Icons.loader className="mr-2 h-4 w-4 animate-spin" />}
+              {isLoading ? "Saving..." : "Add Salary Details"}
+            </Button>
+          </div>
+        ) : null}
       </form>
     </Form>
   );

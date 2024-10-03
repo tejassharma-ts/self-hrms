@@ -31,27 +31,36 @@ import { useRouter } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
 
 const employeeSchema = z.object({
-  first_name: z.string().max(50, "First name must be 50 characters or less").optional(),
-  last_name: z.string().max(50, "Last name must be 50 characters or less").optional(),
-  password: z.string().optional(),
-  email: z.string().email("Invalid email address").optional(),
-  official_email: z.string().email("Invalid email address").optional(),
-  phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
-  official_phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
-  emergency_phone_number: z.string().max(10, "Phone number must be 10 digits or less").optional(),
-  address: z.string().optional(),
-  permanent_address: z.string().optional(),
-  date_of_birth: z.string().optional(),
-  position: z.string().max(100, "Position must be 100 characters or less").optional(),
-  salary: z.string().optional(),
+  first_name: z.string().max(50, "First name cannot exceed 50 characters"),
+  last_name: z.string().max(50, "Last name cannot exceed 50 characters"),
+  password: z.string().min(5, "Password must be at least 5 characters long"),
+  email: z.string().email("Please enter a valid email address"),
+  official_email: z.string().email("Please enter a valid official email address"),
+  phone_number: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  official_phone_number: z
+    .string()
+    .regex(/^\d{10}$/, "Official phone number must be exactly 10 digits"),
+  emergency_phone_number: z
+    .string()
+    .regex(/^\d{10}$/, "Emergency contact number must be exactly 10 digits"),
+  address: z.string().max(100, "Address cannot exceed 100 characters"),
+  permanent_address: z
+    .string()
+    .max(100, "Permanent address cannot exceed 100 characters")
+    .optional(),
+  date_of_birth: z.string().nonempty("Date of birth is required"),
+  position: z.string().max(100, "Position title cannot exceed 100 characters").optional(),
+  salary: z
+    .string()
+    .refine((val) => !val || !isNaN(parseFloat(val)), {
+      message: "Salary must be a valid numeric value",
+    })
+    .refine((val) => !val || parseFloat(val) > 0, {
+      message: "Salary must be greater than 0",
+    }),
   is_hr: z.boolean().default(false).optional(),
-  department: z.string().max(100, "Department must be 100 characters or less").optional(),
-  bank_name: z.string().max(100, "Bank name must be 100 characters or less").optional(),
-  account_number: z.string().max(17, "Account number must be 17 characters or less").optional(),
-  ifsc_code: z.string().max(12, "IFSC code must be 12 characters or less").optional(),
-  aadhar_number: z.string().max(12, "Aadhar number must be 12 digits").optional(),
-  pan_number: z.string().max(10, "PAN number must be 10 characters").optional(),
-  gender: z.string().max(25, "Gender must be 25 characters or less").optional(),
+  department: z.string().max(100, "Department name cannot exceed 100 characters").optional(),
+  gender: z.string().max(25, "Gender description cannot exceed 25 characters").optional(),
   profile_picture: z.any().optional(),
 });
 
@@ -61,8 +70,16 @@ interface AddNewEmployeeFormProps {
   onComplete: () => void;
 }
 
+const designations = [
+  "Software Engineer",
+  "Product Manager",
+  "UI/UX Designer",
+  "Data Analyst",
+  "DevOps Engineer",
+  "Marketing Specialist",
+];
 
-
+const departments = ["Engineering", "Product", "Design", "Data Science", "Operations", "Marketing"];
 
 const AddNewEmployeeForm = ({
   onComplete,
@@ -82,6 +99,7 @@ const AddNewEmployeeForm = ({
   const router = useRouter();
 
   const form = useForm<EmployeeFormValues>({
+    mode: "onChange",
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       first_name: employee?.first_name || undefined,
@@ -99,11 +117,6 @@ const AddNewEmployeeForm = ({
       salary: employee?.salary || undefined,
       is_hr: employee?.is_hr || false,
       department: employee?.department || undefined,
-      bank_name: employee?.bank_name || undefined,
-      account_number: employee?.account_number || undefined,
-      ifsc_code: employee?.ifsc_code || undefined,
-      aadhar_number: employee?.aadhar_number || undefined,
-      pan_number: employee?.pan_number || undefined,
       gender: employee?.gender || undefined,
     },
   });
@@ -168,7 +181,6 @@ const AddNewEmployeeForm = ({
     }
   }, [autoPassword, form.getValues, form.setValue, form.watch("date_of_birth")]);
 
-
   return (
     <div className="mx-auto mt-10 max-w-4xl rounded-lg bg-white p-8 shadow-md">
       <Form {...form}>
@@ -221,7 +233,10 @@ const AddNewEmployeeForm = ({
                         Auto Password
                       </FormLabel>
                       <FormControl>
-                        <PasswordInput {...field} value={autoPassword ? generatedPassword : field.value} />
+                        <PasswordInput
+                          {...field}
+                          value={autoPassword ? generatedPassword : field.value}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -233,7 +248,9 @@ const AddNewEmployeeForm = ({
                   render={({ field }) => (
                     <FormItem>
                       {dobRequired && (
-                        <p className="text-red-600 text-sm">Please select a date of birth to use auto password.</p>
+                        <p className="text-sm text-red-600">
+                          Please select a date of birth to use auto password.
+                        </p>
                       )}
                       <FormLabel>Date Of Birth</FormLabel>
                       <FormControl>
@@ -243,7 +260,6 @@ const AddNewEmployeeForm = ({
                     </FormItem>
                   )}
                 />
-
 
                 <FormField
                   control={form.control}
@@ -258,9 +274,9 @@ const AddNewEmployeeForm = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="male">Male</SelectItem>
-                          <SelectItem value="female">Female</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                          <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -300,7 +316,6 @@ const AddNewEmployeeForm = ({
                     </FormItem>
                   )}
                 />
-
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                 <FormField
@@ -385,10 +400,21 @@ const AddNewEmployeeForm = ({
                   name="position"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Position</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Position" {...field} />
-                      </FormControl>
+                      <FormLabel>Designation</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a designation" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {designations.map((designation) => (
+                            <SelectItem key={designation} value={designation}>
+                              {designation}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -399,9 +425,20 @@ const AddNewEmployeeForm = ({
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Department</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter Department" {...field} />
-                      </FormControl>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a department" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {departments.map((department) => (
+                            <SelectItem key={department} value={department}>
+                              {department}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -447,10 +484,8 @@ const AddNewEmployeeForm = ({
         </form>
       </Form>
       {/* <SalaryDetailsForm /> */}
-
     </div>
   );
 };
 
 export default AddNewEmployeeForm;
-

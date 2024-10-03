@@ -11,13 +11,14 @@ import { useEffect } from "react";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { parse, format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 type AttendanceTiming = {
   check_in_time: string | null;
   check_out_time: string | null;
 };
 
-export default function WelcomeCard() {
+export default function WelcomeCard({ className }: { className: string }) {
   const [attendanceLoading, setAttendanceLoading] = useState(false);
   const { authCompany, authUser, isLoading } = useClientAuth();
   const [attendanceTiming, setAttendanceTiming] = useState<AttendanceTiming>({
@@ -28,6 +29,7 @@ export default function WelcomeCard() {
     "Checked In" | "Checkout Out" | "Not Checked In" | null
   >(null);
 
+  console.log({ authUser });
   const formatTime = (timeString: string) => {
     const cleanedTime = timeString.split(".")[0];
     const parsedTime = parse(cleanedTime, "HH:mm:ss", new Date());
@@ -46,6 +48,7 @@ export default function WelcomeCard() {
         const checkInTime = res.data?.check_in_time ? formatTime(res.data.check_in_time) : null;
         const checkOutTime = res.data?.check_out_time ? formatTime(res.data.check_out_time) : null;
 
+        console.log(res);
         setAttendanceTiming({
           check_in_time: checkInTime,
           check_out_time: checkOutTime,
@@ -67,7 +70,7 @@ export default function WelcomeCard() {
 
   function greet() {
     if (authUser) {
-      return `Hello!! ${getFullName(authUser.employee_profile.first_name, authUser.employee_profile.last_name)}`;
+      return <h1>Hello! {authUser.employee_profile.first_name}</h1>;
     } else if (authCompany) {
       return `${authCompany.company_name}`;
     }
@@ -135,9 +138,11 @@ export default function WelcomeCard() {
         );
       else if (attendanceTiming.check_in_time && !attendanceTiming.check_out_time) {
         return (
-          <div className="flex flex-col space-y-2 text-sm text-white">
-            <h1>Checked in: <span className="font-semibold">{attendanceTiming.check_in_time}</span></h1>
-            <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
+          <div className="flex flex-col items-start justify-between space-y-2 text-sm text-white">
+            <h1>
+              Checked in: <span className="font-semibold">{attendanceTiming.check_in_time}</span>
+            </h1>
+            <Button variant="secondary" className="order-1" onClick={onAttendanceHandle}>
               <span className="mr-2">{attendanceLoading && <Icons.loader />}</span>
               Check out
             </Button>
@@ -162,12 +167,12 @@ export default function WelcomeCard() {
     }
   }
   return (
-    <Card className="relative mx-auto h-48 w-full max-w-md overflow-hidden bg-black">
+    <Card className={cn("relative mx-auto h-48 w-full overflow-hidden bg-black", className)}>
       <div className="absolute inset-0 bg-black bg-opacity-50" />
       <CardContent className="relative z-10 flex h-full flex-col p-6">
         <div className="flex-grow">
           <h2 className="text-2xl font-bold text-white">{greet()}</h2>
-          <p className="text-sm text-white">{formatTodaysDate()}</p>
+          <p className="mt-1 text-sm font-medium text-white">{formatTodaysDate()}</p>
         </div>
         {renderAttendanceStatus()}
       </CardContent>

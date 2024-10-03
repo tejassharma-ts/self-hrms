@@ -20,12 +20,29 @@ import { toast } from "@/hooks/use-toast";
 import { headers } from "next/headers";
 
 const employeeSchema = z.object({
-  bank_name: z.string().min(1, "Bank Name is required").optional(),
-  account_holder_name: z.string().min(1, "Account holder name").optional(),
-  aadhar_number: z.string().optional(),
-  account_number: z.string().min(1, "Account Number is required").optional(),
-  pan_number: z.string().min(1, "PAN Number is required").optional(),
-  ifsc_code: z.string().min(1, "IFSC Code is required").optional(),
+  bank_name: z.string().min(1, "Bank Name is required"),
+  account_holder_name: z
+    .string()
+    .min(1, "Account holder name is required")
+    .max(30, "Account holder name cannot exceed 30 characters.")
+    .regex(/^[a-zA-Z\s]+$/, "Account holder name must contain only alphabets"),
+  aadhar_number: z.string().regex(/^\d{12}$/, "Aadhar number must be exactly 12 digits"),
+  account_number: z
+    .string()
+    .min(1, "Account Number is required")
+    .regex(/^\d{9,18}$/, "Account number must be between 9 and 18 digits"),
+  pan_number: z
+    .string()
+    .min(1, "PAN Number is required")
+    .regex(
+      /^[A-Z]{5}[0-9]{4}[A-Z]{1}$/,
+      "PAN Number must be in the correct format (e.g., ABCDE1234F)",
+    )
+    .optional(),
+  ifsc_code: z
+    .string()
+    .min(1, "IFSC Code is required")
+    .regex(/^[A-Z]{4}0[A-Z0-9]{6}$/, "IFSC Code must be in the correct format (e.g., ABCD0123456)"),
   is_bank_kyc_done: z.boolean().optional(),
   pan_card_image: z.union([z.instanceof(File), z.string()]).optional(),
   aadhaar_card_front_image: z.union([z.instanceof(File), z.string()]).optional(),
@@ -49,6 +66,7 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
   const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<EmployeeFormValues>({
+    mode: "onChange",
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       bank_name: employee?.bank_name || "",
@@ -155,7 +173,7 @@ const AddBankDetails = ({ employee_id, onComplete, employee }: AddBankDetailsPro
                 name="account_holder_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Bank name</FormLabel>
+                    <FormLabel>Account Holder's name</FormLabel>
                     <FormControl>
                       <Input
                         placeholder="Account holder's name"

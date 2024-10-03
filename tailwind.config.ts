@@ -19,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      boxShadow: {
+        card: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      },
       fontFamily: {
         sans: ["var(--font-main)", ...fontFamily.sans],
       },

@@ -33,7 +33,7 @@ function CenterLoader() {
 }
 
 function CustomLoader({ className }: CustomLoaderProps) {
-  return <Loader className={cn("size-5 animate-spin", className)} />;
+  return <Loader className={cn("size-5 animate-spin mr-2", className)} />;
 }
 
 export const Icons = {

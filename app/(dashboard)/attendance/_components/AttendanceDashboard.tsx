@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Employee } from "@/types/types";
-import { formatTime } from "@/lib/utils";
+import { formatISODate, formatTime } from "@/lib/utils";
 
 interface Attendance {
   date: string;
@@ -119,7 +119,7 @@ const AttendanceDashboard: React.FC<AttendanceDashboardProps> = ({
         <TableBody>
           {attendances.map((row, index) => (
             <TableRow key={index}>
-              <TableCell>{row.date}</TableCell>
+              <TableCell>{formatISODate(row.date)}</TableCell>
               <TableCell>{formatTime(row.check_in_time) || "-"}</TableCell>
               <TableCell>{formatTime(row.check_out_time) || "-"}</TableCell>
               <TableCell>
