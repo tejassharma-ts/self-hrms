@@ -12,18 +12,58 @@ import {
 import { Attendance } from "@/types/types";
 import { formatTime } from "@/lib/utils";
 
+import { format } from "date-fns";
+import { Calendar as CalendarIcon } from "lucide-react";
+
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+
 type AttendanceListProps = {
   attendances: any;
 };
 
 export default function AttendanceList({ attendances }: AttendanceListProps) {
+  const [date, setDate] = React.useState<Date>();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { replace } = useRouter();
+
   if (!attendances) {
     return <h1>Opps</h1>;
   }
+
+  function onDateSelect(date: Date | undefined) {
+    if (date) {
+      const formattedDate = format(date, "yyyy-MM-dd");
+      const params = new URLSearchParams(searchParams);
+      params.set("date", formattedDate);
+      replace(`${pathname}?${params.toString()}`);
+    }
+    setDate(date);
+  }
   return (
     <div className="container mx-auto p-6">
-      <h1 className="mb-4 text-2xl font-bold">Attendance List</h1>
-      <p className="mb-4 text-sm text-gray-500">Date- {new Date().toLocaleDateString()}</p>
+      <h1 className="text-2xl font-bold">Attendance List</h1>
+      <Popover>
+        <PopoverTrigger asChild className="mb-4 mt-2">
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-[280px] justify-start rounded-sm text-left font-normal",
+              !date && "text-muted-foreground",
+            )}>
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date ? format(date, "PPP") : <span>Pick a date</span>}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar mode="single" selected={date} onSelect={onDateSelect} initialFocus />
+        </PopoverContent>
+      </Popover>
+      {/* <p className="mb-4 text-sm text-gray-500">Date- {new Date().toLocaleDateString()}</p> */}
 
       <Table>
         <TableHeader>

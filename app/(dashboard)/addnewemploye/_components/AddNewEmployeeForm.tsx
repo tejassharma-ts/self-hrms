@@ -457,9 +457,9 @@ const AddNewEmployeeForm = ({
                   name="salary"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Salary</FormLabel>
+                      <FormLabel>Gross monthy Salary</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Salary" {...field} />
+                        <Input placeholder="Enter Gross monthy Salary" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
