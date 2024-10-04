@@ -33,6 +33,8 @@ type SearchParams = {
   year?: number;
 };
 
+export const dynamic = "force-dynamic"
+
 async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
     const res = await apiCaller.get<Expenses>(`/api/payroll_app/expenses/`, {

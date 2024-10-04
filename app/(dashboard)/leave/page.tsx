@@ -5,6 +5,8 @@ import { LeavesDataApi } from "@/types/dashboard";
 import { Status, Department, LeaveType } from "@/types/types";
 import { cookies } from "next/headers";
 
+export const dynamic = "force-dynamic";
+
 type SearchParams = {
   tab: "leave-request" | "on-leave" | "calender";
   status: Status;
