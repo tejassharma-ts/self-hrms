@@ -15,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Employee } from "@/types/types";
+import { formatISODate, formatTime } from "@/lib/utils";
 
 interface Attendance {
   date: string;
@@ -24,8 +26,14 @@ interface Attendance {
 }
 
 interface AttendanceDashboardProps {
-  employee: EmployeeProfile;
+  employee: any;
   attendances: Attendance[];
+  selectedMonth: any;
+  setSelectedMonth: any;
+  selectedYear: any;
+  setSelectedYear: any;
+  selectedStatus: any;
+  setSelectedStatus: any;
 }
 
 const AttendanceDashboard: React.FC<AttendanceDashboardProps> = ({
@@ -111,9 +119,9 @@ const AttendanceDashboard: React.FC<AttendanceDashboardProps> = ({
         <TableBody>
           {attendances.map((row, index) => (
             <TableRow key={index}>
-              <TableCell>{row.date}</TableCell>
-              <TableCell>{row.check_in_time || "-"}</TableCell>
-              <TableCell>{row.check_out_time || "-"}</TableCell>
+              <TableCell>{formatISODate(row.date)}</TableCell>
+              <TableCell>{formatTime(row.check_in_time) || "-"}</TableCell>
+              <TableCell>{formatTime(row.check_out_time) || "-"}</TableCell>
               <TableCell>
                 <span
                   className={`rounded-full px-2 py-1 text-xs ${

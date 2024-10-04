@@ -23,14 +23,14 @@ export const sidelinks: SideLink[] = [
     icon: <Icons.people size={18} />,
     sub: [
       {
-        title: "Salary Details",
-        href: "/my-team?tab=salary-details",
-        icon: <Icons.leaveRequest size={18} />,
-      },
-      {
         title: "Staff Details",
         href: "/my-team?tab=staff-details",
         icon: <Icons.absent size={18} />,
+      },
+      {
+        title: "Salary Details",
+        href: "/my-team?tab=salary-details",
+        icon: <Icons.leaveRequest size={18} />,
       },
       {
         title: "Bank Details",
@@ -86,16 +86,16 @@ export const sidelinks: SideLink[] = [
         href: "/payroll/history",
         icon: <Icons.history size={18} />,
       },
-      {
-        title: "Payroll Settings",
-        href: "/payroll/settings",
-        icon: <Icons.setting size={18} />,
-      },
+      // {
+      //   title: "Payroll Settings",
+      //   href: "/payroll/settings",
+      //   icon: <Icons.setting size={18} />,
+      // },
     ],
   },
-  {
-    title: "Settings",
-    href: "#",
-    icon: <Icons.setting size={18} />,
-  },
+  // {
+  //   title: "Settings",
+  //   href: "#",
+  //   icon: <Icons.setting size={18} />,
+  // },
 ];

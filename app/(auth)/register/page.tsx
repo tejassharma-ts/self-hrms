@@ -2,6 +2,7 @@ import Image from "next/image";
 import UserSigninForm from "../auth/_components/UserSigninForm";
 import { InputOTPForm } from "../auth/_components/OTPVerifyForm";
 import UserSignupForm from "../auth/_components/UserSignupForm";
+import Link from "next/link";
 
 type AuthPageProps = {
   searchParams: {
@@ -27,12 +28,17 @@ export default function RegisterPage({ searchParams }: AuthPageProps) {
   return (
     <div className="min-h-screen w-full lg:grid lg:grid-cols-2">
       <div className="mx-auto hidden max-w-md pt-16 lg:block">
-        <div className="flex flex-col space-y-1">
-          <h1 className="text-4xl font-semibold">Welcome to,</h1>
-          <p className="max-w-md text-gray-500">
-            Our Human Resource Management portal! Please complete your registration to access
-            valuable resources, manage employee information, and streamline HR processes.
-          </p>
+        <div className="flex h-full flex-col justify-between space-y-1 pb-32 pt-10">
+          <div>
+            <h1 className="text-4xl font-semibold">Welcome to,</h1>
+            <p className="max-w-md text-gray-500">
+              Our Human Resource Management portal! Please complete your registration to access
+              valuable resources, manage employee information, and streamline HR processes.
+            </p>
+          </div>
+          <div className="mt-auto">
+            <img src="/welcome.png" alt="welcome" />
+          </div>
         </div>
       </div>
       <div className="flex items-center justify-center py-12">
@@ -41,6 +47,12 @@ export default function RegisterPage({ searchParams }: AuthPageProps) {
             <h1 className="text-2xl font-bold">Registration</h1>
           </div>
           {aptForm()}
+          <p className="-mt-4 text-center text-muted-foreground">
+            Already have an account?{" "}
+            <Link href="/login" className="underline underline-offset-4">
+              Login
+            </Link>
+          </p>
         </div>
       </div>
     </div>

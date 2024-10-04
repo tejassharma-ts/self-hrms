@@ -3,6 +3,7 @@ import { TabsWrapper } from "./_components/TabsWrapper";
 import { getAuthCookies } from "@/lib/server/api";
 import { LeavesDataApi } from "@/types/dashboard";
 import { Status, Department, LeaveType } from "@/types/types";
+import { cookies } from "next/headers";
 
 type SearchParams = {
   tab: "leave-request" | "on-leave" | "calender";
@@ -19,7 +20,13 @@ type EmployeeRequestListPageProps = {
 async function getLeaveRequests(searchParams: SearchParams) {
   try {
     const res = await apiCaller.get<LeavesDataApi>("/api/companies-app/company/leaves/", {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
+
       params: {
         leave_type: searchParams.leave_type || null,
         status: searchParams.status || null,

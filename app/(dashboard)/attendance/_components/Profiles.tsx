@@ -8,14 +8,15 @@ import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 
 type ProfilesProps = {
-  profiles: EmployeeProfile[];
-  attendances?: AttendanceData;
+  profiles: any;
+  attendances?: any;
 };
 
 const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
+
 export default function Profiles({ profiles, attendances }: ProfilesProps) {
-  const [selectedProfile, setSelectedProfile] = useState<EmployeeProfile | null>(null);
+  const [selectedProfile, setSelectedProfile] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [employeeAttendance, setEmployeeAttendance] = useState();
   const [selectedMonth, setSelectedMonth] = useState(currentMonth + "");

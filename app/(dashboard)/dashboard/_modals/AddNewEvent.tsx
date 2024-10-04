@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +13,19 @@ import ScheduleMeeting from "./ScheduleMeeting";
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 
-export default function AddNewEvent() {
+export default function AddNewEvent({
+  setMeetings,
+  className,
+}: {
+  setMeetings: any;
+  className?: string;
+}) {
+  const [showDialog, setShowDialog] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={showDialog} onOpenChange={setShowDialog}>
       <DialogTrigger asChild>
-        <Button variant="outline">
-          <Icons.add className="size-4 mr-2" />
+        <Button variant="outline" className={className}>
+          <Icons.add className="mr-2 size-4" />
           Add new Event
         </Button>
       </DialogTrigger>
@@ -25,7 +33,7 @@ export default function AddNewEvent() {
         <DialogHeader>
           <DialogTitle>Schedule Meeting</DialogTitle>
           <DialogDescription>
-            <ScheduleMeeting />
+            <ScheduleMeeting setShowDialog={setShowDialog} setMeetings={setMeetings} />
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

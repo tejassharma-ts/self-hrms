@@ -1,23 +1,47 @@
 import React from "react";
-import { getAuthCookies } from "@/lib/server/api";
-import { ExpensesHeader } from "./_components/ExpensesHeader";
-import { ExpensesMonthFilter } from "./_components/ExpensesMonthFilter";
-import { ExpensesYearFilter } from "./_components/ExpensesYearFilter";
-import { ExpensesEmployeeTable } from "./_components/ExpensesEmployeeTable";
+import { MonthFilter } from "@/components/MonthFilter";
+import { YearFilter } from "@/components/YearFilter";
 import { apiCaller } from "@/lib/auth";
 import { getMonthNumber } from "@/lib/utils";
 import { Expenses } from "@/types/types";
+import { cookies } from "next/headers";
+import { ExpenseCard } from "@/app/(dashboard)/expenses/_components/ExpenseCard";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import Link from "next/link";
+import { ExpensesStatusFilter } from "@/app/(dashboard)/expenses/_components/ExpensesStatusFilter";
 
-interface getExpensesProps {
-  status: string;
-  month: number | null;
-  year: number;
-}
+const tableHeadValues: string[] = [
+  "EmployeeId",
+  "Name",
+  "Department",
+  "Date",
+  "Total Expense",
+  "Payable Amount",
+  "Status",
+];
 
-async function getExpenses({ status, month, year }: getExpensesProps): Promise<Expenses> {
+type SearchParams = {
+  status?: string;
+  month?: string;
+  year?: number;
+};
+
+async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
     const res = await apiCaller.get<Expenses>(`/api/payroll_app/expenses/`, {
-      headers: getAuthCookies(),
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
       params: {
         status,
         month,
@@ -30,30 +54,70 @@ async function getExpenses({ status, month, year }: getExpensesProps): Promise<E
   }
 }
 
-const Page = async ({ searchParams }: { searchParams: any }): Promise<React.ReactNode> => {
-  const status = searchParams.status;
-  const month = searchParams.month;
-  const monthNumber = getMonthNumber(month);
-  const year = searchParams.year;
+const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<React.ReactNode> => {
+  const { month, year, status } = searchParams;
 
-  const updatedMonth = monthNumber === 0 ? 9 : monthNumber;
-  const expensesEmployeeData: Expenses = await getExpenses({
-    status,
-    month: updatedMonth,
-    year,
-  });
+  const updatedMonth = month ? getMonthNumber(month) : undefined;
+  const expensesEmployeeData: Expenses = await getExpenses(status, updatedMonth, year);
 
   return (
     <>
-      <ExpensesHeader />
-      <div className={"grid grid-cols-4"}>
-        <div className={"col-span-3"}>
-          <div className={"mb-10 flex justify-end gap-x-4"}>
-            <ExpensesMonthFilter />
-            <ExpensesYearFilter />
+      <div className={"mb-10 grid grid-cols-4 gap-4"}>
+        <ExpenseCard
+          heading={"Pending Expenses"}
+          money={`${expensesEmployeeData.pending_total + expensesEmployeeData.approved_total}`}
+        />
+        <ExpenseCard
+          heading={"Approved Expenses"}
+          money={`${expensesEmployeeData.pending_total}`}
+        />
+        <ExpenseCard
+          isLast
+          heading={"Total Expenses"}
+          money={`${expensesEmployeeData.approved_total + expensesEmployeeData.pending_total}`}
+        />
+        <div className={"col-span-1 mx-auto"}>
+          <ExpensesStatusFilter />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-4">
+        <div className="col-span-3">
+          <div className="mb-10 flex justify-end gap-x-4">
+            <MonthFilter />
+            <YearFilter />
           </div>
           <div>
-            <ExpensesEmployeeTable expensesEmployeeData={expensesEmployeeData} />
+            <div className="rounded-md border">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    {tableHeadValues.map((value, index) => (
+                      <TableHead key={index}>{value}</TableHead>
+                    ))}
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
+                    <TableRow key={eachExpensesEmployeeData.id}>
+                      <TableCell className={"text-nowrap"}>
+                        <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>
+                          {eachExpensesEmployeeData.employee.id.replaceAll("-", "")}
+                        </Link>
+                      </TableCell>
+                      <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
+                      <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
+                      <TableCell className={"text-nowrap"}>
+                        {eachExpensesEmployeeData.date_incurred}
+                      </TableCell>
+                      <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
+                      <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
+                      <TableCell>{eachExpensesEmployeeData.status}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           </div>
         </div>
       </div>

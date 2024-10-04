@@ -31,8 +31,9 @@ interface Employee {
   last_name: string;
   profile_picture: string;
   department: string;
-  position: string;
+  position?: string;
   email: string;
+  phone_number?: string;
 }
 
 interface expense {
@@ -95,7 +96,7 @@ interface IPayrollExpenseDetails {
 
 type LeaveRequest = {
   id: string;
-  employee: object;
+  employee: Employee;
   leave_type: string;
   start_date: string;
   end_date: string;
@@ -103,14 +104,20 @@ type LeaveRequest = {
   status: "Pending" | "Approved" | "Rejected";
   applied_at: string;
   reviewed_at: string | null;
+  leave_duration: number | null;
   rejection_reason: string | null;
   company: string;
   reviewer: string | null;
 };
 
 type EmployeeLeaveStats = {
-  total_leaves_per_year: number;
-  used_leaves: number;
+  total_casual_leaves: number;
+  casual_leave_balance: number;
+  total_sick_leaves: number;
+  sick_leave_balance: number;
+  privilege_leave_balance: number;
+  total_privilege_leaves: number;
+  used_privilege_leaves: number;
 };
 
 type LeavesResponse = {
@@ -125,7 +132,7 @@ type Attendance = {
   date: string;
   check_in_time: string | null;
   check_out_time: string | null;
-  status: "Present" | "Absent" | "On Leave";
+  status: "Present" | "On Leave" | "Half Day" | "Absent";
   lat: string | null;
   long: string | null;
 };
@@ -162,4 +169,71 @@ interface Deduction {
 interface Deductions {
   deductions: Deduction[];
   deductions_count: number;
+}
+
+interface Payroll {
+  [x: string]: ReactNode;
+  slip_sent_status?: boolean;
+  id: string;
+  hra: string;
+  conveyance: string;
+  allowances: string;
+  special_allowance: string;
+  days_in_month: number;
+  employee: Employee;
+  pay_date: string;
+  days_worked: number;
+  overtime_hours: string;
+  overtime_pay: string;
+  total_earnings: string;
+  total_deductions: number;
+  esi_contribution: string;
+  pf_contribution: string;
+  final_salary: string;
+  gross_salary: string;
+  in_hand_salary: string;
+  arrears_amount: string;
+  arrears_month: string | null;
+  expense_reimbursement: string;
+  created_at: string;
+  updated_at: string;
+  company: string;
+  salary_structure: string;
+  bonus: number;
+  monthly_bonus?: string;
+}
+
+type EmployeeProfile = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  address: string | null;
+  date_of_birth: string;
+  position: string;
+  date_joined: string;
+  salary: string;
+  is_active: boolean;
+  is_hr: boolean;
+  created_at: string;
+  updated_at: string;
+  department: string;
+  profile_picture: string;
+  bank_name: string | null;
+  account_number: string | null;
+  ifsc_code: string | null;
+  aadhar_number: string | null;
+  pan_number: string | null;
+  gender: string | null;
+  user: string;
+  company: string;
+};
+
+interface ExpensesDetails extends expense {
+  hr_approved: boolean;
+  accounts_approved: boolean;
+  approval_date: string | null;
+  rejection_reason: string | null;
+  company: string;
 }

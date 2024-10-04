@@ -2,10 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { CalendarIcon, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { CalendarIcon } from "lucide-react";
 import {
   Form,
   FormControl,
@@ -14,13 +13,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format, min } from "date-fns";
+import { format } from "date-fns";
 import {
   Select,
   SelectContent,
@@ -30,66 +28,86 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Icons } from "@/components/Icons";
-import { useRouter } from "next/navigation";
 import { apiCaller } from "@/lib/auth";
+import MultipleSelector from "@/components/ui/multi-select";
 
-// Mock data for teams
-const teams = [
-  { id: "team1", name: "Marketing" },
-  { id: "team2", name: "Development" },
-  { id: "team3", name: "Design" },
-  { id: "team4", name: "Sales" },
-];
+type Employee = {
+  id: string;
+  name: string;
+  profile_picture: string;
+  department: string;
+  label: string;
+  value: string;
+};
 
 const eventSchema = z.object({
   title: z.string().min(1, "Title is required"),
   description: z.string().min(1, "Description is required"),
   add_link: z.string().url({ message: "Please enter a valid URL for the link." }),
   date: z.date({ invalid_type_error: "Please enter a valid date." }),
-  team: z.string().array().nonempty({ message: "Team member name cannot be empty." }),
+  team: z.any().array().nonempty({ message: "Team member name cannot be empty." }),
   status: z.enum(["Ongoing", "Completed"], {
     errorMap: () => ({ message: "Status must be either 'Ongoing' or 'Completed'." }),
   }),
 });
 
-export default function ScheduleMeeting() {
+export default function ScheduleMeeting({
+  setShowDialog,
+  setMeetings,
+}: {
+  setShowDialog: any;
+  setMeetings: any;
+}) {
   const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
   const form = useForm<z.infer<typeof eventSchema>>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
       title: "",
       description: "",
       add_link: "",
-      date: new Date(),
-      // TODO: remove hard coded team
-      team: ["f0d7f832-84a5-4163-b554-5052e6e0927e"],
+      date: undefined,
+      team: [],
       status: "Ongoing",
     },
   });
-  const [selectedTeams, setSelectedTeams] = useState<{ id: string; name: string }[]>([]);
-
-  const handleTeamSelect = (teamId: string) => {
-    const team = teams.find((t) => t.id === teamId);
-    if (team && !selectedTeams.some((t) => t.id === teamId)) {
-      setSelectedTeams([...selectedTeams, team]);
-    }
-  };
-
-  const handleRemoveTeam = (teamId: string) => {
-    setSelectedTeams(selectedTeams.filter((team) => team.id !== teamId));
-  };
 
   async function onSubmit(values: z.infer<typeof eventSchema>) {
     try {
+      const teamIDs = values.team.map((team) => team.id);
       setIsLoading(true);
-      const res = await apiCaller.post("/api/employees-app/event-meetings/", values);
-      console.log(res);
-      router.refresh();
+      const res = await apiCaller.post("/api/employees-app/event-meetings/", {
+        ...values,
+        team: teamIDs,
+      });
+
+      if (format(res.data.date, "yyy MM dd") === format(new Date(), "yyyy MM dd")) {
+        setMeetings((pre: any) => [...pre, res.data]);
+      }
+      setShowDialog(false);
     } catch (err) {
       console.log("err", err);
     } finally {
       setIsLoading(false);
+    }
+  }
+
+  async function onSearchHandler(value: string) {
+    try {
+      const res = await apiCaller.get("/api/employees-app/employees-search/", {
+        params: {
+          search: value,
+        },
+      });
+
+      const employees = res.data.map((employee: Employee) => ({
+        ...employee,
+        label: employee.name,
+        value: employee.name,
+      }));
+
+      return employees;
+    } catch (err) {
+      console.log("err", err);
     }
   }
 
@@ -176,46 +194,75 @@ export default function ScheduleMeeting() {
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="team" className="text-sm font-medium">
-                Select Teams
-              </Label>
-              <Select onValueChange={handleTeamSelect}>
-                <SelectTrigger id="team">
-                  <SelectValue placeholder="Select a team" />
-                </SelectTrigger>
-                <SelectContent>
-                  {teams.map((team) => (
-                    <SelectItem key={team.id} value={team.id}>
-                      {team.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {selectedTeams.map((team) => (
-                  <div
-                    key={team.id}
-                    className="flex items-center rounded-full bg-muted py-1 pl-1 pr-2 text-muted-foreground">
-                    <Image
-                      src={`https://api.dicebear.com/6.x/initials/svg?seed=${team.name}`}
-                      alt={team.name}
-                      width={24}
-                      height={24}
-                      className="mr-2 rounded-full"
+            <FormField
+              control={form.control}
+              name="team"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <MultipleSelector
+                      onChange={field.onChange}
+                      onSearch={onSearchHandler}
+                      placeholder="Add team member"
+                      delay={1000}
+                      loadingIndicator={
+                        <div className="h-20 py-2">
+                          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <Icons.loader />
+                          </div>
+                        </div>
+                      }
+                      emptyIndicator={
+                        <p className="w-full text-center text-sm text-muted-foreground">
+                          No Team member found
+                        </p>
+                      }
                     />
-                    <span className="text-sm">{team.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="ml-1 h-5 w-5 p-0 text-muted-foreground"
-                      onClick={() => handleRemoveTeam(team.id)}>
-                      <X className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-              </div>
-            </div>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            {/* <div className="space-y-2"> */}
+            {/*   <Label htmlFor="team" className="text-sm font-medium"> */}
+            {/*     Select Teams */}
+            {/*   </Label> */}
+            {/*   <Select onValueChange={handleTeamSelect}> */}
+            {/*     <SelectTrigger id="team"> */}
+            {/*       <SelectValue placeholder="Select a team" /> */}
+            {/*     </SelectTrigger> */}
+            {/*     <SelectContent> */}
+            {/*       {teams.map((team) => ( */}
+            {/*         <SelectItem key={team.id} value={team.id}> */}
+            {/*           {team.name} */}
+            {/*         </SelectItem> */}
+            {/*       ))} */}
+            {/*     </SelectContent> */}
+            {/*   </Select> */}
+            {/*   <div className="mt-2 flex flex-wrap gap-2"> */}
+            {/*     {selectedTeams.map((team) => ( */}
+            {/*       <div */}
+            {/*         key={team.id} */}
+            {/*         className="flex items-center rounded-full bg-muted py-1 pl-1 pr-2 text-muted-foreground"> */}
+            {/*         <Image */}
+            {/*           src={`https://api.dicebear.com/6.x/initials/svg?seed=${team.name}`} */}
+            {/*           alt={team.name} */}
+            {/*           width={24} */}
+            {/*           height={24} */}
+            {/*           className="mr-2 rounded-full" */}
+            {/*         /> */}
+            {/*         <span className="text-sm">{team.name}</span> */}
+            {/*         <Button */}
+            {/*           variant="ghost" */}
+            {/*           size="sm" */}
+            {/*           className="ml-1 h-5 w-5 p-0 text-muted-foreground" */}
+            {/*           onClick={() => handleRemoveTeam(team.id)}> */}
+            {/*           <X className="h-3 w-3" /> */}
+            {/*         </Button> */}
+            {/*       </div> */}
+            {/*     ))} */}
+            {/*   </div> */}
+            {/* </div> */}
             <FormField
               control={form.control}
               name="status"

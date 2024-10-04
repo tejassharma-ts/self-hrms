@@ -19,6 +19,9 @@ const config = {
       },
     },
     extend: {
+      boxShadow: {
+        card: "0 25px 50px -12px rgb(0 0 0 / 0.25)",
+      },
       fontFamily: {
         sans: ["var(--font-main)", ...fontFamily.sans],
       },
@@ -83,7 +86,16 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate"), "prettier-plugin-tailwindcss"],
+  plugins: [
+    function ({ addVariant }: { addVariant: any }) {
+      // addVariant("not-first", "&:not(:first-child)");
+      addVariant("child", "& > *");
+      // Select all child except first one
+      addVariant("sa-not-first", "&>*:not(:first-child)");
+    },
+    require("tailwindcss-animate"),
+    "prettier-plugin-tailwindcss",
+  ],
 } satisfies Config;
 
 export default config;

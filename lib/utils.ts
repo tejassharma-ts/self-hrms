@@ -24,6 +24,10 @@ export const getMonthNumber = (month: string) => {
   if (month) return months.indexOf(month) + 1;
 };
 
+export const getMonthNameFromNumber = (monthNumber: number) => {
+  return months[monthNumber - 1];
+};
+
 export function formatTodaysDate() {
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const months = [
@@ -84,3 +88,16 @@ export function formatISOToTime(isoDate: string): string {
 
   return date.toLocaleTimeString(undefined, options);
 }
+
+export const formatTime = (time: any) => {
+  if (!time) return "-";
+  const today = new Date().toISOString().split("T")[0];
+  const dateTimeString = `${today}T${time}`;
+
+  const dateObject = new Date(dateTimeString);
+  return dateObject.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+  });
+};

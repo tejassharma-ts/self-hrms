@@ -34,14 +34,14 @@ export const MonthFilter = (): React.ReactNode => {
     const search = current.toString();
     const query = search ? `?${search}` : "";
 
-    router.push(`${pathname}${query}`);
+    router.replace(`${pathname}${query}`);
   };
 
   return (
     <Select onValueChange={handleValueChange} onOpenChange={(open) => setIsOpen(open)}>
       <SelectTrigger
         className={cn(
-          "h-8 w-28 rounded-full border border-black text-center transition-colors duration-200",
+          "h-8 w-32 rounded-full border border-black text-center transition-colors duration-200",
           isOpen ? "bg-black text-white" : "bg-white text-black",
         )}>
         <SelectValue placeholder={placeholder} />

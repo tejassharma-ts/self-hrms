@@ -1,25 +1,24 @@
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Employee } from "@/app/(dashboard)/my-team/employee-profile/[employeeId]/page";
 import { EmployeeDetailsCardHeader } from "@/app/(dashboard)/my-team/_components/EmployeeDetailsCardHeader";
 
-export const ContactDetails = ({ employeeProfile }: { employeeProfile: Employee }) => {
+export const ContactDetails = ({ employeeProfile }: { employeeProfile: any }) => {
   const contactFields = [
     {
       name: "Mobile Number",
-      value: `${employeeProfile.phone_number}`,
+      value: `${employeeProfile?.phone_number || "N/A"}`,
     },
     {
       name: "Emergency Contact Number",
-      value: `${employeeProfile.phone_number}`,
+      value: `${employeeProfile?.phone_number || "N/A"}`,
     },
     {
       name: "Personal Email I'd",
-      value: `${employeeProfile.email}`,
+      value: `${employeeProfile?.email || "N/A"}`,
     },
     {
       name: "Official Email I'd",
-      value: `${employeeProfile.email}`,
+      value: `${employeeProfile?.email || "N/A"}`,
     },
   ];
   return (

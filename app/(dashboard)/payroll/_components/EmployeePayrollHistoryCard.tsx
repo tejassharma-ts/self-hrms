@@ -4,12 +4,15 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { Payroll } from "@/types/types";
 
 interface IPayrollHeaderCardProps {
   heading: string;
+  payrollData: Payroll[];
 }
 
-export const EmployeePayrollHistoryCard = ({ heading }: IPayrollHeaderCardProps) => {
+export const EmployeePayrollHistoryCard = ({ heading, payrollData }: IPayrollHeaderCardProps) => {
   const router = useRouter();
   const pathName = usePathname();
 
@@ -32,11 +35,15 @@ export const EmployeePayrollHistoryCard = ({ heading }: IPayrollHeaderCardProps)
         </div>
         <div>
           <div className="flex -space-x-4">
-            {[...Array(4)].map((_, index) => (
-              <Avatar key={index} className="h-16 w-16 border-2 border-white">
-                <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+            {payrollData.slice(0, 4).map((eachPayrollData) => (
+              <Link
+                key={eachPayrollData.id}
+                href={`/payroll/history/?id=${eachPayrollData.employee.id}`}>
+                <Avatar className="h-16 w-16 border-2 border-white">
+                  <AvatarImage src={`${eachPayrollData.employee.profile_picture}`} alt="@shadcn" />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              </Link>
             ))}
           </div>
         </div>

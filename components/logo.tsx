@@ -10,7 +10,7 @@ type LogoProps = {
 export default function Logo({ isCollapsed }: LogoProps) {
   const { isLoading, authCompany, authUser } = useClientAuth();
 
-  let companyLogoUrl;
+  let companyLogoUrl: any;
   if (authUser && authUser.company_logo) {
     companyLogoUrl = authUser.company_logo;
   } else if (authCompany && authCompany.company_logo) {

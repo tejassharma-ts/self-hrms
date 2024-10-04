@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/table";
 import { employeeListCellLeave, employeeLeaveData } from "../constant";
 import { LeaveRequest } from "@/types/dashboard";
+import { formatISODate } from "@/lib/utils";
 
 type EmployeeLeaveProps = {
   onLeaveList: LeaveRequest[] | null;
@@ -22,7 +23,7 @@ export default function EmployeeLeave({ onLeaveList }: EmployeeLeaveProps) {
         <TableHeader>
           <TableRow>
             {employeeListCellLeave.map((cell, idx) => (
-              <TableHead key={idx} className="capitalize">
+              <TableHead key={idx} className="text-left capitalize">
                 {cell}
               </TableHead>
             ))}
@@ -34,7 +35,7 @@ export default function EmployeeLeave({ onLeaveList }: EmployeeLeaveProps) {
               <TableCell className="font-medium">{col.name}</TableCell>
               <TableCell>{col.department}</TableCell>
               <TableCell>{col.leave}</TableCell>
-              <TableCell>{col.dateRequested}</TableCell>
+              <TableCell>{formatISODate(col.dateRequested)}</TableCell>
               <TableCell>{col.reasonOfLeave}</TableCell>
               <TableCell>{col.duration}</TableCell>
               <TableCell className="capitalize">{col.status}</TableCell>

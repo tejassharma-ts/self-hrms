@@ -2,11 +2,18 @@ import React from "react";
 import { SpendExpensesTable } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesTable";
 import { SpendExpensesHeader } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesHeader";
 import { apiCaller } from "@/lib/auth";
-import { getAuthCookies } from "@/lib/server/api";
-import { SpendExpensesYearFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesYearFilter";
-import { SpendExpensesMonthFilter } from "@/app/(dashboard)/expenses/[employeeId]/_components/SpendExpensesMonthFilter";
+// import { getAuthCookies } from "@/lib/server/api";
 import { getMonthNumber } from "@/lib/utils";
-import { IExpensesSearchParams, IPayrollExpenseDetails } from "@/types/types";
+import { IPayrollExpenseDetails } from "@/types/types";
+import { MonthFilter } from "@/components/MonthFilter";
+import { YearFilter } from "@/components/YearFilter";
+import { cookies } from "next/headers";
+
+interface IExpensesSearchParams {
+  status: string;
+  month: string;
+  year: number;
+}
 
 interface IGetEmployeeSpendDataProps {
   employeeId: string;
@@ -26,7 +33,12 @@ async function getEmployeeSpendData({
     const res = await apiCaller.get<IPayrollExpenseDetails[]>(
       "/api/payroll_app/expenses-details/",
       {
-        headers: getAuthCookies(),
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
         params: {
           employee_id: employeeId,
           approval_status: status,
@@ -48,17 +60,19 @@ const EmployeePage = async ({
   params: { employeeId: string };
   searchParams: IExpensesSearchParams;
 }): Promise<React.ReactNode> => {
-  const status = searchParams.status;
-  const month = searchParams.month;
-  const monthNumber = getMonthNumber(month);
-  const year = searchParams.year;
-  const employeeId = params.employeeId;
+  const { month, year, status } = searchParams;
+  const monthNumber = month && getMonthNumber(month);
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const updatedMonth = monthNumber ? monthNumber : currentMonth + 1;
+  const updatedYear = year ? year : currentYear;
+  const { employeeId } = params;
 
   const employeeSpendData: IPayrollExpenseDetails[] = await getEmployeeSpendData({
     employeeId,
     status,
-    month: monthNumber,
-    year,
+    month: updatedMonth,
+    year: updatedYear,
   });
 
   return (
@@ -76,12 +90,12 @@ const EmployeePage = async ({
                   ? "Pending"
                   : status === "rejected"
                     ? "Declined"
-                    : "Spend"}{" "}
-              Expenses
+                    : ""}{" "}
+              Expenses Record
             </h2>
             <div className={"flex items-center gap-x-4"}>
-              <SpendExpensesMonthFilter />
-              <SpendExpensesYearFilter />
+              <MonthFilter />
+              <YearFilter />
             </div>
           </div>
           <div>

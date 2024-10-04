@@ -9,9 +9,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Attendance } from "@/types/types";
 
 type AttendanceListProps = {
-  attendances?: AttendanceData;
+  attendances: any;
 };
 
 export default function AttendanceList({ attendances }: AttendanceListProps) {
@@ -34,7 +35,7 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {attendances.employees.map((employee) => (
+          {attendances.employees.map((employee: any) => (
             <TableRow key={employee.id}>
               <TableCell>{employee.id}</TableCell>
               <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>
