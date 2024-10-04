@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { IPayrollExpenseDetails } from "@/types/types";
 import { StatusFilter } from "@/components/StatusFilter";
+import { ExpensesStatusFilter } from "../../_components/ExpensesStatusFilter";
 
 interface ISpendExpensesHeaderProps {
   employeeSpendData: IPayrollExpenseDetails[];
@@ -38,7 +39,7 @@ export const SpendExpensesHeader = ({
         </CardContent>
       </Card>
       <div className={"col-span-1 mx-auto"}>
-        <StatusFilter />
+        <ExpensesStatusFilter />
       </div>
     </div>
   );
