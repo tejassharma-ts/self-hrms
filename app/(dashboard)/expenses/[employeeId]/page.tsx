@@ -8,6 +8,10 @@ import { IPayrollExpenseDetails } from "@/types/types";
 import { MonthFilter } from "@/components/MonthFilter";
 import { YearFilter } from "@/components/YearFilter";
 import { cookies } from "next/headers";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Link from "next/link";
+import { ArrowLeftFromLine, ChevronLeft } from "lucide-react";
 
 interface IExpensesSearchParams {
   status: string;
@@ -80,27 +84,40 @@ const EmployeePage = async ({
       {!status && (
         <SpendExpensesHeader employeeSpendData={employeeSpendData} employeeId={employeeId} />
       )}
-      <div className={"grid grid-cols-4"}>
-        <div className={"col-span-3 flex-col"}>
-          <div className={"mb-10 flex items-center justify-between gap-x-4"}>
-            <h2 className={"text-xl font-semibold"}>
-              {status === "approved"
-                ? "Approved"
-                : status === "pending"
-                  ? "Pending"
-                  : status === "rejected"
-                    ? "Declined"
-                    : ""}{" "}
-              Expenses Record
-            </h2>
-            <div className={"flex items-center gap-x-4"}>
-              <MonthFilter />
-              <YearFilter />
-            </div>
+
+      <div className={"flex-col"}>
+        <div className={"mb-10 flex items-center justify-between gap-x-4"}>
+          <Link href={"/expenses"} className="mb-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild >
+                  <Button variant="ghost" className="hover:bg-gray-700 hover:text-white">
+                    <ChevronLeft />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Back to Expenses</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </Link>
+          <h2 className={"text-xl font-semibold"}>
+            {status === "approved"
+              ? "Approved"
+              : status === "pending"
+                ? "Pending"
+                : status === "rejected"
+                  ? "Declined"
+                  : ""}{" "}
+            Expenses Record
+          </h2>
+          <div className={"flex items-center gap-x-4"}>
+            <MonthFilter />
+            <YearFilter />
           </div>
-          <div>
-            <SpendExpensesTable spendExpensesData={employeeSpendData} />
-          </div>
+        </div>
+        <div>
+          <SpendExpensesTable spendExpensesData={employeeSpendData} />
         </div>
       </div>
     </section>
