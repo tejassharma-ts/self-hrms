@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Attendance } from "@/types/types";
+import { formatTime } from "@/lib/utils";
 
 type AttendanceListProps = {
   attendances: any;
@@ -37,11 +38,15 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
         <TableBody>
           {attendances.employees.map((employee: any) => (
             <TableRow key={employee.id}>
-              <TableCell>{employee.id}</TableCell>
+              <TableCell>{employee.id.replaceAll("-", " ")}</TableCell>
               <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>
               <TableCell>{employee.department}</TableCell>
-              <TableCell className="text-green-500">{employee.check_in_time || "-"}</TableCell>
-              <TableCell className="text-red-500">{employee.check_out_time || "-"}</TableCell>
+              <TableCell className="text-green-500">
+                {formatTime(employee.check_in_time) || "-"}
+              </TableCell>
+              <TableCell className="text-red-500">
+                {formatTime(employee.check_out_time) || "-"}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

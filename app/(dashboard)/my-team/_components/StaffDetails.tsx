@@ -76,27 +76,27 @@ export default async function StaffDetails() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Profile Picture</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Gender</TableHead>
             {/* <TableHead>ID</TableHead> */}
             <TableHead>Email</TableHead>
             <TableHead>Phone Number</TableHead>
             <TableHead>Address</TableHead>
             <TableHead>Date of Birth</TableHead>
+            <TableHead>Department</TableHead>
             <TableHead>Position</TableHead>
             <TableHead>Date Joined</TableHead>
             <TableHead>Salary</TableHead>
             {/* <TableHead>Is Active</TableHead> */}
-            <TableHead>Is HR</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Updated At</TableHead>
-            <TableHead>Department</TableHead>
-            <TableHead>Profile Picture</TableHead>
             <TableHead>Bank Name</TableHead>
             <TableHead>Account Number</TableHead>
             <TableHead>IFSC Code</TableHead>
             <TableHead>Aadhar Number</TableHead>
             <TableHead>PAN Number</TableHead>
-            <TableHead>Gender</TableHead>
+            <TableHead>Created At</TableHead>
+            <TableHead>Updated At</TableHead>
+            <TableHead>Is HR</TableHead>
             {/* <TableHead>User</TableHead> */}
             {/* <TableHead>Company</TableHead> */}
           </TableRow>
@@ -107,38 +107,38 @@ export default async function StaffDetails() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <TableRow key={index}>
-                    <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
-                    {/* <TableCell>{data.id}</TableCell> */}
-                    <TableCell>{data.email}</TableCell>
-                    <TableCell>{data.phone_number}</TableCell>
-                    <TableCell>{data.address}</TableCell>
-                    <TableCell>{data.date_of_birth}</TableCell>
-                    <TableCell>{data.position}</TableCell>
-                    <TableCell>{data.date_joined}</TableCell>
-                    <TableCell>{data.salary}</TableCell>
-                    {/* <TableCell className="text-center"> */}
-                    {/*   <Checkbox checked={data.is_active} disabled /> */}
-                    {/* </TableCell> */}
-                    <TableCell className="text-center">
-                      <Checkbox checked={data.is_hr} disabled />
-                    </TableCell>
-                    <TableCell>{formatISODate(data.created_at)}</TableCell>
-                    <TableCell>{formatISODate(data.updated_at)}</TableCell>
-                    <TableCell>{data.department}</TableCell>
                     <TableCell>
                       <Avatar>
                         <AvatarImage src={data.profile_picture} />
                         <AvatarFallback>{data.first_name}</AvatarFallback>
                       </Avatar>
                     </TableCell>
+                    <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
+                    <TableCell>{data.gender || "N/A"}</TableCell>
+                    {/* <TableCell>{data.id}</TableCell> */}
+                    <TableCell>{data.email}</TableCell>
+                    <TableCell>{data.phone_number}</TableCell>
+                    <TableCell>{data.address}</TableCell>
+                    <TableCell>{data.date_of_birth}</TableCell>
+                    <TableCell>{data.department}</TableCell>
+                    <TableCell>{data.position}</TableCell>
+                    <TableCell>{data.date_joined}</TableCell>
+                    <TableCell>{data.salary}</TableCell>
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.is_active} disabled /> */}
+                    {/* </TableCell> */}
                     <TableCell>{data.bank_name || "N/A"}</TableCell>
                     <TableCell>{data.account_number || "N/A"}</TableCell>
                     <TableCell>{data.ifsc_code || "N/A"}</TableCell>
                     <TableCell>{data.aadhar_number || "N/A"}</TableCell>
                     <TableCell>{data.pan_number || "N/A"}</TableCell>
-                    <TableCell>{data.gender || "N/A"}</TableCell>
                     {/* <TableCell>{data.user}</TableCell> */}
                     {/* <TableCell>{data.company}</TableCell> */}
+                    <TableCell>{formatISODate(data.created_at)}</TableCell>
+                    <TableCell>{formatISODate(data.updated_at)}</TableCell>
+                    <TableCell className="text-center">
+                      <Checkbox checked={data.is_hr} disabled />
+                    </TableCell>
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>
