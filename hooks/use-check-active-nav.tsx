@@ -1,14 +1,27 @@
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 export default function useCheckActiveNav() {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   function checkActiveNav(nav: string) {
+    const [navPath, navQuery] = nav.split('?');
+    
     const pathArray = pathname.split("/").filter((item) => item !== "");
+    const isPathMatch = (navPath === "/" && pathArray.length < 1) || 
+                        pathArray.includes(navPath.replace(/^\//, ""));
 
-    if (nav === "/" && pathArray.length < 1) return true;
+    if (!navQuery) return isPathMatch;
 
-    return pathArray.includes(nav.replace(/^\//, ""));
+    const navParams = new URLSearchParams(navQuery);
+    let allParamsMatch = true;
+    navParams.forEach((value, key) => {
+      if (searchParams.get(key) !== value) {
+        allParamsMatch = false;
+      }
+    });
+
+    return isPathMatch && allParamsMatch;
   }
 
   return { checkActiveNav };
