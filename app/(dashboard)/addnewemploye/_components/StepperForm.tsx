@@ -6,6 +6,7 @@ import AddNewEmployeeForm from "./AddNewEmployeeForm";
 import SalaryDetailsForm from ".//SalaryDetailsForm";
 import AddBankDetails from "./AddBankdetails";
 import useEmployeeStore from "@/model/employee";
+import { useRouter } from "next/navigation";
 
 export default function StepperForms({
   employee,
@@ -21,6 +22,7 @@ export default function StepperForms({
     salaryForm: false,
   });
   const { employee_id, setEmployeeId } = useEmployeeStore();
+  const { refresh } = useRouter();
 
   useEffect(() => {
     if (employee) {
@@ -31,6 +33,7 @@ export default function StepperForms({
   const handleStepClick = (step: number) => {
     if (employee || step <= currentStep) {
       setCurrentStep(step);
+      refresh();
     }
   };
 
@@ -47,6 +50,7 @@ export default function StepperForms({
       return updated;
     });
     setCurrentStep((prevStep) => prevStep + 1);
+    refresh();
   };
 
   return (

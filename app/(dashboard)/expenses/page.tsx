@@ -33,6 +33,8 @@ type SearchParams = {
   year?: number;
 };
 
+export const dynamic = "force-dynamic"
+
 async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
     const res = await apiCaller.get<Expenses>(`/api/payroll_app/expenses/`, {
@@ -81,43 +83,41 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
         </div>
       </div>
 
-      <div className="grid grid-cols-4">
-        <div className="col-span-3">
-          <div className="mb-10 flex justify-end gap-x-4">
-            <MonthFilter />
-            <YearFilter />
-          </div>
-          <div>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    {tableHeadValues.map((value, index) => (
-                      <TableHead key={index}>{value}</TableHead>
-                    ))}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
-                    <TableRow key={eachExpensesEmployeeData.id}>
-                      <TableCell className={"text-nowrap"}>
-                        <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>
-                          {eachExpensesEmployeeData.employee.id.replaceAll("-", "")}
-                        </Link>
-                      </TableCell>
-                      <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
-                      <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
-                      <TableCell className={"text-nowrap"}>
-                        {eachExpensesEmployeeData.date_incurred}
-                      </TableCell>
-                      <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
-                      <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
-                      <TableCell>{eachExpensesEmployeeData.status}</TableCell>
-                    </TableRow>
+      <div className="w-full">
+        <div className="mb-10 flex justify-end gap-x-4">
+          <MonthFilter />
+          <YearFilter />
+        </div>
+        <div>
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {tableHeadValues.map((value, index) => (
+                    <TableHead key={index}>{value}</TableHead>
                   ))}
-                </TableBody>
-              </Table>
-            </div>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
+                  <TableRow key={eachExpensesEmployeeData.id}>
+                    <TableCell className={"text-nowrap"}>
+                      <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>
+                        {eachExpensesEmployeeData.employee.id.replaceAll("-", " ")}
+                      </Link>
+                    </TableCell>
+                    <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
+                    <TableCell className={"text-nowrap"}>
+                      {eachExpensesEmployeeData.date_incurred}
+                    </TableCell>
+                    <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData.status}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           </div>
         </div>
       </div>

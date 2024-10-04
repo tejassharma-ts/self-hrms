@@ -14,7 +14,7 @@ import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cookies } from "next/headers";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Link from "next/link"
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 type EmployeeData = {
@@ -146,7 +146,7 @@ export default async function SalaryStructure() {
                   <Button className="relative" variant="ghost">
                     Edit employee
                     <Link
-                      href={`my-team/employee-profile/${data.id}/?tab=person-details`}
+                      href={`my-team/employee-profile/${data.employee.id}/?tab=person-details`}
                       className="absolute inset-0"
                     />
                   </Button>

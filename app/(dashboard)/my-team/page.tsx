@@ -13,6 +13,8 @@ type MyTeamPageProps = {
   };
 };
 
+export const dynamic = "force-dynamic"
+
 export default function MyTeamPage({ searchParams }: MyTeamPageProps) {
   return (
     <Tabs

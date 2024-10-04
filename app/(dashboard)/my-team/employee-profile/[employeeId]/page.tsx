@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { apiCaller } from "@/lib/auth";
 import { getAuthCookies } from "@/lib/server/api";
 import { TabsCard } from "@/app/(dashboard)/my-team/_components/TabsCard";
-import { EmployeeProfile } from "@/app/(dashboard)/my-team/_components/EmployeeProfile";
+import { MemoizedEmployeeProfile } from "@/app/(dashboard)/my-team/_components/EmployeeProfile";
 import { EmployeePersonalInformation } from "@/app/(dashboard)/my-team/_components/EmployeePersonalInformation";
 import { EmployeeAddressDetails } from "@/app/(dashboard)/my-team/_components/EmployeeAddressDetails";
 import { EmployeeDocuments } from "@/app/(dashboard)/my-team/_components/EmployeeDocuments";
@@ -142,8 +142,7 @@ async function getLeavesOfEmployee({ employeeId, month, year }: EmployeeProfileA
     });
     return res.data;
   } catch (err) {
-    // TODO: Uncomment this once API starts working.
-    // throw new Error("Error getting leaves of employee");
+    throw new Error("Error getting leaves of employee");
   }
 }
 
@@ -167,6 +166,7 @@ const EmployeeProfilePage = async ({
     month: updatedMonth,
     year: updatedYear,
   });
+
   let historyData = null;
   if (tab === "history") {
     const [leaves, attendance, bonuses, deductions, expenses, payroll] = await Promise.all([
@@ -186,7 +186,7 @@ const EmployeeProfilePage = async ({
         <TabsCard employeeId={employeeId} />
         <div className="min-w-[55rem]">
           <CardContent>
-            <EmployeeProfile employeeProfile={employeeProfile} />
+            <MemoizedEmployeeProfile employeeProfile={employeeProfile} />
           </CardContent>
           {tab === "person-details" && (
             <>

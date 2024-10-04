@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { EditButton } from "@/app/(dashboard)/my-team/_components/EditButton";
 import { EmployeeProfile as Employee } from "@/types/types";
 
-export const EmployeeProfile = ({ employeeProfile }: { employeeProfile: Employee }) => {
+const EmployeeProfile = ({ employeeProfile }: { employeeProfile: Employee }) => {
   return (
     <Card className="w-full border">
       <CardContent>
@@ -32,3 +32,5 @@ export const EmployeeProfile = ({ employeeProfile }: { employeeProfile: Employee
     </Card>
   );
 };
+
+export const MemoizedEmployeeProfile = React.memo(EmployeeProfile);

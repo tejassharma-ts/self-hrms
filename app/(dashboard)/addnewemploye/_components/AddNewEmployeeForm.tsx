@@ -27,7 +27,7 @@ import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Icons } from "@/components/Icons";
 import useEmployeeStore from "@/model/employee";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
 
 const employeeSchema = z.object({
@@ -96,6 +96,9 @@ const AddNewEmployeeForm = ({
   const [autoPassword, setAutoPassword] = useState(false);
   const [dobRequired, setDobRequired] = useState(false);
   const [generatedPassword, setGeneratedPassword] = useState("");
+
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   const form = useForm<EmployeeFormValues>({
@@ -130,6 +133,11 @@ const AddNewEmployeeForm = ({
           company_id: authUser?.employee_profile.company.id || authCompany?.id,
         });
         setEmployeeId(res.data.id);
+
+        const params = new URLSearchParams(searchParams);
+        params.set("employeeID", res.data.id);
+        router.replace(`${pathname}?${params.toString()}`);
+
         toast({
           description: "Employee successfully added",
         });
@@ -137,6 +145,7 @@ const AddNewEmployeeForm = ({
         const res = await apiCaller.patch(
           "/api/companies-app/company/add-employee/",
           {
+            // TODO: not the perfect use of patch api
             ...data,
           },
           {
@@ -151,7 +160,6 @@ const AddNewEmployeeForm = ({
         });
       }
       onComplete();
-      router.refresh();
     } catch (err) {
       toast({
         description: "Something went very wrong",
@@ -449,9 +457,9 @@ const AddNewEmployeeForm = ({
                   name="salary"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Salary</FormLabel>
+                      <FormLabel>Gross monthy Salary</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter Salary" {...field} />
+                        <Input placeholder="Enter Gross monthy Salary" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

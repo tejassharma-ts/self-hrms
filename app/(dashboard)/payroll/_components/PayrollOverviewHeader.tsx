@@ -10,7 +10,6 @@ export const PayrollOverviewHeader = ({
   totalDeductions: number;
   bonus: number;
 }): React.ReactNode => {
-  const currentDate = new Date().getDate();
   const currentMonthNumber = new Date().getMonth();
   const currentYear = new Date().getFullYear();
   const currentMonthName = getMonthNameFromNumber(currentMonthNumber);
@@ -25,8 +24,7 @@ export const PayrollOverviewHeader = ({
             <h2 className="text-md font-semibold text-gray-400">This Month's Payroll</h2>
 
             <h2 className="mb-2 text-xl font-bold text-white">
-              {currentMonthName} {currentDate} ,{" "}
-              <span className={"text-lg opacity-35"}>{currentYear}</span>
+              {currentMonthName} 01 , <span className={"text-lg opacity-35"}>{currentYear}</span>
             </h2>
           </CardContent>
         </Card>
