@@ -18,6 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Icons } from "@/components/Icons";
+import { Input } from "postcss";
+import { InputOTP } from "@/components/ui/input-otp";
 
 interface CircularProgressBarProps {
   percentage: number;
@@ -74,7 +77,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
 }) => {
   return (
     <Card
-      className={`mx-1 w-48 cursor-pointer overflow-hidden rounded-lg shadow-lg ${isSelected ? "bg-[#2B2928] text-white" : "bg-white text-black"}`}
+      className={`mx-1  w-52 cursor-pointer overflow-hidden rounded-lg shadow-sm ${isSelected ? "bg-gradient-to-b from-[#1A1A1A] to-[#000000ab] text-white" : "bg-white text-black"}`}
       onClick={onClick}>
       <CardHeader className="flex flex-col items-center p-3">
         <Avatar className="h-14 w-14">
@@ -82,9 +85,9 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
           <AvatarFallback>
             {name
               ? name
-                  .split(" ")
-                  .map((n: string) => n.charAt(0))
-                  .join("")
+                .split(" ")
+                .map((n: string) => n.charAt(0))
+                .join("")
               : ""}
           </AvatarFallback>
         </Avatar>
@@ -99,7 +102,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
       </CardContent>
       <CardFooter className="flex items-center justify-center p-3">
         <button
-          className={`rounded-full px-4 py-2 text-xs hover:bg-gray-700 ${isSelected ? "bg-[#5A5555]" : "bg-black text-white"}`}>
+          className={`rounded-full px-4 py-2 text-xs hover:bg-gray-700 ${isSelected ? "bg-[#5A5555]" : "bg-gradient-to-b from-[#1A1A1A] to-[#000000ab] text-white"}`}>
           {today_status}
         </button>
       </CardFooter>
@@ -140,6 +143,15 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({
     setSelectedProfile(profile);
   }
 
+
+
+  // for  ssearch button
+  const [open, setOpen] = useState(false)
+  const [isSearchActive, setIsSearchActive] = useState(false);
+
+  const handleSearchClick = () => {
+    setIsSearchActive(!isSearchActive);
+  };
   return (
     <div className="">
       <div className="mb-4 flex gap-4">
@@ -156,6 +168,37 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({
             ))}
           </SelectContent>
         </Select>
+        <div className="hidden lg:flex flex-row gap-5 bg-white rounded-full">
+          <div className="flex items-center">
+            {!isSearchActive ? (
+              <div
+                className="h-10 w-10 bg-yell bg-yell-hover rounded-full flex items-center justify-center cursor-pointer transition-all duration-300"
+                onClick={handleSearchClick}
+              >
+                <Icons.Search className="text-[#3E100B] size-4" />
+              </div>
+            ) : (
+              <div className="flex items-center transition-all duration-300 ease-in-out border rounded-full h-10 w-60 px-4">
+                <Icons.Search className="text-gray-400 h-5 w-5" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="ml-2 h-full w-full text-gray-400 text-sm outline-none border-none placeholder:text-gray-400"
+                  style={{
+                    opacity: isSearchActive ? 1 : 0,
+                  }}
+                />
+                <Icons.close
+                  className="text-gray-400 h-5 w-5 ml-3 cursor-pointer"
+                  onClick={handleSearchClick}
+                />
+              </div>
+            )}
+          </div>
+        </div>
+
+
+
       </div>
       <div className="relative">
         <Carousel className="w-full">

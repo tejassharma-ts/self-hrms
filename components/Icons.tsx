@@ -17,6 +17,7 @@ import {
   Calendar,
   TableOfContents,
   History,
+  Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -56,4 +57,5 @@ export const Icons = {
   tableContent: TableOfContents,
   history: History,
   loaderCenter: CenterLoader,
+  Search: Search,
 };
