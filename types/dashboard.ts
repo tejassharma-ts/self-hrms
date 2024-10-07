@@ -49,6 +49,8 @@ type Employee = {
   email: string;
   position: string;
   profile_picture: string | null;
+  check_out_time: string | null;
+  check_in_time: string | null;
 };
 
 export type AttendanceDataApi = {
