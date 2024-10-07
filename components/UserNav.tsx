@@ -2,22 +2,19 @@
 
 import useAuthStore from "@/model/auth";
 import { toast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation"; // Import usePathname
+import { usePathname, useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "./ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { removeAuthCookies } from "@/lib/client/auth";
 import { useClientAuth } from "@/context/auth-context";
+import { getPageTitle } from "@/data/page-title";
 
 export function UserNav() {
   const { authUser, authCompany } = useClientAuth();
@@ -52,23 +49,18 @@ export function UserNav() {
     }
   }
 
-
   return (
-    <div className="flex items-center justify-between mx-auto">
-      <div className="div">
-        {pathname === '/attendance' && (
-          <div className="p-2 text-sm text-gray-700">
-            <p className="font-bold text-xl">Daily Attendance</p>
-          </div>
-        )}
-      </div>
-      <div className="div">
+    <>
+      <h1 className="text-lg font-semibold">{getPageTitle(pathname)}</h1>
+      <div className="flex items-center justify-between">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Avatar className="h-8 w-8">
                 <AvatarImage
-                  src={companyLogoUrl || "https://mighty.tools/mockmind-api/content/abstract/47.jpg"}
+                  src={
+                    companyLogoUrl || "https://mighty.tools/mockmind-api/content/abstract/47.jpg"
+                  }
                   alt="@shadcn"
                 />
                 <AvatarFallback>RIP</AvatarFallback>
@@ -106,8 +98,6 @@ export function UserNav() {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-
-    </div>
-
+    </>
   );
 }

@@ -43,40 +43,35 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
   }
 
   return (
-    <>
-      <div className="mb-2 flex items-center justify-between space-y-2">
-        <h1 className="text-2xl font-bold tracking-tight">Employee Request List</h1>
-      </div>
-      <Card>
-        <Tabs value={currentTab} onValueChange={onTabChange} defaultValue={currentTab}>
-          <CardHeader className="relative px-0">
-            <TabsList className="self-start">
-              <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
-              <TabsTrigger value="on-leave">On Leave</TabsTrigger>
-              <TabsTrigger value="calender">Calender</TabsTrigger>
-            </TabsList>
-          </CardHeader>
-          <CardContent className="relative p-0">
-            <TabsContent value="leave-request">
-              <EmployeeLeaveRequest
-                leaveRequest={
-                  leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
-                }
-              />
-            </TabsContent>
-            <TabsContent value="on-leave">
-              <EmployeeLeaveRequest
-                leaveRequest={
-                  leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
-                }
-              />
-            </TabsContent>
-            <TabsContent value="calender">
-              <CustomCalendar />
-            </TabsContent>
-          </CardContent>
-        </Tabs>
-      </Card>
-    </>
+    <Card>
+      <Tabs value={currentTab} onValueChange={onTabChange} defaultValue={currentTab}>
+        <CardHeader className="relative px-0">
+          <TabsList className="self-start">
+            <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
+            <TabsTrigger value="on-leave">On Leave</TabsTrigger>
+            <TabsTrigger value="calender">Calender</TabsTrigger>
+          </TabsList>
+        </CardHeader>
+        <CardContent className="relative p-0">
+          <TabsContent value="leave-request">
+            <EmployeeLeaveRequest
+              leaveRequest={
+                leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
+              }
+            />
+          </TabsContent>
+          <TabsContent value="on-leave">
+            <EmployeeLeaveRequest
+              leaveRequest={
+                leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
+              }
+            />
+          </TabsContent>
+          <TabsContent value="calender">
+            <CustomCalendar />
+          </TabsContent>
+        </CardContent>
+      </Tabs>
+    </Card>
   );
 }
