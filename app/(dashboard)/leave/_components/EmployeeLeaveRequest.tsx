@@ -27,6 +27,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 import { Checkbox } from "@/components/ui/checkbox";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 type EmployeeLeaveRequestProps = {
   leaveRequest: LeaveRequest[] | null;
@@ -98,100 +99,102 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
 
   return (
     <>
-      <Table>
-        <TableCaption>A list of employees as per requested filter.</TableCaption>
-        <TableHeader>
-          <TableRow className="hover:bg-transparent">
-            <TableHead>
-              <div className="flex items-center space-x-2">
-                {/* <Checkbox checked={!!selectedLeaves.length} onCheckedChange={handleSelectAll} /> */}
-                <span>Name</span>
-              </div>
-            </TableHead>
-            <TableHead>
-              <MultiSelector
-                label="department"
-                values={departments}
-                handleSelectChange={handleDepartmentChange}
-                isOptionSelected={isDepartmentSelected}
-                onSearch={onSearchDepartment}
-              />
-            </TableHead>
-            <TableHead className="capitalize">
-              <MultiSelector
-                label="Leave type"
-                values={leaveType}
-                handleSelectChange={handleLeaveTypeChange}
-                isOptionSelected={isLeaveTypeSelected}
-                onSearch={onLeaveTypeChange}
-              />
-            </TableHead>
-            <TableHead>
-              <DateRangeSelect />
-            </TableHead>
-            <TableHead>Reason of leave</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="gap-2">
-                    <span>Status</span>
-                    <Icons.listFilter size={16} />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                  <DropdownMenuLabel>Leave status</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuRadioGroup value={status} onValueChange={onStatusChange}>
-                    <DropdownMenuRadioItem value="approved">Approved</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="rejected">Rejected</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="">All Request</DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </TableHead>
-            <TableHead>Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leaveRequest.map((col, idx) => (
-            <TableRow key={idx} className={isLeaveSelected(col.id) ? "bg-muted/50" : ""}>
-              <TableCell>
+      <ScrollArea>
+        <Table>
+          <TableHeader>
+            <TableRow className="hover:bg-transparent">
+              <TableHead>
                 <div className="flex items-center space-x-2">
-                  <Checkbox
-                    checked={isLeaveSelected(col.id)}
-                    onCheckedChange={() => {
-                      handleSelectLeave(col.id);
-                    }}
-                  />
-                  <span className="line-clamp-1 text-ellipsis font-medium">
-                    {getFullName(col.employee.first_name, col.employee.last_name)}
-                  </span>
+                  {/* <Checkbox checked={!!selectedLeaves.length} onCheckedChange={handleSelectAll} /> */}
+                  <span>Name</span>
                 </div>
-              </TableCell>
-              <TableCell>{col.employee.department}</TableCell>
-              <TableCell>{col.leave_type}</TableCell>
-              <TableCell>{formatISODate(col.start_date)}</TableCell>
-              <TableCell>
-                <span className="line-clamp-1 text-ellipsis">{col.reason}</span>
-              </TableCell>
-              <TableCell>{col?.leave_duration || "-"}</TableCell>
-              <TableCell className="capitalize">{col.status}</TableCell>
-              <TableCell>
-                <LeaveRequestOption
-                  leaveRequest={col}
-                  employeeName={getFullName(col.employee.first_name, col.employee.last_name)}
-                  leaveId={col.id}
-                  isRejected={col.status === "Rejected"}
-                  isApproved={col.status === "Approved"}
-                  hideDropDown={false}
+              </TableHead>
+              <TableHead>
+                <MultiSelector
+                  label="department"
+                  values={departments}
+                  handleSelectChange={handleDepartmentChange}
+                  isOptionSelected={isDepartmentSelected}
+                  onSearch={onSearchDepartment}
                 />
-              </TableCell>
+              </TableHead>
+              <TableHead className="capitalize">
+                <MultiSelector
+                  label="Leave type"
+                  values={leaveType}
+                  handleSelectChange={handleLeaveTypeChange}
+                  isOptionSelected={isLeaveTypeSelected}
+                  onSearch={onLeaveTypeChange}
+                />
+              </TableHead>
+              <TableHead>
+                <DateRangeSelect />
+              </TableHead>
+              <TableHead>Reason of leave</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="gap-2">
+                      <span>Status</span>
+                      <Icons.listFilter size={16} />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56">
+                    <DropdownMenuLabel>Leave status</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuRadioGroup value={status} onValueChange={onStatusChange}>
+                      <DropdownMenuRadioItem value="approved">Approved</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="rejected">Rejected</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="">All Request</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {leaveRequest.map((col, idx) => (
+              <TableRow key={idx} className={isLeaveSelected(col.id) ? "bg-muted/50" : ""}>
+                <TableCell>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      checked={isLeaveSelected(col.id)}
+                      onCheckedChange={() => {
+                        handleSelectLeave(col.id);
+                      }}
+                    />
+                    <span className="line-clamp-1 text-ellipsis font-medium">
+                      {getFullName(col.employee.first_name, col.employee.last_name)}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell>{col.employee.department}</TableCell>
+                <TableCell>{col.leave_type}</TableCell>
+                <TableCell>{formatISODate(col.start_date)}</TableCell>
+                <TableCell>
+                  <span className="line-clamp-2">{col.reason}</span>
+                </TableCell>
+                <TableCell>{col?.leave_duration || "-"}</TableCell>
+                <TableCell className="capitalize">{col.status}</TableCell>
+                <TableCell>
+                  <LeaveRequestOption
+                    leaveRequest={col}
+                    employeeName={getFullName(col.employee.first_name, col.employee.last_name)}
+                    leaveId={col.id}
+                    isRejected={col.status === "Rejected"}
+                    isApproved={col.status === "Approved"}
+                    hideDropDown={false}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <ScrollBar orientation="horizontal" />
+        </Table>
+      </ScrollArea>
       {selectedLeaves.length ? (
         <Button onClick={() => setShowBulkAction(true)} className="absolute -top-12 right-0">
           Bulk Action

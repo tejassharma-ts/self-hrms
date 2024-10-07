@@ -35,7 +35,7 @@ async function getProfiles() {
   }
 }
 
-async function getAttendances() {
+async function getAttendances(date?: string) {
   try {
     const res = await apiCaller.get("/api/companies-app/company/attendance/status/", {
       headers: {
@@ -44,6 +44,9 @@ async function getAttendances() {
           .map(({ name, value }) => `${name}=${value}`)
           .join("; "),
       },
+      params: {
+        date: date,
+      },
     });
     return res.data;
   } catch (err) {
@@ -51,8 +54,12 @@ async function getAttendances() {
   }
 }
 
-export default async function AttendancePage() {
-  const [res, attendance] = await Promise.all([getProfiles(), getAttendances()]);
+export default async function AttendancePage({
+  searchParams,
+}: {
+  searchParams: { date?: string };
+}) {
+  const [res, attendance] = await Promise.all([getProfiles(), getAttendances(searchParams.date)]);
 
   if (!res) {
     return <h1>Opps</h1>;

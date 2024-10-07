@@ -8,6 +8,8 @@ type NewEmployeePageProps = {
   };
 };
 
+export const dynamic = "force-dynamic"
+
 async function getEmployeeProfile(employeeID: string) {
   try {
     const res = await apiCaller.get("/api/companies-app/company/employee-detail/", {
