@@ -92,9 +92,9 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
   ) : meetings.length === 0 ? (
     <div className="flex flex-col space-y-4">
       {selectedDate ? (
-        <p className="my-2 text-center text-gray-500">
-          There are no events for {format(parseISO(selectedDate), "yyyy MMM dd EEEE")}.
-        </p>
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center font-medium text-gray-500">
+          <p>There are no events for {format(parseISO(selectedDate), "MMM dd EEEE")}.</p>
+        </div>
       ) : (
         <p className="my-2 text-center text-gray-500">
           Please select a date from above to view all the meetings.

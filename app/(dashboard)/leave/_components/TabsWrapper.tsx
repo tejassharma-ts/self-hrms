@@ -45,14 +45,14 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
   return (
     <Card>
       <Tabs value={currentTab} onValueChange={onTabChange} defaultValue={currentTab}>
-        <CardHeader className="relative px-0">
+        <CardHeader className="relative">
           <TabsList className="self-start">
             <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
             <TabsTrigger value="on-leave">On Leave</TabsTrigger>
             <TabsTrigger value="calender">Calender</TabsTrigger>
           </TabsList>
         </CardHeader>
-        <CardContent className="relative p-0">
+        <CardContent className="relative pt-0">
           <TabsContent value="leave-request">
             <EmployeeLeaveRequest
               leaveRequest={

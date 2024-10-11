@@ -14,7 +14,7 @@ export const EditButton = ({ employeeID }: { employeeID: string }) => {
       <span>
         <PencilLineIcon height={16} width={16} />
       </span>
-      <Link href={`/addnewemploye?employeeID=${employeeID}`} className="absolute inset-0" />
+      <Link href={`/add-new-employee?employee_id=${employeeID}`} className="absolute inset-0" />
     </Button>
   );
 };

@@ -13,6 +13,8 @@ export function getPageTitle(pathname: string) {
     return "Payroll History";
   } else if (pathname.startsWith("/payroll/overview")) {
     return "Payroll Overview";
+  } else if (pathname.startsWith("/add-new-employee")) {
+    return "Add new Employee";
   }
   return "";
 }

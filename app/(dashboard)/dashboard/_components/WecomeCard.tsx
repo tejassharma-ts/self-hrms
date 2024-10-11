@@ -167,7 +167,7 @@ export default function WelcomeCard({ className }: { className: string }) {
     }
   }
   return (
-    <Card className={cn("relative mx-auto h-48 w-full overflow-hidden bg-black", className)}>
+    <Card className={cn("relative mx-auto h-48 w-full overflow-hidden bg-black rounded-2xl", className)}>
       <div className="absolute inset-0 bg-black bg-opacity-50" />
       <CardContent className="relative z-10 flex h-full flex-col p-6">
         <div className="flex-grow">

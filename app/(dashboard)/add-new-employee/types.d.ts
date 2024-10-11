@@ -1,0 +1,46 @@
+type EmployeeFormSteps = "personal-detail" | "bank-details" | "salary-structure";
+
+type FreshEmployee  = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number: string;
+  address: string;
+  permanent_address: string;
+  date_of_birth: string;
+  position: string;
+  date_joined: string;
+  salary: string;
+  is_active: boolean;
+  is_hr: boolean;
+  profile_picture: string;
+  bank_name: string;
+  account_number: string;
+  ifsc_code: string;
+  aadhar_number: string;
+  pan_number: string;
+  gender: "Male" | "Female" | "Other";
+  account_holder_name: string;
+  casual_leave_balance: number;
+  total_casual_leaves: number;
+  sick_leave_balance: number;
+  total_sick_leaves: number;
+  privilege_leave_balance: number;
+  total_privilege_leaves: number;
+  used_privilege_leaves: number;
+  is_bank_kyc_done: boolean;
+  pan_card_image: string;
+  aadhaar_card_front_image: string;
+  aadhaar_card_back_image: string;
+  passbook_image: string;
+  passport_image: string;
+  emergency_phone_number: string;
+  official_phone_number: string;
+  official_email: string;
+  uan_number: string | null;
+  short_leave_balance: number;
+  short_leave_total: number;
+  short_leave_used: number;
+  department: string | null;
+}

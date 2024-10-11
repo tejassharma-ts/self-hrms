@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 export default function GridCards() {
   return (
     <div className="mt-4">
-      <div className="grid grid-cols-12 grid-rows-[200px_180px_1fr] gap-4">
+      <div className="grid grid-cols-12 grid-rows-[200px_180px_1fr] gap-4 min-h-screen">
         <WelcomeCard className="col-span-3" />
         <EmployeeStatus className="col-span-2" />
         <NewHiresCard className="col-span-5" />

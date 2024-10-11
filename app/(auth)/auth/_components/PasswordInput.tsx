@@ -7,13 +7,14 @@ import { Input } from "@/components/ui/input";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   className?: string;
+  show?: boolean;
 }
 
 const PasswordInput = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, ...props }, ref) => {
-    const [showPassword, setShowPassword] = React.useState(false);
+  ({ className, show = false, ...props }, ref) => {
+    const [showPassword, setShowPassword] = React.useState(show);
     return (
-      <div className="relative rounded-md w-full">
+      <div className="relative w-full rounded-md">
         <Input
           type={showPassword ? "text" : "password"}
           className={cn(className)}

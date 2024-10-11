@@ -80,9 +80,8 @@ const Body = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
         ref={ref}
         data-layout="body"
         className={cn(
-          "mt-0 px-4 py-2 md:overflow-hidden md:px-8",
+          "mt-0 bg-[#f5f7fa] px-4 py-4 md:overflow-hidden md:px-8 min-h-screen",
           contextVal && contextVal.fixed && "flex-1",
-          pathname.startsWith("/dashboard") && "bg-[#f5f7fa]",
           className,
         )}
         {...props}
