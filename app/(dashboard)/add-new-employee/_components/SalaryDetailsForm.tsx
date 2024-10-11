@@ -15,6 +15,7 @@ export default function SalaryDetailsForm({ salaryStructure, employeeID }: Salar
   const [salaryVariant, setSalaryVariant] = useState("gross-based");
 
   useEffect(() => {
+    if (!salaryStructure) return;
     setSalaryVariant(salaryStructure.is_gross_based ? "gross-based" : "component-based");
   }, [salaryStructure]);
 

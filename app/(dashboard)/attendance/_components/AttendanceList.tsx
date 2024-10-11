@@ -80,7 +80,7 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
             <TableRow key={employee.id}>
               <TableCell>{employee.id.replaceAll("-", " ")}</TableCell>
               <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>
-              <TableCell>{employee.department}</TableCell>
+              <TableCell>{employee.department.depart_name}</TableCell>
               <TableCell className="text-green-500">
                 {formatTime(employee.check_in_time) || "-"}
               </TableCell>

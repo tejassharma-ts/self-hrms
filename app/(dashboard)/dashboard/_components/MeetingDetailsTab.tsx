@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "@/hooks/use-toast";
 import { format, parseISO } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import AddNewInterview from "../_modals/AddNewInterview";
 
 export const MeetingDetailsTab = ({
   selectedDate,
@@ -31,9 +32,13 @@ export const MeetingDetailsTab = ({
       <Tabs defaultValue="meetings" className="relative mt-4 h-full w-full">
         <TabsList className="grid w-full grid-cols-3 gap-4">
           <TabsTrigger value="meetings">Meetings</TabsTrigger>
+          <TabsTrigger value="interviews">Interviews</TabsTrigger>
         </TabsList>
         <TabsContent value="meetings" className="">
           <Meetings selectedDate={selectedDate} />
+        </TabsContent>
+        <TabsContent value="interviews" className="">
+          <Interviews selectedDate={selectedDate} />
         </TabsContent>
       </Tabs>
     </div>
@@ -162,6 +167,136 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
         ))}
       </ScrollArea>
       <AddNewEvent setMeetings={setMeetings} className="absolute bottom-0 w-full" />
+    </>
+  );
+}
+
+type EmployeeApplication = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  qualification: string;
+  resume: string | null;
+  status: string;
+  meeting_link: string;
+  address: string;
+  gender: string;
+  position_applied: string;
+  previous_company_name: string;
+  previous_salary: string;
+  is_selected: string;
+  interview_date: string;
+  created_at: string;
+  updated_at: string;
+  company: string;
+  department: string;
+  user: string;
+};
+
+function Interviews({ selectedDate }: { selectedDate: any }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
+  const [interviews, setInterviews] = useState<EmployeeApplication[] | []>([]);
+
+  async function removeEvent(meetindID: string) {
+    return;
+    try {
+      setIsDeleteLoading(true);
+      await apiCaller.delete("/api/employees-app/event-meetings/", {
+        params: {
+          event_id: meetindID,
+        },
+      });
+      const filteredEvents = interviews.filter((meeting) => meeting.id !== meetindID);
+      setInterviews(filteredEvents);
+    } catch (err) {
+      toast({
+        description: "Failed to remove events",
+        variant: "destructive",
+      });
+    } finally {
+      setIsDeleteLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    async function getMeetings() {
+      try {
+        setIsLoading(true);
+        const res = await apiCaller.get<EmployeeApplication[]>(
+          "/api/companies-app/schedule-interview/",
+          {
+            params: {
+              date: selectedDate === "" ? undefined : selectedDate,
+            },
+          },
+        );
+        setInterviews(res.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (selectedDate) {
+      getMeetings();
+    }
+  }, [selectedDate]);
+
+  return isLoading ? (
+    [...Array(2)].map((_, idx) => <MeetingSkeleton key={idx} />)
+  ) : interviews.length === 0 ? (
+    <div className="flex flex-col space-y-4">
+      {selectedDate ? (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center font-medium text-gray-500">
+          <p>There are no events for {format(parseISO(selectedDate), "MMM dd EEEE")}.</p>
+        </div>
+      ) : (
+        <p className="my-2 text-center text-gray-500">
+          Please select a date from above to view all the meetings.
+        </p>
+      )}
+      <AddNewInterview setMeetings={setInterviews} className="absolute bottom-0 w-full" />
+    </div>
+  ) : (
+    <>
+      <ScrollArea className="h-[300px]">
+        {interviews.map((meeting) => (
+          <Card className="mb-4 mr-4 border shadow-none last:mb-0">
+            <CardContent className="p-4">
+              <div key={meeting.id} className="flex flex-col space-y-6">
+                <div className="flex items-center justify-between px-0">
+                  <div className="relative">
+                    <h1 className="text-lg font-semibold">
+                      Interview with {getFullName(meeting.first_name, meeting.last_name)}
+                    </h1>
+                    <p className="text-sm text-gray-500">Role: {meeting.position_applied}</p>
+                    <a href={meeting.meeting_link} className="absolute inset-0" />
+                  </div>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger>
+                      <Icons.option size={15} />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                      <DropdownMenuItem
+                        className="flex space-x-2 text-destructive"
+                        onClick={() => removeEvent(meeting.id)}>
+                        {isDeleteLoading && <Icons.loader />}
+                        <span>Cancel</span>
+                      </DropdownMenuItem>
+                      {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </ScrollArea>
+      <AddNewInterview setMeetings={setInterviews} className="absolute bottom-0 w-full" />
     </>
   );
 }
