@@ -41,6 +41,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAddEmployeeStore } from "@/model/add-employee";
 import { isString, isValidUrl } from "@/lib/string";
+import DepartmentSelector from "@/components/department-selector";
 
 const employeeSchema = z.object({
   first_name: z.string().max(50, "First name cannot exceed 50 characters"),
@@ -165,9 +166,6 @@ export default function AddNewEmployeeForm({
           formData.append(key, data[key]);
         });
 
-        // TODO: remove this later
-        formData.delete("department");
-
         formData.append("date_of_birth", format(data.date_of_birth, "yyyy-MM-dd"));
         formData.append("company_id", authUser?.employee_profile.company.id! || authCompany?.id!);
 
@@ -199,9 +197,6 @@ export default function AddNewEmployeeForm({
             formData.append(key, data[key]);
           }
         });
-
-        // TODO: remove this later
-        formData.delete("department");
 
         await apiCaller.patch("/api/companies-app/company/add-employee/", formData, {
           params: {
@@ -628,20 +623,12 @@ export default function AddNewEmployeeForm({
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Department</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select a department" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {departments.map((department) => (
-                              <SelectItem key={department} value={department}>
-                                {department}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <DepartmentSelector
+                            defaultValue={field.value}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
