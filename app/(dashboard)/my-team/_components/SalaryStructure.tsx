@@ -16,6 +16,7 @@ import { cookies } from "next/headers";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { SlashSquare } from "lucide-react";
 
 type EmployeeData = {
   id: string;
@@ -65,6 +66,7 @@ async function getSalaryStructure() {
 
 export default async function SalaryStructure() {
   const salaryStructure = await getSalaryStructure();
+  console.log(salaryStructure);
   if (!salaryStructure) {
     return <h1>Opps</h1>;
   }

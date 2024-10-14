@@ -16,7 +16,7 @@ export default async function PendingRequests({
   className,
 }: PendingRequestsProps) {
   return (
-    <Card className={cn("w-full", className)}>
+    <Card className={cn("w-full rounded-2xl", className)}>
       <CardHeader>
         <CardTitle>Pending Requests</CardTitle>
       </CardHeader>

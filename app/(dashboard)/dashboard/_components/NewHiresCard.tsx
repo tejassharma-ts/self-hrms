@@ -52,8 +52,8 @@ export default function NewHiresCard({ className }: { className: string }) {
   }
 
   return (
-    <Card className={cn("h-48 w-full", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-x-4">
+    <Card className={cn("h-48 w-full rounded-2xl overflow-hidden", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-x-4 pb-4">
         <CardTitle className="flex w-full items-center justify-between">New Hires</CardTitle>
         <YearMonthSelector
           selectedYear={selectedYear}
@@ -98,7 +98,7 @@ export default function NewHiresCard({ className }: { className: string }) {
           </DialogContent>
         </Dialog>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pt-0">
         {isLoading ? (
           <NewHiresSkeleton />
         ) : newHires.length === 0 ? (

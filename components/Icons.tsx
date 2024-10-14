@@ -17,6 +17,10 @@ import {
   Calendar,
   TableOfContents,
   History,
+  Search,
+  Upload,
+  RefreshCcw,
+  Trash,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +37,7 @@ function CenterLoader() {
 }
 
 function CustomLoader({ className }: CustomLoaderProps) {
-  return <Loader className={cn("size-5 animate-spin mr-2", className)} />;
+  return <Loader className={cn("mr-2 size-5 animate-spin", className)} />;
 }
 
 export const Icons = {
@@ -56,4 +60,8 @@ export const Icons = {
   tableContent: TableOfContents,
   history: History,
   loaderCenter: CenterLoader,
+  Search: Search,
+  upload: Upload,
+  refresh: RefreshCcw,
+  trash: Trash,
 };

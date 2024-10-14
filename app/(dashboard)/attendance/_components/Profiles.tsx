@@ -73,7 +73,7 @@ export default function Profiles({ profiles, attendances }: ProfilesProps) {
     return <AttendanceList attendances={attendances} />;
   }
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-10 bg-[#f9f9f9] p-5 ">
       <ProfileCarousel
         profiles={profiles}
         selectedProfile={selectedProfile}

@@ -67,7 +67,7 @@ export default function MeetingCard({ className }: { className: string }) {
   }
 
   return (
-    <Card className={cn("relative flex flex-col overflow-hidden", className)}>
+    <Card className={cn("relative flex flex-col overflow-hidden rounded-2xl", className)}>
       <CardHeader>
         <YearMonthSelector
           selectedYear={selectedYear}
@@ -82,19 +82,19 @@ export default function MeetingCard({ className }: { className: string }) {
           }}
         />
       </CardHeader>
-      <CardContent className="flex h-full flex-col">
+      <CardContent className="flex h-full flex-col pt-0">
         <Carousel className="px-5">
           <CarouselContent>
             {getDatesPerWeekForCurrentMonth().map((week) =>
               week.map((day, idx) => {
                 const [currDate, currDay] = day.split(" ");
                 return (
-                  <CarouselItem className="basis-[25%]">
+                  <CarouselItem className="basis-[25%] py-2">
                     <Card
                       key={idx}
                       onClick={() => handleDateClick(currDate)}
                       className={cn(
-                        "inline-flex justify-center hover:bg-gray-200",
+                        "inline-flex min-w-[4.5rem] justify-center hover:bg-gray-200 rounded-lg",
                         selectedDate.split("-")[2] === currDate && "bg-black hover:bg-black",
                       )}>
                       <CardContent

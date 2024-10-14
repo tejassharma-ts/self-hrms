@@ -1,4 +1,3 @@
-import Image from "next/image";
 import UserSigninForm from "../auth/_components/UserSigninForm";
 import { InputOTPForm } from "../auth/_components/OTPVerifyForm";
 import UserSignupForm from "../auth/_components/UserSignupForm";

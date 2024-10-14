@@ -101,3 +101,9 @@ export const formatTime = (time: any) => {
     hour12: true,
   });
 };
+
+export function formatAdharNumber(value: string) {
+  if (!value) return;
+  value = value.replace(/\D/g, "");
+  return value.match(/.{1,4}/g)?.join(" ") || "";
+}

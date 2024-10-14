@@ -48,7 +48,7 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
     <div className="container mx-auto p-6">
       <h1 className="text-2xl font-bold">Attendance List</h1>
       <Popover>
-        <PopoverTrigger asChild className="mb-4 mt-2">
+        <PopoverTrigger asChild className="mb-4 mt-5">
           <Button
             variant={"outline"}
             className={cn(
@@ -65,7 +65,7 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
       </Popover>
       {/* <p className="mb-4 text-sm text-gray-500">Date- {new Date().toLocaleDateString()}</p> */}
 
-      <Table>
+      <Table className="mt-5">
         <TableHeader>
           <TableRow>
             <TableHead className="text-gray-400">Employee ID</TableHead>
@@ -80,7 +80,7 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
             <TableRow key={employee.id}>
               <TableCell>{employee.id.replaceAll("-", " ")}</TableCell>
               <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>
-              <TableCell>{employee.department}</TableCell>
+              <TableCell>{employee.department.depart_name}</TableCell>
               <TableCell className="text-green-500">
                 {formatTime(employee.check_in_time) || "-"}
               </TableCell>

@@ -31,6 +31,7 @@ const FormSchema = z.object({
   }),
 });
 
+// DDoS yes
 const maxOtpResendAttempts = 2;
 export function InputOTPForm() {
   const searchParams = useSearchParams();
@@ -77,6 +78,7 @@ export function InputOTPForm() {
         router.replace(`${pathname}?${params.toString()}`);
       } else {
         await login(data);
+        // check if the company profile already exists
         router.push("/company-register");
       }
     } catch (err) {
@@ -112,6 +114,7 @@ export function InputOTPForm() {
       setDate(Date.now() + 120000);
       setOtpResendCount(otpResendCount + 1);
     } catch (err) {
+      console.log(err);
       toast({
         title: "Authentication",
         description: "Something went wrong please try again later.",
@@ -161,7 +164,9 @@ export function InputOTPForm() {
               </FormControl>
               <FormDescription className="text-center">
                 Please check your email <br />
-                <span className="font-medium">{searchParams.get("email")}</span>
+                <span className="font-medium">
+                  {searchParams.get("email") || searchParams.get("company_email")}
+                </span>
                 <br />
                 <Link href="/register" className="mt-2 block underline underline-offset-4">
                   Email not correct?

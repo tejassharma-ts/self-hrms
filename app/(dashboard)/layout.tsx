@@ -11,10 +11,8 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <MainLayout>
           <Layout>
             <LayoutHeader sticky>
-              <div className="ml-auto">
-                <div className="ml-auto">
-                  <UserNav />
-                </div>
+              <div className="flex justify-between w-full items-center">
+                <UserNav />
               </div>
             </LayoutHeader>
             <LayoutBody>{children}</LayoutBody>
