@@ -19,6 +19,7 @@ import { toast } from "@/hooks/use-toast";
 import { format, parseISO } from "date-fns";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import AddNewInterview from "../_modals/AddNewInterview";
+import { UserAccount } from "@/types/auth";
 
 export const MeetingDetailsTab = ({
   selectedDate,
@@ -33,12 +34,16 @@ export const MeetingDetailsTab = ({
         <TabsList className="grid w-full grid-cols-3 gap-4">
           <TabsTrigger value="meetings">Meetings</TabsTrigger>
           <TabsTrigger value="interviews">Interviews</TabsTrigger>
+          <TabsTrigger value="announcements">Announcements</TabsTrigger>
         </TabsList>
         <TabsContent value="meetings" className="">
           <Meetings selectedDate={selectedDate} />
         </TabsContent>
         <TabsContent value="interviews" className="">
           <Interviews selectedDate={selectedDate} />
+        </TabsContent>
+        <TabsContent value="announcements" className="">
+          <Announcements selectedDate={selectedDate} />
         </TabsContent>
       </Tabs>
     </div>
@@ -327,6 +332,92 @@ function MeetingSkeleton() {
         </CardContent>
       </Card>
       {/* <Skeleton className="h-10 w-full rounded-full" /> */}
+    </>
+  );
+}
+
+type NotificationType = "Birthday" | "Anniversary" | "Meeting";
+
+interface UserProfile {
+  id: string;
+  first_name: string;
+  last_name: string;
+  profile_picture: string;
+  notification_type: NotificationType[];
+}
+
+function Announcements({ selectedDate }: { selectedDate: any }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [announcements, setAnnouncements] = useState<UserProfile[] | []>([]);
+
+  useEffect(() => {
+    async function getAnnouncements() {
+      try {
+        setIsLoading(true);
+        const res = await apiCaller.get<UserProfile[]>(
+          "/api/companies-app/api/today-notifications/",
+          {
+            params: {
+              date: selectedDate === "" ? undefined : selectedDate,
+            },
+          },
+        );
+        console.log(res);
+        setAnnouncements(res.data);
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    if (selectedDate) {
+      getAnnouncements();
+    }
+  }, [selectedDate]);
+
+  return isLoading ? (
+    [...Array(2)].map((_, idx) => <MeetingSkeleton key={idx} />)
+  ) : announcements.length === 0 ? (
+    <div className="flex flex-col space-y-4">
+      {selectedDate ? (
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-center font-medium text-gray-500">
+          <p>There are no events for {format(parseISO(selectedDate), "MMM dd EEEE")}.</p>
+        </div>
+      ) : (
+        <p className="my-2 text-center text-gray-500">
+          Please select a date from above to view all the meetings.
+        </p>
+      )}
+    </div>
+  ) : (
+    <>
+      <ScrollArea className="h-[300px]">
+        {announcements.map((ann) => (
+          <Card className="mb-4 mr-4 border shadow-none last:mb-0">
+            <CardContent className="p-4">
+              <div key={ann.id} className="flex flex-col space-y-6">
+                <div className="flex items-center justify-between px-0">
+                  <div className="relative w-full">
+                    <h1 className="text-lg font-semibold text-gray-500">{ann.notification_type}</h1>
+                    <div className="flex w-full items-center justify-between">
+                      <h1 className="text-lg font-semibold">
+                        {getFullName(ann.first_name, ann.last_name)}
+                      </h1>
+                      <Avatar className="-ml-2 cursor-pointer border bg-white transition-all first:-ml-0 group-hover:ml-2 group-hover:first:ml-0">
+                        <AvatarImage src={ann.profile_picture || "https://github.com/shadcn.png"} />
+                        <AvatarFallback>
+                          {getFullName(ann.first_name, ann.last_name)}
+                        </AvatarFallback>
+                      </Avatar>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </ScrollArea>
     </>
   );
 }

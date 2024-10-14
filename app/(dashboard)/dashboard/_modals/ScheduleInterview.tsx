@@ -32,6 +32,8 @@ import { apiCaller } from "@/lib/auth";
 import MultipleSelector from "@/components/ui/multi-select";
 import useAuthStore from "@/model/auth";
 import { useClientAuth } from "@/context/auth-context";
+import DepartmentSelector from "@/components/department-selector";
+import { toast } from "@/hooks/use-toast";
 
 type Employee = {
   id: string;
@@ -56,6 +58,7 @@ const formSchema = z.object({
   interview_date: z.date(),
   status: z.enum(["In Progress", "Completed", "Pending"]),
   department: z.string().min(1, "Department is required"),
+  meeting_link: z.string(),
 });
 
 export default function ScheduleInterview({
@@ -83,6 +86,7 @@ export default function ScheduleInterview({
       interview_date: new Date(),
       status: "Pending",
       department: "",
+      meeting_link: "",
     },
   });
 
@@ -92,7 +96,13 @@ export default function ScheduleInterview({
       values.company_id = authUser?.employee_profile.company.id! || authCompany?.id!;
 
       setIsLoading(true);
-      await apiCaller.post("/api/companies-app/schedule-interview/", values);
+      const res = await apiCaller.post("/api/companies-app/schedule-interview/", values);
+      // @ts-ignore
+      setInterviews((pre) => [...pre, res.data.interview]);
+      toast({
+        description: res.data.message,
+      });
+      setShowDialog(false);
     } catch (err) {
       console.log("err", err);
     } finally {
@@ -160,6 +170,20 @@ export default function ScheduleInterview({
               <FormLabel>Email</FormLabel>
               <FormControl>
                 <Input type="email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="meeting_link"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Meeting link</FormLabel>
+              <FormControl>
+                <Input type="text" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -338,14 +362,14 @@ export default function ScheduleInterview({
             <FormItem>
               <FormLabel>Department</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <DepartmentSelector onChange={field.onChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <Button type="submit" className="w-full">
+        <Button disabled={isLoading} type="submit" className="w-full">
           {isLoading && <Icons.loader className="ml-2" />}
           Schedule Interview
         </Button>

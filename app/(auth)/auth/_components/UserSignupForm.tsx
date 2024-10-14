@@ -41,16 +41,20 @@ export default function UserSignupForm({ className, ...props }: UserSignupFromPr
   async function onSubmit(formData: z.infer<typeof SignupFormSchema>) {
     try {
       setIsLoading(true);
-      const res = await publicApiCaller.post("/api/auth/register/", formData);
+      await publicApiCaller.post("/api/auth/register/", formData);
 
       // OTP is successfully sent
       const params = new URLSearchParams(searchParams);
       params.set("company_email", formData.email);
       replace(`${pathname}?${params.toString()}`);
-
-      console.log(res);
-    } catch (err) {
-      console.log(err);
+    } catch (err: any) {
+      if (err && err.response) {
+        return toast({
+          title: "Authentication",
+          description: err.response.data?.error,
+          variant: "destructive",
+        });
+      }
       toast({
         title: "Authentication",
         description: "Something went wrong please try again later.",

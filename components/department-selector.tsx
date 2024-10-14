@@ -102,7 +102,7 @@ export default function DepartmentSelector({ defaultValue, onChange }: Departmen
   }, [open]);
 
   return (
-    <Popover open={open} onOpenChange={setIsOpen}>
+    <Popover open={open} onOpenChange={setIsOpen} modal>
       <PopoverTrigger asChild>
         <Button
           variant="outline"

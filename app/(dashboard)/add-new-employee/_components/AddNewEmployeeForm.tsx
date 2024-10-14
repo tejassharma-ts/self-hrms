@@ -89,15 +89,7 @@ const designations = [
   "Marketing Specialist",
 ];
 
-const departments = ["Engineering", "Product", "Design", "Data Science", "Operations", "Marketing"];
-
-export default function AddNewEmployeeForm({
-  employee,
-}: {
-  onComplete: any;
-  setForms: any;
-  employee?: any;
-}) {
+export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
   const form = useForm<EmployeeFormValues>({
     mode: "onChange",
     resolver: zodResolver(employeeSchema),
@@ -163,6 +155,7 @@ export default function AddNewEmployeeForm({
         const formData = new FormData();
 
         Object.keys(data).forEach((key) => {
+          // @ts-ignore
           formData.append(key, data[key]);
         });
 
@@ -188,12 +181,16 @@ export default function AddNewEmployeeForm({
         data.date_of_birth = format(data.date_of_birth, "yyyy-MM-dd");
 
         Object.keys(employee).map((key) => {
+          // @ts-ignore
           if (data.hasOwnProperty(key) && employee[key] !== data[key]) {
             // for image because only expiry time updates IDK why but, additional check will do the job for now
             // if it is a valid url we can safely return without appending because if the assest has  really changed
             // it would be having blob object
+
+            // @ts-ignore
             if (isValidUrl(data[key])) return;
 
+            // @ts-ignore
             formData.append(key, data[key]);
           }
         });
@@ -269,10 +266,13 @@ export default function AddNewEmployeeForm({
                         className="relative size-40 overflow-hidden rounded-full bg-gray-500">
                         {profile ? (
                           <img
+                            // @ts-ignore
                             src={isString(profile) ? profile : profile.preview}
                             className="absolute inset-0 h-full w-full object-cover"
                             onLoad={() => {
                               if (isString(profile)) return;
+
+                              // @ts-ignore
                               URL.revokeObjectURL(profile.preview);
                             }}
                           />

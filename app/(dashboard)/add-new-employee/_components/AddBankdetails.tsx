@@ -178,16 +178,20 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
       if (employee) {
         // we are updating fields
         Object.keys(employee).map((key) => {
+          // @ts-ignore
           if (data.hasOwnProperty(key) && employee[key] !== data[key]) {
             // for image because only expiry time updates IDK why but, additional check will do the job for now
             // if it is a valid url we can safely return without appending because if the assest has  really changed
             // it would be having blob object
-            if (isValidUrl(data[key])) return;
+            //
+            // @ts-ignore if (isValidUrl(data[key])) return;
+            // @ts-ignore
             formData.append(key, data[key]);
           }
         });
       } else {
         Object.keys(data).forEach((key) => {
+          // @ts-ignore
           formData.append(key, data[key]);
         });
       }
@@ -226,10 +230,12 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
           onClick={onRemove}
         />
         <img
+          // @ts-ignore
           src={isString(file) ? file : file.preview}
           className="h-full w-full object-cover"
           onLoad={() => {
             if (isString(file)) return;
+            // @ts-ignore
             URL.revokeObjectURL(file.preview);
           }}
         />
@@ -332,6 +338,7 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
                             }}
                           />
                           {renderThumb({
+                            // @ts-ignore
                             file: form.getValues("pan_card_image"),
                             onRemove: () => form.resetField("pan_card_image", { defaultValue: "" }),
                           })}
@@ -385,6 +392,7 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
                               }}
                             />
                             {renderThumb({
+                              // @ts-ignore
                               file: form.getValues("aadhaar_card_front_image"),
                               onRemove: () =>
                                 form.resetField("aadhaar_card_front_image", { defaultValue: "" }),
@@ -412,6 +420,7 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
                               }}
                             />
                             {renderThumb({
+                              // @ts-ignore
                               file: form.getValues("aadhaar_card_back_image"),
                               onRemove: () =>
                                 form.resetField("aadhaar_card_back_image", { defaultValue: "" }),
@@ -439,6 +448,7 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
                               }}
                             />
                             {renderThumb({
+                              // @ts-ignore
                               file: form.getValues("passport_image"),
                               onRemove: () =>
                                 form.resetField("passport_image", { defaultValue: "" }),
@@ -466,6 +476,7 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
                               }}
                             />
                             {renderThumb({
+                              // @ts-ignore
                               file: form.getValues("passbook_image"),
                               onRemove: () =>
                                 form.resetField("passbook_image", { defaultValue: "" }),
