@@ -47,7 +47,7 @@ export default function SalaryDetailsForm({ salaryStructure, employeeID }: Salar
           {salaryVariant === "gross-based" ? (
             <IsGrossBased salaryStructure={salaryStructure} employeeID={employeeID} />
           ) : (
-            <IsComponentBased salaryStructure={null} />
+            <IsComponentBased salaryStructure={salaryStructure} employeeID={employeeID} />
           )}
         </CardContent>
       </Card>
