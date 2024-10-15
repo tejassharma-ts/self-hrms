@@ -33,7 +33,7 @@ type SearchParams = {
   year?: number;
 };
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
@@ -65,13 +65,10 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
   return (
     <>
       <div className={"mb-10 grid grid-cols-4 gap-4"}>
-        <ExpenseCard
-          heading={"Pending Expenses"}
-          money={`${expensesEmployeeData.pending_total + expensesEmployeeData.approved_total}`}
-        />
+        <ExpenseCard heading={"Pending Expenses"} money={`${expensesEmployeeData.pending_total}`} />
         <ExpenseCard
           heading={"Approved Expenses"}
-          money={`${expensesEmployeeData.pending_total}`}
+          money={`${expensesEmployeeData.approved_total}`}
         />
         <ExpenseCard
           isLast
