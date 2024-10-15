@@ -21,7 +21,7 @@ export const PayrollHeaderCard = ({
       <CardContent className="flex h-full flex-col justify-between p-6">
         <h2 className="text-md font-semibold text-gray-400">{heading}</h2>
         <h2 className="mb-2 text-xl font-bold">
-          {month || ""}, <span className={"text-lg opacity-35"}>{year}</span>
+          {month || ""} <span className={"text-lg opacity-35"}>{year || "-"}</span>
         </h2>
       </CardContent>
     </Card>

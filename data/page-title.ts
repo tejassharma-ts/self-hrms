@@ -15,6 +15,8 @@ export function getPageTitle(pathname: string) {
     return "Payroll Overview";
   } else if (pathname.startsWith("/add-new-employee")) {
     return "Add new Employee";
+  } else if (pathname.startsWith("/department")) {
+    return "Add new Departments";
   }
   return "";
 }

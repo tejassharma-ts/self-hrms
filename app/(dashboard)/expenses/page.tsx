@@ -33,7 +33,7 @@ type SearchParams = {
   year?: number;
 };
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic";
 
 async function getExpenses(status?: string, month?: number, year?: number): Promise<Expenses> {
   try {
@@ -65,13 +65,10 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
   return (
     <>
       <div className={"mb-10 grid grid-cols-4 gap-4"}>
-        <ExpenseCard
-          heading={"Pending Expenses"}
-          money={`${expensesEmployeeData.pending_total + expensesEmployeeData.approved_total}`}
-        />
+        <ExpenseCard heading={"Pending Expenses"} money={`${expensesEmployeeData.pending_total}`} />
         <ExpenseCard
           heading={"Approved Expenses"}
-          money={`${expensesEmployeeData.pending_total}`}
+          money={`${expensesEmployeeData.approved_total}`}
         />
         <ExpenseCard
           isLast
@@ -100,11 +97,9 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
               </TableHeader>
               <TableBody>
                 {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
-                  <TableRow key={eachExpensesEmployeeData.id}>
+                  <TableRow key={eachExpensesEmployeeData.id} className="relative">
                     <TableCell className={"text-nowrap"}>
-                      <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>
-                        {eachExpensesEmployeeData.employee.id.replaceAll("-", " ")}
-                      </Link>
+                      {eachExpensesEmployeeData.employee.id.replaceAll("-", " ")}
                     </TableCell>
                     <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
                     <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
@@ -114,6 +109,10 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
                     <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
                     <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
                     <TableCell>{eachExpensesEmployeeData.status}</TableCell>
+                    <Link
+                      href={`/expenses/${eachExpensesEmployeeData.employee.id}`}
+                      className="absolute inset-0"
+                    />
                   </TableRow>
                 ))}
               </TableBody>

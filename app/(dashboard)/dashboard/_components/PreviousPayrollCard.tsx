@@ -22,6 +22,6 @@ async function getPreviousPayroll() {
 }
 
 export default async function PreviousPayrollCard({ className }: { className: string }) {
-  const result = await getPreviousPayroll();
+  // const result = await getPreviousPayroll();
   return <PreviousPayroll className={className} />;
 }
