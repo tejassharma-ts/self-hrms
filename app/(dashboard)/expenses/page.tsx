@@ -97,11 +97,9 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
               </TableHeader>
               <TableBody>
                 {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
-                  <TableRow key={eachExpensesEmployeeData.id}>
+                  <TableRow key={eachExpensesEmployeeData.id} className="relative">
                     <TableCell className={"text-nowrap"}>
-                      <Link href={`/expenses/${eachExpensesEmployeeData.employee.id}`}>
-                        {eachExpensesEmployeeData.employee.id.replaceAll("-", " ")}
-                      </Link>
+                      {eachExpensesEmployeeData.employee.id.replaceAll("-", " ")}
                     </TableCell>
                     <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
                     <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
@@ -111,6 +109,10 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
                     <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
                     <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
                     <TableCell>{eachExpensesEmployeeData.status}</TableCell>
+                    <Link
+                      href={`/expenses/${eachExpensesEmployeeData.employee.id}`}
+                      className="absolute inset-0"
+                    />
                   </TableRow>
                 ))}
               </TableBody>
