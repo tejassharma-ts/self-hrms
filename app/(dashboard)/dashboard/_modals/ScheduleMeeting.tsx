@@ -30,6 +30,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Icons } from "@/components/Icons";
 import { apiCaller } from "@/lib/auth";
 import MultipleSelector from "@/components/ui/multi-select";
+import { toast } from "@/hooks/use-toast";
 
 type Employee = {
   id: string;
@@ -46,7 +47,7 @@ const eventSchema = z.object({
   add_link: z.string().url({ message: "Please enter a valid URL for the link." }),
   date: z.date({ invalid_type_error: "Please enter a valid date." }),
   team: z.any().array().nonempty({ message: "Team member name cannot be empty." }),
-  status: z.enum(["Ongoing", "Completed"], {
+  status: z.enum(["Ongoing", "Completed", "Scheduled"], {
     errorMap: () => ({ message: "Status must be either 'Ongoing' or 'Completed'." }),
   }),
 });
@@ -85,6 +86,10 @@ export default function ScheduleMeeting({
       }
       setShowDialog(false);
     } catch (err) {
+      toast({
+        description: "Something went wrong",
+        variant: "destructive",
+      });
       console.log("err", err);
     } finally {
       setIsLoading(false);
@@ -278,6 +283,7 @@ export default function ScheduleMeeting({
                     <SelectContent>
                       <SelectItem value="Ongoing">On Going</SelectItem>
                       <SelectItem value="Completed">Completed</SelectItem>
+                      <SelectItem value="Scheduled">Scheduled</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />

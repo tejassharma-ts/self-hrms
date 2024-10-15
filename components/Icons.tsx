@@ -21,6 +21,7 @@ import {
   Upload,
   RefreshCcw,
   Trash,
+  BriefcaseBusiness,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -64,4 +65,5 @@ export const Icons = {
   upload: Upload,
   refresh: RefreshCcw,
   trash: Trash,
+  bag: BriefcaseBusiness,
 };

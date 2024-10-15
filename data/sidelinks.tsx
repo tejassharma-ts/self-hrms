@@ -93,6 +93,11 @@ export const sidelinks: SideLink[] = [
       // },
     ],
   },
+  {
+    title: "Department",
+    href: "/department",
+    icon: <Icons.bag size={18} />,
+  },
   // {
   //   title: "Settings",
   //   href: "#",
