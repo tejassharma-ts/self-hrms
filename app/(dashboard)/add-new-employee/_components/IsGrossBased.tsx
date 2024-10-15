@@ -110,7 +110,7 @@ export default function IsGrossBased({ salaryStructure, employeeID }: IsGrossBas
   }
 
   const fields: Array<{ name: keyof GrossSalaryFormValues; label: string }> = [
-    { name: "has_medical_allowance", label: "Medical Insurance" },
+    { name: "has_medical_allowance", label: "Medical Allowances" },
     { name: "has_hra", label: "HRA" },
     { name: "has_lta", label: "LTA" },
     { name: "has_allowances", label: "Allowances" },

@@ -21,7 +21,11 @@ export default async function PendingRequests({
         <CardTitle>Pending Requests</CardTitle>
       </CardHeader>
       <CardContent className="mt-auto flex items-center space-x-8 px-6 pt-4">
-        <RequestItem label="Leave Requests" value={leaveRequestCount} href="/leave" />
+        <RequestItem
+          label="Leave Requests"
+          value={leaveRequestCount}
+          href="/leave?status=pending"
+        />
         <Separator orientation="vertical" className="h-[60px]" />
         <RequestItem label="Expense Requests" value={expenseRequestCount} href="/expenses" />
       </CardContent>
@@ -32,9 +36,10 @@ export default async function PendingRequests({
 function RequestItem({ label, value, href }: { label: string; value: number; href: string }) {
   return (
     <div className="flex">
-      <div className="flex flex-col space-y-1">
+      <div className="relative flex flex-col space-y-1">
         <h1 className="text-lg font-medium text-gray-500">{label}</h1>
         <span className="text-3xl font-bold text-foreground">{value}</span>
+        <Link href={href} className="absolute inset-0" />
       </div>
     </div>
   );
