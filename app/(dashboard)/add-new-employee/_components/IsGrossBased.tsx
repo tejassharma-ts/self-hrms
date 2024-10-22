@@ -5,14 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-} from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -20,41 +13,48 @@ import { toast } from "@/hooks/use-toast";
 import useEmployeeStore from "@/model/employee";
 import { Icons } from "@/components/Icons";
 import { useAddEmployeeStore } from "@/model/add-employee";
-import { redirect, useRouter } from "next/navigation";
 
-const GrossSalarySchema = z.object({
-  gross_salary: z.string().optional(),
-  medical_insurance: z.string().optional(),
+const ComponentSalarySchema = z.object({
+  basic_salary: z.string().optional(),
+  hra: z.string().optional(),
+  allowances: z.string().optional(),
+  medical: z.string().optional(),
   conveyance: z.string().optional(),
-  // gratuity: z.string().optional(),
-  has_medical_allowance: z.boolean().optional(),
+  gratuity: z.string().optional(),
+  has_lta: z.boolean().optional(),
   has_bonus: z.boolean().optional(),
   has_conveyance: z.boolean().optional(),
-  has_lta: z.boolean().optional(),
   has_hra: z.boolean().optional(),
   has_allowances: z.boolean().optional(),
   has_special_allowance: z.boolean().optional(),
   has_esi: z.boolean().optional(),
   has_pf: z.boolean().optional(),
+  has_medical_allowance: z.boolean().optional(),
 });
 
-type GrossSalaryFormValues = z.infer<typeof GrossSalarySchema>;
+type ComponentSalaryFormValues = z.infer<typeof ComponentSalarySchema>;
 
-type IsGrossBasedProps = {
+const isGrossBased = ({
+  salaryStructure = undefined,
+  employeeID,
+}: {
   salaryStructure: any;
-  employeeID?: string;
-};
-export default function IsGrossBased({ salaryStructure, employeeID }: IsGrossBasedProps) {
+  employeeID?: any;
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const { form: formStore } = useAddEmployeeStore();
 
-  const form = useForm<GrossSalaryFormValues>({
-    resolver: zodResolver(GrossSalarySchema),
+  const form = useForm<ComponentSalaryFormValues>({
+    resolver: zodResolver(ComponentSalarySchema),
     defaultValues: {
-      gross_salary: salaryStructure?.gross_monthly_salary || "",
-      medical_insurance: salaryStructure?.medical_insurance || "",
-      // gratuity: salaryStructure?.gratuity || "",
+      basic_salary: salaryStructure?.basic_salary || "",
+      hra: salaryStructure?.hra || "",
+      allowances: salaryStructure?.allowances || "",
+      medical: salaryStructure?.medical_insurance || "",
       has_medical_allowance: salaryStructure?.has_medical_allowance || "",
+      conveyance: salaryStructure?.conveyance || "",
+      gratuity: salaryStructure?.gratuity || "",
+      has_lta: salaryStructure?.has_lta || false,
       has_bonus: salaryStructure?.has_bonus || false,
       has_conveyance: salaryStructure?.has_conveyance || false,
       has_hra: salaryStructure?.has_hra || false,
@@ -62,41 +62,43 @@ export default function IsGrossBased({ salaryStructure, employeeID }: IsGrossBas
       has_special_allowance: salaryStructure?.has_special_allowance || false,
       has_esi: salaryStructure?.has_esi || false,
       has_pf: salaryStructure?.has_pf || false,
-      has_lta: salaryStructure?.has_lta || false,
     },
   });
 
   useEffect(() => {
     if (formStore.personal) {
-      form.setValue("gross_salary", formStore.personal.salary);
+      form.setValue("basic_salary", formStore.personal.salary);
     }
   }, [formStore]);
 
-  async function onSubmit(data: GrossSalaryFormValues) {
+  async function onSubmit(data: ComponentSalaryFormValues) {
     try {
       setIsLoading(true);
 
       const requestBody = {
-        // gratuity: data.gratuity || "0",
-        is_gross_based: true,
-        conveyance: data.conveyance,
         employee: employeeID,
-        gross_salary: data.gross_salary,
-        medical_insurance: data.medical_insurance,
+        is_component_based: false,
+        is_gross_based: true,
+        gross_salary: data.basic_salary,
+        hra: data.hra || "0",
+        conveyance: data.conveyance,
+        allowances: data.hra || "0",
+        medical_insurance: data.medical,
+        gratuity: data.gratuity || "0",
+        has_lta: data.has_lta,
         has_bonus: data.has_bonus,
         has_medical_allowance: data.has_medical_allowance,
-        has_conveyance: !!data.conveyance,
+        has_conveyance: data.has_conveyance,
         has_hra: data.has_hra,
         has_allowances: data.has_allowances,
         has_special_allowance: data.has_special_allowance,
         has_esi: data.has_esi,
         has_pf: data.has_pf,
-        has_lta: data.has_lta,
       };
 
       await apiCaller.post("/api/payroll_app/salary-structures/", requestBody);
       toast({
-        description: "Salary successfully added",
+        description: "Component-based salary successfully added",
       });
     } catch (err) {
       console.error(err);
@@ -109,97 +111,137 @@ export default function IsGrossBased({ salaryStructure, employeeID }: IsGrossBas
     }
   }
 
-  const fields: Array<{ name: keyof GrossSalaryFormValues; label: string }> = [
-    { name: "has_medical_allowance", label: "Medical Allowances" },
+  const fields: Array<{ name: keyof ComponentSalaryFormValues; label: string }> = [
     { name: "has_hra", label: "HRA" },
     { name: "has_lta", label: "LTA" },
     { name: "has_allowances", label: "Allowances" },
+    { name: "has_medical_allowance", label: "Medical Allowances" },
+    { name: "has_conveyance", label: "Conveyance" },
     { name: "has_bonus", label: "Bonus" },
     { name: "has_special_allowance", label: "Other Allowance" },
-    { name: "has_esi", label: "ESI" },
+    { name: "has_esi", label: "ESIC" },
     { name: "has_pf", label: "PF" },
   ];
 
   return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
-          <FormField
-            control={form.control}
-            name="gross_salary"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Gross Salary</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter gross salary" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="medical_insurance"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Medical Insurance</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter medical insurance" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="conveyance"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Conveyance</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter conveyance" {...field} />
-                </FormControl>
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="flex flex-col">
-          <h1 className="my-8 font-medium">Select the modules you would like to enable.</h1>
-          <div className="flex flex-col gap-4">
-            {fields.map(({ name, label }) => (
-              <div className="">
-                <FormField
-                  key={name}
-                  control={form.control}
-                  name={name}
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center gap-2">
-                        <FormControl>
-                          <Checkbox
-                            checked={!!field.value}
-                            onCheckedChange={field.onChange}
-                            id={name}
-                          />
-                        </FormControl>
-                        <FormLabel htmlFor={name} className="text-base">
-                          {label}
-                        </FormLabel>
-                      </div>
-                    </FormItem>
-                  )}
-                />
-              </div>
-            ))}
+    <>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
+            <FormField
+              control={form.control}
+              name="basic_salary"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Gross Salary</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter gross salary" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {/* <FormField */}
+            {/*   control={form.control} */}
+            {/*   name="hra" */}
+            {/*   render={({ field }) => ( */}
+            {/*     <FormItem> */}
+            {/*       <FormLabel>HRA</FormLabel> */}
+            {/*       <FormControl> */}
+            {/*         <Input placeholder="Enter HRA" {...field} /> */}
+            {/*       </FormControl> */}
+            {/*     </FormItem> */}
+            {/*   )} */}
+            {/* /> */}
+            {/* <FormField */}
+            {/*   control={form.control} */}
+            {/*   name="allowances" */}
+            {/*   render={({ field }) => ( */}
+            {/*     <FormItem> */}
+            {/*       <FormLabel>Allowance</FormLabel> */}
+            {/*       <FormControl> */}
+            {/*         <Input placeholder="Enter  allowance" {...field} /> */}
+            {/*       </FormControl> */}
+            {/*     </FormItem> */}
+            {/*   )} */}
+            {/* /> */}
+            <FormField
+              control={form.control}
+              name="medical"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Medical insurance</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter medical insurance" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="conveyance"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Conveyance</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter conveyance" {...field} />
+                  </FormControl>
+                </FormItem>
+              )}
+            />
+            {/* <FormField */}
+            {/*   control={form.control} */}
+            {/*   name="lta" */}
+            {/*   render={({ field }) => ( */}
+            {/*     <FormItem> */}
+            {/*       <FormLabel>LTA</FormLabel> */}
+            {/*       <FormControl> */}
+            {/*         <Input placeholder="Enter lta" {...field} /> */}
+            {/*       </FormControl> */}
+            {/*     </FormItem> */}
+            {/*   )} */}
+            {/* /> */}
           </div>
-        </div>
-        {!salaryStructure ? (
-          <div className="flex justify-center">
-            <Button type="submit" className="mt-4" disabled={isLoading}>
-              {isLoading && <Icons.loader className="mr-2 h-4 w-4 animate-spin" />}
-              {isLoading ? "Saving..." : "Add Salary Details"}
-            </Button>
+          <div className="flex flex-col">
+            <h1 className="my-8 font-medium">Select the modules you would like to enable.</h1>
+            <div className="flex flex-col gap-4">
+              {fields.map(({ name, label }) => (
+                <div className="">
+                  <FormField
+                    key={name}
+                    control={form.control}
+                    name={name}
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id={name}
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor={name} className="text-base">
+                            {label}
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        ) : null}
-      </form>
-    </Form>
+          {!salaryStructure ? (
+            <div className="flex justify-center">
+              <Button type="submit" className="mt-4" disabled={isLoading}>
+                {isLoading && <Icons.loader className="mr-2 h-4 w-4 animate-spin" />}
+                {isLoading ? "Saving..." : "Add Salary Details"}
+              </Button>
+            </div>
+          ) : null}
+        </form>
+      </Form>
+    </>
   );
-}
+};
+export default isGrossBased;

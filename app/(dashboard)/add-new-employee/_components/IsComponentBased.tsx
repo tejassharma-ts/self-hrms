@@ -119,7 +119,7 @@ const IsComponentBased = ({
     { name: "has_conveyance", label: "Conveyance" },
     { name: "has_bonus", label: "Bonus" },
     { name: "has_special_allowance", label: "Other Allowance" },
-    { name: "has_esi", label: "ESI" },
+    { name: "has_esi", label: "ESIC" },
     { name: "has_pf", label: "PF" },
   ];
 
