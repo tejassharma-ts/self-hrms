@@ -1,68 +1,77 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { PlusCircle, X } from "lucide-react";
-import ScheduleMeeting from "../_modals/ScheduleMeeting";
+import AddNewEvent from "../_modals/AddNewEvent";
+// import { getAuthCookies } from "@/lib/server/api";
+import { Meeting } from "@/types/dashboard";
+import { formatISOToTime } from "@/lib/utils";
+import { apiCaller } from "@/lib/auth";
+import { EmptyPlaceholder } from "@/components/EmptyPlaceholder";
+import { cookies } from "next/headers";
+import { setRequestMeta } from "next/dist/server/request-meta";
 
-// Mock data for events and meetings
-const events = [
-  { title: "Team Meeting", subtitle: "Weekly Sync", time: "10:00 AM" },
-  { title: "Client Presentation", subtitle: "Project X", time: "2:00 PM" },
-  { title: "Lunch with Colleagues", subtitle: "Team Building", time: "12:30 PM" },
-  { title: "Product Demo", subtitle: "New Features", time: "4:00 PM" },
-  { title: "1-on-1 with Manager", subtitle: "Performance Review", time: "11:00 AM" },
-  { title: "Workshop", subtitle: "Agile Methodologies", time: "3:00 PM" },
-  { title: "Networking Event", subtitle: "Industry Meetup", time: "6:00 PM" },
-];
+async function getAllMeetings() {
+  try {
+    const res = await apiCaller.get<Meeting[]>("/api/employees-app/event-meetings/", {
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
+    });
+    return res.data;
+  } catch (err) {
+    // console.log("err", err);
+  }
+}
 
-export default function EventsAndMeetings() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+export default async function EventsAndMeetings() {
+  const meetings = await getAllMeetings();
 
-  const toggleModal = () => {
-    setIsModalOpen(!isModalOpen);
-  };
+  if (!meetings) {
+    return (
+      <EmptyPlaceholder className="mx-auto max-w-[800px]">
+        {/* <EmptyPlaceholder.Icon name="warning" /> */}
+        <EmptyPlaceholder.Title>Uh oh!</EmptyPlaceholder.Title>
+        <EmptyPlaceholder.Description>Can't fetch today's events</EmptyPlaceholder.Description>
+      </EmptyPlaceholder>
+    );
+  }
 
   return (
     <>
-      <Card className="w-full h-[407px] max-w-md">
+      <Card className="relative w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-lg font-semibold">Events and Meetings</CardTitle>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[230px] pr-4">
-            {events.map((event, index) => (
-              <div key={index} className="mb-4 flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium">{event.title}</h3>
-                  <p className="text-xs text-muted-foreground">{event.subtitle}</p>
+          {meetings.length ? (
+            <ScrollArea className="h-[150px] pr-4">
+              {meetings.map((meeting, index) => (
+                <div key={index} className="mb-4 flex items-center justify-between">
+                  <div>
+                    <a href={meeting.add_link} className="text-sm font-medium">
+                      {meeting.title}
+                    </a>
+                    <p className="text-xs text-muted-foreground">{meeting.description}</p>
+                  </div>
+                  <span className="text-xs font-medium">{formatISOToTime(meeting.date)}</span>
                 </div>
-                <span className="text-xs font-medium">{event.time}</span>
-              </div>
-            ))}
-          </ScrollArea>
+              ))}
+            </ScrollArea>
+          ) : (
+            <EmptyPlaceholder className="min-h-auto">
+              <EmptyPlaceholder.Title>Uh</EmptyPlaceholder.Title>
+              <EmptyPlaceholder.Description>
+                There are not meetings for today
+              </EmptyPlaceholder.Description>
+            </EmptyPlaceholder>
+          )}
         </CardContent>
-        <CardFooter>
-          <Button variant="outline" className="w-full rounded-full text-sm" onClick={toggleModal}>
-            <PlusCircle className="mr-2 h-3 w-3" />
-            Add new Event
-          </Button>
-        </CardFooter>
+        {/* <CardFooter className="flex justify-center"> */}
+        {/* <AddNewEvent /> */}
+        {/* </CardFooter> */}
       </Card>
-
-      {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-          <div className="relative bg-white rounded-lg shadow-lg p-6 max-w-md w-full">
-            <button
-              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
-              onClick={toggleModal}
-            >
-              <X className="h-5 w-5" />
-            </button>
-            <ScheduleMeeting />
-          </div>
-        </div>
-      )}
     </>
   );
 }

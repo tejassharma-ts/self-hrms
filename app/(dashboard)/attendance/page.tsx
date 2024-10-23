@@ -1,59 +1,68 @@
-'use client'
-import React, { useEffect, useState } from 'react'
-import ProfileCarousel from './_components/ProfileCarousel'
-import AttendanceList from './_components/AttendanceList'
-import ProjectTimeline from './_components/ProjectTimeline';
-import AttendanceDashboard from './_components/AttendanceDashboard';
+import { apiCaller } from "@/lib/auth";
+// import { getAuthCookies } from "@/lib/server/api";
+import Profiles from "./_components/Profiles";
+import { cookies } from "next/headers";
 
-interface Profile {
-    name: string;
-    role: string;
-    monthlyPercentage: number;
-    yearlyPercentage: number;
-    image: string;
-    department: string;
+export const dynamic = "force-dynamic";
+
+type AttendancePercentageResponse = {
+  employee_stats: any;
+  month: number;
+  year: number;
+};
+
+async function getProfiles() {
+  try {
+    const currentDate = new Date();
+    const res = await apiCaller.get<AttendancePercentageResponse>(
+      "/api/companies-app/attendance-percentage/",
+      {
+        params: {
+          month: currentDate.getMonth() + 1,
+          year: currentDate.getFullYear(),
+        },
+        headers: {
+          Cookie: cookies()
+            .getAll()
+            .map(({ name, value }) => `${name}=${value}`)
+            .join("; "),
+        },
+      },
+    );
+    return res.data;
+  } catch (err) {
+    console.log("Error", err);
+  }
 }
 
-const page = () => {
-    const [profiles, setProfiles] = useState<Profile[]>([]);
-    const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null)
-
-    useEffect(() => {
-        const fetchProfiles = async () => {
-            try {
-                const response = await fetch('https://randomuser.me/api/?results=10');
-                const data = await response.json();
-                const fetchedProfiles = data.results.map((user: any, index: number) => ({
-                    name: `${user.name.first} ${user.name.last}`,
-                    role: ['Design', 'Development', 'Marketing', 'Sales', 'HR'][index % 5],
-                    monthlyPercentage: Math.floor(Math.random() * 31) + 70, // 70-100
-                    yearlyPercentage: Math.floor(Math.random() * 21) + 80, // 80-100
-                    image: user.picture.large
-                }));
-                setProfiles(fetchedProfiles);
-            } catch (error) {
-                console.error('Error fetching profiles:', error);
-                setProfiles([]);
-            }
-        };
-
-        fetchProfiles();
-    }, []);
-
-
-    return (
-        <div className='px-5 space-y-6' >
-            <ProfileCarousel profiles={profiles} selectedProfile={selectedProfile} setSelectedProfile={setSelectedProfile} />
-            {selectedProfile ?
-                <div className='flex flex-row gap-10' >
-                    <AttendanceDashboard />
-                    <ProjectTimeline/>
-                </div>
-                :
-                <AttendanceList />
-            }
-        </div>
-    )
+async function getAttendances(date?: string) {
+  try {
+    const res = await apiCaller.get("/api/companies-app/company/attendance/status/", {
+      headers: {
+        Cookie: cookies()
+          .getAll()
+          .map(({ name, value }) => `${name}=${value}`)
+          .join("; "),
+      },
+      params: {
+        date: date,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    console.log("Error:", err);
+  }
 }
 
-export default page
+export default async function AttendancePage({
+  searchParams,
+}: {
+  searchParams: { date?: string };
+}) {
+  const [res, attendance] = await Promise.all([getProfiles(), getAttendances(searchParams.date)]);
+
+  if (!res) {
+    return <h1>Opps</h1>;
+  }
+  return <Profiles profiles={res.employee_stats} attendances={attendance} />;
+}

@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const fontMain = localFont({
+  src: "../assets/Inter-VariableFont_slnt,wght.ttf",
+  variable: "--font-main",
+});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,8 +19,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" suppressHydrationWarning className={`${fontMain.variable} antialiased`}>
+      <body>
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }

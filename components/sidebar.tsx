@@ -1,140 +1,86 @@
-'use client'
-import { useState } from 'react'
-import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Separator } from "@/components/ui/separator"
-import { ChevronDown, ChevronUp, Home, Settings, Users, BarChart, Files } from "lucide-react"
-import { useRouter } from 'next/navigation'
+"use client";
 
-type Route = {
-  name: string
-  path: string
-  icon: React.ReactNode
-  subRoutes?: { name: string; path: string }[],
+import { useEffect, useState } from "react";
+import {
+  ChevronLeft as IconChevronsLeft,
+  ChevronDown as IconMenu2,
+  ChevronLeft as IconX,
+} from "lucide-react";
+import { Layout, LayoutHeader } from "./custom/layout";
+import { Button } from "./ui/button";
+import SideNav from "./side-nav";
+import { cn } from "@/lib/utils";
+import { sidelinks } from "@/data/sidelinks";
+import Logo from "./logo";
+
+interface SidebarProps extends React.HTMLAttributes<HTMLElement> {
+  isCollapsed: boolean;
+  setIsCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const routes: Route[] = [
-  {
-    name: 'Dashboard',
-    path: '/dashboard',
-    icon: <Home className="h-4 w-4" />,
-  },
-  {
-    name: 'Users',
-    path: '/users',
-    icon: <Users className="h-4 w-4" />,
-    subRoutes: [
-      { name: 'All Users', path: '/users' },
-      { name: 'Add User', path: '/users/add' },
-    ],
-  },
-  {
-    name: 'Reports',
-    path: '/reports',
-    icon: <BarChart className="h-4 w-4" />,
-    subRoutes: [
-      { name: 'Sales Report', path: '/reports/sales' },
-      { name: 'User Activity', path: '/reports/activity' },
-    ],
-  },
-  {
-    name: 'Documents',
-    path: '/documents',
-    icon: <Files className="h-4 w-4" />,
-  },
-  {
-    name: 'Settings',
-    path: '/settings',
-    icon: <Settings className="h-4 w-4" />,
-  },
-]
+export default function Sidebar({ className, isCollapsed, setIsCollapsed }: SidebarProps) {
+  const [navOpened, setNavOpened] = useState(false);
 
-export default function Sidebar() {
-  const [expandedRoutes, setExpandedRoutes] = useState<string[]>([])
-  const [selectedRoute, setSelectedRoute] = useState<string>('')
-  const router = useRouter()
-
-  const toggleRoute = (routeName: string) => {
-    setExpandedRoutes(prev =>
-      prev.includes(routeName)
-        ? prev.filter(name => name !== routeName)
-        : [...prev, routeName]
-    )
-  }
-
-  const handleRouteClick = (routeName: string, path: string) => {
-    setSelectedRoute(routeName)
-    router.push(path)
-  }
+  /* Make body not scrollable when navBar is opened */
+  useEffect(() => {
+    if (navOpened) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+  }, [navOpened]);
 
   return (
-    <div className="flex h-screen w-64 flex-col">
-      <div className="flex items-center space-x-2 p-4 bg-white">
-        <img
-          alt="Company logo"
-          className="h-8 w-8 rounded-full"
-          src="/placeholder.svg"
-          style={{
-            aspectRatio: "32/32",
-            objectFit: "cover",
-          }}
+    <aside
+      className={cn(
+        `fixed left-0 right-0 top-0 z-50 w-full border-r-2 border-r-muted transition-[width] md:bottom-0 md:right-auto md:h-svh ${isCollapsed ? "md:w-14" : "md:w-64"}`,
+        className,
+      )}>
+      {/* Overlay in mobile */}
+      <div
+        onClick={() => setNavOpened(false)}
+        className={`absolute inset-0 transition-[opacity] delay-100 duration-700 ${navOpened ? "h-svh opacity-50" : "h-0 opacity-0"} w-full bg-black md:hidden`}
+      />
+
+      <Layout fixed className={navOpened ? "h-svh" : ""}>
+        {/* Header */}
+        <LayoutHeader sticky className="z-50 flex justify-center px-4 py-5 shadow-sm md:px-4">
+          <div className={`flex w-full items-center ${!isCollapsed ? "gap-2" : ""}`}>
+            <Logo isCollapsed={isCollapsed} />
+            <span className="sr-only">Website Name</span>
+          </div>
+
+          {/* Toggle Button in mobile */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="md:hidden"
+            aria-label="Toggle Navigation"
+            aria-controls="sidebar-menu"
+            aria-expanded={navOpened}
+            onClick={() => setNavOpened((prev) => !prev)}>
+            {navOpened ? <IconX /> : <IconMenu2 />}
+          </Button>
+        </LayoutHeader>
+
+        {/* Navigation links */}
+        <SideNav
+          id="sidebar-menu"
+          className={`z-40 mx-2 h-full flex-1 overflow-auto ${navOpened ? "max-h-screen" : "max-h-0 py-0 md:max-h-screen md:py-2"}`}
+          closeNav={() => setNavOpened(false)}
+          isCollapsed={isCollapsed}
+          links={sidelinks}
         />
-        <h2 className="text-lg font-semibold">Acme Inc.</h2>
-      </div>
-      <Separator className="mx-auto w-4/5" />
-      <ScrollArea className="flex-1">
-        <nav className="p-2">
-          {routes.map((route) => (
-            <div key={route.name} className="mb-1">
-              <div className="flex items-center">
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start transition-colors ${
-                    selectedRoute === route.name
-                      ? 'bg-black text-white'
-                      : 'hover:bg-gray-200'
-                  }`}
-                  onClick={() => handleRouteClick(route.name, route.path)}
-                >
-                  {route.icon}
-                  <span className="ml-2 flex-1 text-left">{route.name}</span>
-                </Button>
-                {route.subRoutes && (
-                  <Button
-                    variant="ghost"
-                    className="ml-2"
-                    onClick={() => toggleRoute(route.name)}
-                  >
-                    {expandedRoutes.includes(route.name) ? (
-                      <ChevronUp className="h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="h-4 w-4" />
-                    )}
-                  </Button>
-                )}
-              </div>
-              {route.subRoutes && expandedRoutes.includes(route.name) && (
-                <div className="ml-4 mt-1 space-y-1">
-                  {route.subRoutes.map((subRoute) => (
-                    <Button
-                      key={subRoute.name}
-                      variant="ghost"
-                      className={`w-full justify-start pl-8 text-sm transition-colors ${
-                        selectedRoute === subRoute.name
-                          ? 'bg-black text-white'
-                          : 'hover:bg-gray-200'
-                      }`}
-                      onClick={() => handleRouteClick(subRoute.name, subRoute.path)}
-                    >
-                      {subRoute.name}
-                    </Button>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
-      </ScrollArea>
-    </div>
-  )
+
+        {/* Scrollbar width toggle button */}
+        <Button
+          onClick={() => setIsCollapsed((prev) => !prev)}
+          size="icon"
+          variant="outline"
+          className="absolute -right-4 top-1/2 z-50 hidden rounded-full bg-white md:inline-flex">
+          <IconChevronsLeft className={`h-4 w-4 stroke-[1.5] ${isCollapsed ? "rotate-180" : ""}`} />
+        </Button>
+      </Layout>
+    </aside>
+  );
 }

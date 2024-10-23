@@ -1,16 +1,20 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 interface ValueCardProps {
   value: number;
   title: string;
   subtitle: string;
+  className?: string;
 }
 
-export default function ValueCard({ value, title, subtitle }: ValueCardProps) {
+export default function ValueCard({ value, title, subtitle, className }: ValueCardProps) {
   return (
-    <Card className="w-full h-48 p-4">
-      <CardContent className="space-y-2">
+    <Card className={cn("h-48 w-full rounded-2xl", className)}>
+      <CardHeader>
         <div className="text-4xl font-bold text-foreground">{value}</div>
+      </CardHeader>
+      <CardContent className="space-y-0 pt-0">
         <div className="text-lg font-semibold text-foreground">{title}</div>
         <div className="text-sm text-muted-foreground">{subtitle}</div>
       </CardContent>

@@ -4,7 +4,9 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
+    --header-height: 5rem;
+
+    --background: 210% 17% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -63,7 +65,22 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
+
+.customnextp {
+  border: black;
+  border: 1px;
+  font: black;
+}
+
+.customborder {
+  border: black;
+  border: 5px;
+  border: 0px, 1px, 1px, 1px, 1px;
+  margin-left: 5px;
+}
+
