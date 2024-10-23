@@ -50,9 +50,9 @@ export default function AddPayroll() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       employee: "",
-      pay_date: undefined,
+      pay_date: new Date(),
       arrears_amount: "",
-      arrears_month: undefined,
+      arrears_month: new Date(),
     },
   });
 
