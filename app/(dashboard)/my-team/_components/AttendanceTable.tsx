@@ -131,7 +131,7 @@ const CalendarView = ({
                   attendanceForDate.status === "Absent" ? (
                     <span className={"bg-inherit text-lg font-semibold text-red-500"}>Absent</span>
                   ) : attendanceForDate.status === "Present" ? (
-                    <p className="absolute bottom-0 flex gap-x-4 text-nowrap pb-2 text-[8px] font-medium">
+                    <p className="absolute bottom-0 flex gap-x-4 text-nowrap pb-2 text-sm font-medium">
                       <span className={"text-green-500"}>
                         {" "}
                         {formatTime(attendanceForDate?.check_in_time)}
@@ -144,7 +144,7 @@ const CalendarView = ({
                     ""
                   )
                 ) : (
-                  <p className="absolute bottom-0 flex gap-x-4 pb-2 text-[8px] font-medium">
+                  <p className="absolute bottom-0 flex gap-x-4 pb-2 text-sm font-medium">
                     <span className={"px-2 text-green-500"}>N/A</span>
                     <span className={"px-2 text-red-500"}>N/A</span>
                   </p>
