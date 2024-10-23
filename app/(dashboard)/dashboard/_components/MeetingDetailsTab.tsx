@@ -141,7 +141,7 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
                   </DropdownMenu>
                 </div>
                 <div className="group flex items-center justify-between">
-                  <div className="group flex items-center justify-between flex-1">
+                  <div className="group flex flex-1 items-center justify-between">
                     {meeting.team.map((member) => (
                       <TooltipProvider delayDuration={0}>
                         <Tooltip>
@@ -236,7 +236,7 @@ function Interviews({ selectedDate }: { selectedDate: any }) {
           "/api/companies-app/schedule-interview/",
           {
             params: {
-              date: selectedDate === "" ? undefined : selectedDate,
+              interview_date: selectedDate === "" ? undefined : selectedDate,
             },
           },
         );
@@ -282,21 +282,24 @@ function Interviews({ selectedDate }: { selectedDate: any }) {
                     </h1>
                     <p className="text-sm text-gray-500">Role: {meeting.position_applied}</p>
                     <a href={meeting.meeting_link} className="absolute inset-0" />
+                    <span className="text-sm font-semibold text-[#998383]">
+                      {format(meeting.interview_date, "hh:mm:a")}
+                    </span>
                   </div>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger>
-                      <Icons.option size={15} />
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem
-                        className="flex space-x-2 text-destructive"
-                        onClick={() => removeEvent(meeting.id)}>
-                        {isDeleteLoading && <Icons.loader />}
-                        <span>Cancel</span>
-                      </DropdownMenuItem>
-                      {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  {/* <DropdownMenu> */}
+                  {/*   <DropdownMenuTrigger> */}
+                  {/*     <Icons.option size={15} /> */}
+                  {/*   </DropdownMenuTrigger> */}
+                  {/*   <DropdownMenuContent> */}
+                  {/*     <DropdownMenuItem */}
+                  {/*       className="flex space-x-2 text-destructive" */}
+                  {/*       onClick={() => removeEvent(meeting.id)}> */}
+                  {/*       {isDeleteLoading && <Icons.loader />} */}
+                  {/*       <span>Cancel</span> */}
+                  {/*     </DropdownMenuItem> */}
+                  {/*     <DropdownMenuItem>Edit</DropdownMenuItem> */}
+                  {/*   </DropdownMenuContent> */}
+                  {/* </DropdownMenu> */}
                 </div>
               </div>
             </CardContent>
