@@ -66,7 +66,6 @@ async function getSalaryStructure() {
 
 export default async function SalaryStructure() {
   const salaryStructure = await getSalaryStructure();
-  console.log(salaryStructure);
   if (!salaryStructure) {
     return <h1>Opps</h1>;
   }
@@ -143,7 +142,7 @@ export default async function SalaryStructure() {
                     {/*   <Checkbox checked={data.has_pf} disabled /> */}
                     {/* </TableCell> */}
                     <TableCell>{data.gross_monthly_salary}</TableCell>
-                    <TableCell>{parseFloat(data.total_ctc) / 12}</TableCell>
+                    <TableCell>{(parseFloat(data.total_ctc) / 12).toFixed(2)}</TableCell>
                     <TableCell>{data.total_ctc}</TableCell>
                   </TableRow>
                 </TooltipTrigger>
