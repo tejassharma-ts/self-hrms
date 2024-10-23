@@ -1,5 +1,16 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import {
+  startOfWeek,
+  eachDayOfInterval,
+  format,
+  addDays,
+  startOfMonth,
+  endOfMonth,
+  endOfWeek,
+  isSameMonth,
+  setDate,
+} from "date-fns";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -119,3 +130,34 @@ export function combineDateAndTime(date: Date, time: string) {
 
   return newDate;
 }
+
+export const getDatesPerWeekForCurrentMonth = ({
+  selectedYear,
+  selectedMonth,
+}: {
+  selectedYear: number;
+  selectedMonth: number;
+}) => {
+  const today = new Date(selectedYear, selectedMonth - 1);
+  const firstDayOfMonth = startOfMonth(today); // Date Tue Oct 01 2024 00:00:00 GMT+0530 (India Standard Time)
+  const lastDayOfMonth = endOfMonth(today); // Date Thu Oct 31 2024 23:59:59 GMT+0530 (India Standard Time)
+
+  const result = [];
+  let currentWeekStart = startOfWeek(firstDayOfMonth, { weekStartsOn: 0 }); // Date Sun Sep 29 2024 00:00:00 GMT+0530 (India Standard Time) }
+
+  while (currentWeekStart <= lastDayOfMonth) {
+    const currentWeekEnd = endOfWeek(currentWeekStart, { weekStartsOn: 0 }); // Date Sat Oct 5 2024 00:00:00 GMT+0530 (India Standard Time) }
+
+    const weekDates = eachDayOfInterval({ start: currentWeekStart, end: currentWeekEnd })
+      .filter((date) => isSameMonth(date, today))
+      .map((date) => format(date, "dd EEE"));
+
+    if (weekDates.length > 0) {
+      result.push(weekDates);
+    }
+
+    currentWeekStart = addDays(currentWeekEnd, 1);
+  }
+
+  return result;
+};
