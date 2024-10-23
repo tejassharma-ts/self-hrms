@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { apiCaller } from "@/lib/auth";
 import { getAuthCookies } from "@/lib/server/api";
 import { TabsCard } from "@/app/(dashboard)/my-team/_components/TabsCard";
@@ -130,6 +130,21 @@ async function getEmployeeAttendance({ employeeId, month, year }: EmployeeProfil
   }
 }
 
+async function getHolidays({ month, year }: { month: number; year: number }) {
+  try {
+    const res = await apiCaller.get("api/attendance_app/get-holidays/", {
+      headers: getAuthCookies(),
+      params: {
+        month,
+        year,
+      },
+    });
+    return res.data;
+  } catch (err) {
+    throw new Error(`Error getEmployeeAttendance: ${err}`);
+  }
+}
+
 async function getLeavesOfEmployee({ employeeId, month, year }: EmployeeProfileApiProps) {
   try {
     const res = await apiCaller.get<LeavesResponse>("/api/companies-app/company/leaves/", {
@@ -169,22 +184,24 @@ const EmployeeProfilePage = async ({
 
   let historyData = null;
   if (tab === "history") {
-    const [leaves, attendance, bonuses, deductions, expenses, payroll] = await Promise.all([
-      getLeavesOfEmployee({ employeeId, month: updatedMonth, year: updatedYear }),
-      getEmployeeAttendance({ employeeId, month: updatedMonth, year: updatedYear }),
-      getEmployeeBonus({ employeeId, month: updatedMonth, year: updatedYear }),
-      getEmployeeDeductions({ employeeId, month: updatedMonth, year: updatedYear }),
-      getEmployeeExpenses({ employeeId, month: updatedMonth, year: updatedYear }),
-      getEmployeePayroll({ employeeId, month: updatedMonth, year: updatedYear }),
-    ]);
-    historyData = { leaves, attendance, bonuses, deductions, expenses, payroll };
+    const [leaves, attendance, bonuses, deductions, expenses, payroll, holidays] =
+      await Promise.all([
+        getLeavesOfEmployee({ employeeId, month: updatedMonth, year: updatedYear }),
+        getEmployeeAttendance({ employeeId, month: updatedMonth, year: updatedYear }),
+        getEmployeeBonus({ employeeId, month: updatedMonth, year: updatedYear }),
+        getEmployeeDeductions({ employeeId, month: updatedMonth, year: updatedYear }),
+        getEmployeeExpenses({ employeeId, month: updatedMonth, year: updatedYear }),
+        getEmployeePayroll({ employeeId, month: updatedMonth, year: updatedYear }),
+        getHolidays({ month: updatedMonth, year: updatedYear }),
+      ]);
+    historyData = { leaves, attendance, bonuses, deductions, expenses, payroll, holidays };
   }
 
   return (
     <div>
-      <Card className="flex h-[calc(100vh-10rem)] w-full overflow-y-scroll">
+      <Card className="flex h-full w-full overflow-x-scroll">
         <TabsCard employeeId={employeeId} />
-        <div className="min-w-[55rem]">
+        <div className="min-w-[55rem] flex-grow">
           <CardContent>
             <MemoizedEmployeeProfile employeeProfile={employeeProfile} />
           </CardContent>
@@ -214,6 +231,9 @@ const EmployeeProfilePage = async ({
           {tab === "history" && historyData && (
             <CardContent>
               <HistoryDetails
+                holidays={historyData?.holidays}
+                month={updatedMonth}
+                year={updatedYear}
                 expenses={historyData?.expenses}
                 deductions={historyData?.deductions}
                 bonuses={historyData?.bonuses}

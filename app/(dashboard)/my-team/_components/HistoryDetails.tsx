@@ -29,6 +29,9 @@ export const HistoryDetails = ({
   deductions,
   expenses,
   payrollData,
+  month,
+  year,
+  holidays,
 }: {
   attendance: EmployeeAttendance;
   employeeProfile: Employee;
@@ -37,6 +40,9 @@ export const HistoryDetails = ({
   deductions: Deductions;
   expenses: ExpensesDetails[];
   payrollData: Payroll;
+  month: number;
+  year: number;
+  holidays: any;
 }) => {
   const employeeId = employeeProfile.id;
   const searchParams = useSearchParams();
@@ -74,7 +80,9 @@ export const HistoryDetails = ({
         {category === "leaves" && (
           <LeaveRequestTable leaveRequestTableData={leaves?.leaves_request} />
         )}
-        {category === "attendance" && <AttendanceTable attendance={attendance} />}
+        {category === "attendance" && (
+          <AttendanceTable attendance={attendance} month={month} year={year} holidays={holidays} />
+        )}
         {category === "bonus" && <BonusTable bonuses={bonuses} />}
         {category === "deduction" && <DeductionsTable deductions={deductions} />}
         {category === "expense" && <HistoryExpensesTable expenses={expenses} />}
