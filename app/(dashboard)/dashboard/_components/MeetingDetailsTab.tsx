@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { getFullbackName, getFullName } from "@/lib/utils";
+import { formatTime, getFullbackName, getFullName } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -141,7 +141,7 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
                   </DropdownMenu>
                 </div>
                 <div className="group flex items-center justify-between">
-                  <div className="group flex">
+                  <div className="group flex items-center justify-between flex-1">
                     {meeting.team.map((member) => (
                       <TooltipProvider delayDuration={0}>
                         <Tooltip>
@@ -163,8 +163,10 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
                         </Tooltip>
                       </TooltipProvider>
                     ))}
+                    <span className="text-sm font-semibold text-[#998383]">
+                      {format(meeting.date, "hh:mm:a")}
+                    </span>
                   </div>
-                  <span className="text-sm font-semibold text-[#998383]">10:00 am</span>
                 </div>
               </div>
             </CardContent>
