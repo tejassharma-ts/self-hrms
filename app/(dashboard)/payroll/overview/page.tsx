@@ -5,6 +5,7 @@ import { PayrollOverviewHeader } from "@/app/(dashboard)/payroll/_components/Pay
 import { PayrollOverviewTable } from "@/app/(dashboard)/payroll/_components/PayrollOverviewTable";
 import { Payroll } from "@/types/types";
 import { cookies } from "next/headers";
+import AddPayroll from "../_components/AddPayroll";
 
 export const dynamic = "force-dynamic";
 
@@ -33,7 +34,8 @@ const PayrollOverviewPage = async (): Promise<React.ReactNode> => {
         bonus={payrollData[0]?.bonus || "N/A"}
         totalDeductions={payrollData[0]?.total_deductions || "N/A"}
       />
-      <div>
+      <div className="flex flex-col">
+        <AddPayroll />
         <PayrollOverviewTable payrollData={payrollData} />
       </div>
     </div>
