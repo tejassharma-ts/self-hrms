@@ -114,12 +114,12 @@ const IsComponentBased = ({
   const fields: Array<{ name: keyof ComponentSalaryFormValues; label: string }> = [
     { name: "has_hra", label: "HRA" },
     { name: "has_lta", label: "LTA" },
-    { name: "has_allowances", label: "Allowances" },
+    // { name: "has_allowances", label: "Allowances" },
     { name: "has_medical_allowance", label: "Medical Allowances" },
     { name: "has_conveyance", label: "Conveyance" },
     { name: "has_bonus", label: "Bonus" },
     { name: "has_special_allowance", label: "Other Allowance" },
-    { name: "has_esi", label: "ESI" },
+    { name: "has_esi", label: "ESIC" },
     { name: "has_pf", label: "PF" },
   ];
 

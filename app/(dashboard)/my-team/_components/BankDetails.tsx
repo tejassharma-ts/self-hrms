@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { getFullName } from "@/lib/utils";
 import { cookies } from "next/headers";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import Link from "next/link"
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 type Staff = {
@@ -74,6 +74,7 @@ export default async function BankDetails() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Employee ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Phone Number</TableHead>
             <TableHead>Position</TableHead>
@@ -93,6 +94,7 @@ export default async function BankDetails() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <TableRow key={index}>
+                    <TableCell>{data.id}</TableCell>
                     <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
                     <TableCell>{data.phone_number}</TableCell>
                     <TableCell>{data.position}</TableCell>

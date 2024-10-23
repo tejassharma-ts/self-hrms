@@ -76,16 +76,16 @@ export default async function SalaryStructure() {
       <Table>
         <TableHeader>
           <TableRow>
-            {/* <TableCell>ID</TableCell> */}
+            <TableCell>Employee ID</TableCell>
             <TableHead>Name</TableHead>
             <TableHead>Position</TableHead>
             <TableHead>Profile Picture</TableHead>
             <TableHead>Basic Salary</TableHead>
             <TableHead>HRA</TableHead>
             <TableHead>Conveyance</TableHead>
-            <TableHead>Allowances</TableHead>
-            <TableHead>Special Allowance</TableHead>
-            <TableHead>Bonuses</TableHead>
+            {/* <TableHead>Allowances</TableHead> */}
+            <TableHead>Other Allowance</TableHead>
+            <TableHead>Bonus</TableHead>
             {/* <TableHead>Has Bonus</TableHead> */}
             {/* <TableHead>Has Conveyance</TableHead> */}
             {/* <TableHead>Has HRA</TableHead> */}
@@ -93,8 +93,9 @@ export default async function SalaryStructure() {
             {/* <TableHead>Has Special Allowance</TableHead> */}
             {/* <TableHead>Has ESI</TableHead> */}
             {/* <TableHead>Has PF</TableHead> */}
-            <TableHead>Gross Monthly Salary</TableHead>
-            <TableHead>Total CTC</TableHead>
+            <TableHead>Gross Monthly</TableHead>
+            <TableHead>Monthly CTC</TableHead>
+            <TableHead>Annual CTC</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -103,6 +104,7 @@ export default async function SalaryStructure() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <TableRow key={index}>
+                    <TableCell>{data.employee.id}</TableCell>
                     <TableCell>
                       {getFullName(data.employee.first_name, data.employee.last_name)}
                     </TableCell>
@@ -116,7 +118,7 @@ export default async function SalaryStructure() {
                     <TableCell>{data.basic_salary}</TableCell>
                     <TableCell>{data.hra}</TableCell>
                     <TableCell>{data.conveyance}</TableCell>
-                    <TableCell>{data.allowances}</TableCell>
+                    {/* <TableCell>{data.allowances}</TableCell> */}
                     <TableCell>{data.special_allowance}</TableCell>
                     <TableCell>{data.bonuses}</TableCell>
                     {/* <TableCell className="text-center"> */}
@@ -141,6 +143,7 @@ export default async function SalaryStructure() {
                     {/*   <Checkbox checked={data.has_pf} disabled /> */}
                     {/* </TableCell> */}
                     <TableCell>{data.gross_monthly_salary}</TableCell>
+                    <TableCell>{parseFloat(data.total_ctc) / 12}</TableCell>
                     <TableCell>{data.total_ctc}</TableCell>
                   </TableRow>
                 </TooltipTrigger>

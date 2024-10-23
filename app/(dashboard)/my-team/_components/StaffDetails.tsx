@@ -76,6 +76,7 @@ export default async function StaffDetails() {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead>Employee ID</TableHead>
             <TableHead>Profile Picture</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Gender</TableHead>
@@ -107,6 +108,7 @@ export default async function StaffDetails() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <TableRow key={index}>
+                    <TableCell>{data.id}</TableCell>
                     <TableCell>
                       <Avatar>
                         <AvatarImage src={data.profile_picture} />

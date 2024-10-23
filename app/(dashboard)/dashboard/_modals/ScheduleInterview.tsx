@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, combineDateAndTime } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -56,10 +56,50 @@ const formSchema = z.object({
   previous_company_name: z.string().optional(),
   previous_salary: z.string().optional(),
   interview_date: z.date(),
+  time: z.string(),
   status: z.enum(["In Progress", "Completed", "Pending"]),
+  is_selected: z.enum([
+    "Shortlisted",
+    "Rejected",
+    "Interview In Process",
+    "On Hold",
+    "Under Review",
+    "Selected",
+    "Offered",
+    "Offer Accepted",
+    "Offer Declined",
+    "Awaiting Interview",
+    "Awaiting Feedback",
+    "Hired",
+    "Background Check In Progress",
+    "Interview Rescheduled",
+    "Interview No Show",
+    "Withdrawn",
+    "Talent Pooled",
+  ]),
   department: z.string().min(1, "Department is required"),
   meeting_link: z.string(),
 });
+
+const selectionStatus = [
+  "Shortlisted",
+  "Rejected",
+  "Interview In Process",
+  "On Hold",
+  "Under Review",
+  "Selected",
+  "Offered",
+  "Offer Accepted",
+  "Offer Declined",
+  "Awaiting Interview",
+  "Awaiting Feedback",
+  "Hired",
+  "Background Check In Progress",
+  "Interview Rescheduled",
+  "Interview No Show",
+  "Withdrawn",
+  "Talent Pooled",
+];
 
 export default function ScheduleInterview({
   setShowDialog,
@@ -73,20 +113,21 @@ export default function ScheduleInterview({
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: "",
-      last_name: "",
-      email: "",
-      phone: "",
-      qualification: "",
-      address: "",
+      first_name: "Tejas",
+      last_name: "Sharma",
+      email: "tejassharma2021@outlook.com",
+      phone: "6398284253",
+      qualification: "Graduation",
+      address: "Earth",
       gender: "Male",
-      position_applied: "",
-      previous_company_name: "",
-      previous_salary: "",
+      position_applied: "Eng",
+      previous_company_name: "Sun",
+      previous_salary: "300000",
       interview_date: new Date(),
       status: "Pending",
+      is_selected: undefined,
       department: "",
-      meeting_link: "",
+      meeting_link: "http://localhost:3000/dashboard",
     },
   });
 
@@ -96,7 +137,11 @@ export default function ScheduleInterview({
       values.company_id = authUser?.employee_profile.company.id! || authCompany?.id!;
 
       setIsLoading(true);
-      const res = await apiCaller.post("/api/companies-app/schedule-interview/", values);
+      const res = await apiCaller.post("/api/companies-app/schedule-interview/", {
+        ...values,
+        interview_date: combineDateAndTime(values.interview_date, values.time),
+        status: "Scheduled",
+      });
       // @ts-ignore
       setInterviews((pre) => [...pre, res.data.interview]);
       toast({
@@ -297,57 +342,75 @@ export default function ScheduleInterview({
           )}
         />
 
-        <FormField
-          control={form.control}
-          name="interview_date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Interview Date</FormLabel>
-              <Popover modal>
-                <PopoverTrigger asChild>
-                  <FormControl>
-                    <Button
-                      variant="outline"
-                      className={cn(
-                        "w-[240px] pl-3 text-left font-normal",
-                        !field.value && "text-muted-foreground",
-                      )}>
-                      {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    disabled={(date) => date < new Date("1900-01-01")}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="interview_date"
+            render={({ field }) => (
+              <FormItem className="">
+                <FormLabel>Interview Date</FormLabel>
+                <Popover modal>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground",
+                        )}>
+                        {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) => date < new Date("1900-01-01")}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Time</FormLabel>
+                <FormControl>
+                  <Input type="time" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
         <FormField
           control={form.control}
-          name="status"
+          name="is_selected"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Status</FormLabel>
+              <FormLabel>Selection Status</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
+                    <SelectValue placeholder="Selection status" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Completed">Completed</SelectItem>
-                  <SelectItem value="Pending">Pending</SelectItem>
+                  {selectionStatus.map((status) => (
+                    <SelectItem key={status} value={status}>
+                      {status}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />

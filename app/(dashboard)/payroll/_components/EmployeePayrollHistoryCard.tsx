@@ -25,13 +25,13 @@ export const EmployeePayrollHistoryCard = ({ heading, payrollData }: IPayrollHea
       <CardContent className="flex h-full flex-col justify-between p-4">
         <div className={"flex items-center justify-between"}>
           <h2 className="text-md font-semibold">{heading}</h2>
-          <div
-            onClick={handleViewClick}
-            className={
-              "cursor-pointer rounded-full border border-black bg-transparent px-4 text-sm"
-            }>
-            View All
-          </div>
+          {/* <div */}
+          {/*   onClick={handleViewClick} */}
+          {/*   className={ */}
+          {/*     "cursor-pointer rounded-full border border-black bg-transparent px-4 text-sm" */}
+          {/*   }> */}
+          {/*   View All */}
+          {/* </div> */}
         </div>
         <div>
           <div className="flex -space-x-4">

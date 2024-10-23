@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, combineDateAndTime } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,9 +47,10 @@ const eventSchema = z.object({
   add_link: z.string().url({ message: "Please enter a valid URL for the link." }),
   date: z.date({ invalid_type_error: "Please enter a valid date." }),
   team: z.any().array().nonempty({ message: "Team member name cannot be empty." }),
-  status: z.enum(["Ongoing", "Completed", "Scheduled"], {
-    errorMap: () => ({ message: "Status must be either 'Ongoing' or 'Completed'." }),
-  }),
+  // status: z.enum(["Ongoing", "Completed", "Scheduled"], {
+  //   errorMap: () => ({ message: "Status must be either 'Ongoing' or 'Completed'." }),
+  // }),
+  time: z.string(),
 });
 
 export default function ScheduleMeeting({
@@ -63,12 +64,12 @@ export default function ScheduleMeeting({
   const form = useForm<z.infer<typeof eventSchema>>({
     resolver: zodResolver(eventSchema),
     defaultValues: {
-      title: "",
-      description: "",
-      add_link: "",
+      title: "This is example",
+      description: "This is example",
+      add_link: "http://localhost:3000/dashboard",
       date: undefined,
+      time: undefined,
       team: [],
-      status: "Ongoing",
     },
   });
 
@@ -78,13 +79,18 @@ export default function ScheduleMeeting({
       setIsLoading(true);
       const res = await apiCaller.post("/api/employees-app/event-meetings/", {
         ...values,
+        date: combineDateAndTime(values.date, values.time),
+        status: "Scheduled",
         team: teamIDs,
       });
 
-      if (format(res.data.date, "yyy MM dd") === format(new Date(), "yyyy MM dd")) {
+      if (format(res.data.date, "yyy MM dd") === format(values.date, "yyyy MM dd")) {
         setMeetings((pre: any) => [...pre, res.data]);
       }
       setShowDialog(false);
+      toast({
+        description: `Event has been scheduled at ${format(new Date(res.data.date), "MMMM, EEE, dd")}`,
+      });
     } catch (err) {
       toast({
         description: "Something went wrong",
@@ -161,43 +167,54 @@ export default function ScheduleMeeting({
               )}
             />
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <FormField
-                  control={form.control}
-                  name="date"
-                  render={({ field }) => (
-                    <FormItem className="flex flex-col">
-                      <FormLabel>Date</FormLabel>
-                      <Popover modal>
-                        <PopoverTrigger asChild>
-                          <FormControl>
-                            <Button
-                              variant="outline"
-                              className={cn(
-                                "w-[240px] pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground",
-                              )}>
-                              {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
-                              <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                            </Button>
-                          </FormControl>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-auto p-0" align="start">
-                          <Calendar
-                            mode="single"
-                            selected={field.value}
-                            onSelect={field.onChange}
-                            // disabled={(date) => date <= new Date() || date < new Date("1900-01-01")}
-                            disabled={(date) => date < new Date("1900-01-01")}
-                            initialFocus
-                          />
-                        </PopoverContent>
-                      </Popover>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="date"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Date</FormLabel>
+                    <Popover modal>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant="outline"
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground",
+                            )}>
+                            {field.value ? format(field.value, "PPP") : <span>Pick a date</span>}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          // disabled={(date) => date <= new Date() || date < new Date("1900-01-01")}
+                          disabled={(date) => date < new Date("1900-01-01")}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="time"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Time</FormLabel>
+                    <FormControl>
+                      <Input type="time" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             <FormField
               control={form.control}
@@ -268,28 +285,28 @@ export default function ScheduleMeeting({
             {/*     ))} */}
             {/*   </div> */}
             {/* </div> */}
-            <FormField
-              control={form.control}
-              name="status"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select a verified email to display" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Ongoing">On Going</SelectItem>
-                      <SelectItem value="Completed">Completed</SelectItem>
-                      <SelectItem value="Scheduled">Scheduled</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {/* <FormField */}
+            {/*   control={form.control} */}
+            {/*   name="status" */}
+            {/*   render={({ field }) => ( */}
+            {/*     <FormItem> */}
+            {/*       <FormLabel>Status</FormLabel> */}
+            {/*       <Select onValueChange={field.onChange} defaultValue={field.value}> */}
+            {/*         <FormControl> */}
+            {/*           <SelectTrigger> */}
+            {/*             <SelectValue placeholder="Select a verified email to display" /> */}
+            {/*           </SelectTrigger> */}
+            {/*         </FormControl> */}
+            {/*         <SelectContent> */}
+            {/*           <SelectItem value="Ongoing">On Going</SelectItem> */}
+            {/*           <SelectItem value="Completed">Completed</SelectItem> */}
+            {/*           <SelectItem value="Scheduled">Scheduled</SelectItem> */}
+            {/*         </SelectContent> */}
+            {/*       </Select> */}
+            {/*       <FormMessage /> */}
+            {/*     </FormItem> */}
+            {/*   )} */}
+            {/* /> */}
             <Button type="submit" className="w-full rounded-full">
               {isLoading ? <Icons.loader /> : "Create Event"}
             </Button>
