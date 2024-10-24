@@ -242,7 +242,7 @@ function Interviews({ selectedDate }: { selectedDate: any }) {
         );
         setInterviews(res.data);
       } catch (err) {
-        console.log(err);
+        console.log({ err });
       } finally {
         setIsLoading(false);
       }
@@ -276,15 +276,16 @@ function Interviews({ selectedDate }: { selectedDate: any }) {
             <CardContent className="p-4">
               <div key={meeting.id} className="flex flex-col space-y-6">
                 <div className="flex items-center justify-between px-0">
-                  <div className="relative">
+                  <div className="relative w-full">
                     <h1 className="text-lg font-semibold">
                       Interview with {getFullName(meeting.first_name, meeting.last_name)}
                     </h1>
                     <p className="text-sm text-gray-500">Role: {meeting.position_applied}</p>
                     <a href={meeting.meeting_link} className="absolute inset-0" />
-                    <span className="text-sm font-semibold text-[#998383]">
-                      {format(meeting.interview_date, "hh:mm:a")}
-                    </span>
+                    <div className="flex w-full justify-between text-sm font-semibold text-[#998383]">
+                      <span className="">{format(meeting.interview_date, "hh:mm:a")}</span>
+                      <span>{meeting?.is_selected}</span>
+                    </div>
                   </div>
                   {/* <DropdownMenu> */}
                   {/*   <DropdownMenuTrigger> */}
