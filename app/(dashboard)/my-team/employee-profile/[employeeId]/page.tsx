@@ -198,10 +198,10 @@ const EmployeeProfilePage = async ({
   }
 
   return (
-    <div>
-      <Card className="flex h-full w-full overflow-x-scroll">
+    <section>
+      <Card className="flex min-h-lvh w-full py-2">
         <TabsCard employeeId={employeeId} />
-        <div className="min-w-[55rem] flex-grow">
+        <div className="h-full min-w-[55rem] flex-grow">
           <CardContent>
             <MemoizedEmployeeProfile employeeProfile={employeeProfile} />
           </CardContent>
@@ -246,7 +246,7 @@ const EmployeeProfilePage = async ({
           )}
         </div>
       </Card>
-    </div>
+    </section>
   );
 };
 

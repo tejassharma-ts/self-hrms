@@ -6,9 +6,9 @@ export const leaveRequestTableHead = [
   "Status",
 ];
 
-export const attendanceTableHead = ["Date", "Check In Time", "Check out Time", "Status"];
+export const attendanceTableHead = ["Date", "Login Time", "Log Out Time", "Status"];
 
 export const bonusTableHead = ["Bonus", "Amount", "Payout Date"];
 
 export const deductionsTableHead = ["Deduction", "Amount", "Payout Date"];
-export const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+export const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];

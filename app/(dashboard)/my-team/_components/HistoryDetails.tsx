@@ -49,7 +49,7 @@ export const HistoryDetails = ({
   const category = searchParams.get("category");
 
   return (
-    <div className={"container"}>
+    <div className={""}>
       <div className={"flex items-center justify-between"}>
         {category === "leaves" && (
           <div>
@@ -76,7 +76,7 @@ export const HistoryDetails = ({
         </div>
       </div>
       <HistoryTabs employeeId={employeeId} />
-      <div className={"max-w-[70rem]"}>
+      <div>
         {category === "leaves" && (
           <LeaveRequestTable leaveRequestTableData={leaves?.leaves_request} />
         )}
