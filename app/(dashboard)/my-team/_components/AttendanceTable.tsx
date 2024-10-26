@@ -236,12 +236,12 @@ const CalendarView = ({
                   ) : attendanceForDate.status === "Present" &&
                     attendanceForDate.check_in_time &&
                     attendanceForDate.check_out_time ? (
-                    <p className="absolute bottom-0 flex gap-x-4 text-nowrap pb-2 text-[9px] font-medium">
-                      <span className="text-green-500">
-                        {formatTime(attendanceForDate?.check_in_time)}
+                    <p className="absolute bottom-0 flex gap-x-4 pb-2 text-[9px] font-medium">
+                      <span className="text-center text-green-500">
+                        In <br /> {formatTime(attendanceForDate?.check_in_time)}
                       </span>
-                      <span className="text-red-500">
-                        {formatTime(attendanceForDate?.check_out_time)}
+                      <span className="text-center text-red-500">
+                        Out <br /> {formatTime(attendanceForDate?.check_out_time)}
                       </span>
                     </p>
                   ) : (attendanceForDate.status === "Present" &&
