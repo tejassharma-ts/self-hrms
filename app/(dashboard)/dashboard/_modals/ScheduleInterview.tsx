@@ -139,7 +139,7 @@ export default function ScheduleInterview({
       setIsLoading(true);
       const res = await apiCaller.post("/api/companies-app/schedule-interview/", {
         ...values,
-        is_selected: undefined,
+        // is_selected: undefined,
         interview_date: combineDateAndTime(values.interview_date, values.time),
         status: "Scheduled",
       });
@@ -151,6 +151,11 @@ export default function ScheduleInterview({
       setShowDialog(false);
     } catch (err) {
       console.log("err", err);
+      toast({
+        variant: "destructive",
+        description:
+          "The form fields are invalid, or an interview has already been scheduled with the provided email address.",
+      });
     } finally {
       setIsLoading(false);
     }

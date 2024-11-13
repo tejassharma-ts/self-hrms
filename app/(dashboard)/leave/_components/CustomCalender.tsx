@@ -167,6 +167,13 @@ export default function CustomCalendar() {
   }
 
   const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
+  const weeks = new Set(
+    Array.from({ length: daysInMonth }).map((_, day) => {
+      const date = new Date(selectedYear, selectedMonth, day + 1);
+      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      return dayName;
+    }),
+  );
 
   return (
     <div>
@@ -311,6 +318,9 @@ export default function CustomCalendar() {
       </div>
 
       <div className="mt-10 grid grid-cols-7">
+        {Array.from(weeks).map((week) => (
+          <span className="font-medium mb-4 text-muted-foreground">{week}</span>
+        ))}
         {Array.from({ length: daysInMonth }).map((_, day) => {
           const date = new Date(selectedYear, selectedMonth, day + 1);
           const formattedDate = date.toLocaleString("sv-SE").split(" ")[0];

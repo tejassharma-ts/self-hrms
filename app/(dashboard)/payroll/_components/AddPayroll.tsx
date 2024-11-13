@@ -34,6 +34,7 @@ import EmployeeSelector from "./EmployeeSelector";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { useRouter } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   employee: z.string().min(2).max(50),
@@ -50,9 +51,9 @@ export default function AddPayroll() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       employee: "",
-      pay_date: new Date(),
+      pay_date: undefined,
       arrears_amount: "",
-      arrears_month: new Date(),
+      arrears_month: undefined,
     },
   });
 
@@ -76,6 +77,11 @@ export default function AddPayroll() {
       setOpen(false);
     } catch (err) {
       console.log(err);
+      toast({
+        variant: "destructive",
+        description:
+          "Either the employee's salary structure has not been created, or there has been an error on our part.",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -90,6 +96,7 @@ export default function AddPayroll() {
         <DialogHeader>
           <DialogTitle className="mb-2">Create Payroll</DialogTitle>
           <Form {...form}>
+            {/* @ts-ignore */}
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
@@ -132,6 +139,15 @@ export default function AddPayroll() {
                           mode="single"
                           selected={field.value}
                           onSelect={field.onChange}
+                          disabled={(date) => {
+                            const today = new Date();
+                            const startOfCurrentMonth = new Date(
+                              today.getFullYear(),
+                              today.getMonth(),
+                              1,
+                            );
+                            return date >= startOfCurrentMonth || date < new Date("1900-01-01");
+                          }}
                           initialFocus
                         />
                       </PopoverContent>
@@ -183,6 +199,16 @@ export default function AddPayroll() {
                           selected={field.value}
                           onSelect={field.onChange}
                           initialFocus
+                          disabled={(date) => {
+                            const today = new Date();
+                            const startOfCurrentMonth = new Date(
+                              today.getFullYear(),
+                              today.getMonth(),
+                              1,
+                            );
+
+                            return date >= startOfCurrentMonth || date < new Date("1900-01-01");
+                          }}
                         />
                       </PopoverContent>
                     </Popover>
