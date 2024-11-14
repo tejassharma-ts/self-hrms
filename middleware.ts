@@ -1,6 +1,6 @@
 import type { NextRequest } from "next/server";
 
-const publicAccessPages = ["/register", "/login", "/"];
+const publicAccessPages = ["/register", "/login"];
 export function middleware(request: NextRequest) {
   const currentUser = request.cookies.get("access_token")?.value;
 
