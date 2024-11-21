@@ -11,4 +11,4 @@ export const attendanceTableHead = ["Date", "Login Time", "Log Out Time", "Statu
 export const bonusTableHead = ["Bonus", "Amount", "Payout Date"];
 
 export const deductionsTableHead = ["Deduction", "Amount", "Payout Date"];
-export const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+export const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
