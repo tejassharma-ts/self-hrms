@@ -1,32 +1,15 @@
 import { useState } from "react";
 import { apiCaller } from "@/lib/auth";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
 import { Input } from "./ui/input";
-import { Icons } from "./Icons";
 import { Skeleton } from "./ui/skeleton";
 import { useDebouncedCallback } from "use-debounce";
-import { ScrollArea } from "./ui/scroll-area";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import { CommandLoading } from "cmdk";
+
+import { Command, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronsUpDown } from "lucide-react";
 
 interface Department {
   id: string;
@@ -43,29 +26,6 @@ interface DepartmentsResponse {
 }
 
 const debounceTime = 400;
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-  {
-    value: "remix",
-    label: "Remix",
-  },
-  {
-    value: "astro",
-    label: "Astro",
-  },
-];
 
 type DepartmentSelectorProps = {
   defaultValue?: string;

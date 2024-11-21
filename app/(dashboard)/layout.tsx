@@ -11,7 +11,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         <MainLayout>
           <Layout>
             <LayoutHeader sticky>
-              <div className="flex justify-between w-full items-center">
+              <div className="flex w-full items-center justify-between">
                 <UserNav />
               </div>
             </LayoutHeader>

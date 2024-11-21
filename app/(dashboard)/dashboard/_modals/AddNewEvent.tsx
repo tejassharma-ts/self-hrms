@@ -14,11 +14,11 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 
 export default function AddNewEvent({
-  setMeetings,
   className,
+  defaultForm,
 }: {
-  setMeetings: any;
   className?: string;
+  defaultForm?: string;
 }) {
   const [showDialog, setShowDialog] = useState(false);
   return (
@@ -29,11 +29,11 @@ export default function AddNewEvent({
           Add new Event
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>Schedule Meeting</DialogTitle>
+          <DialogTitle className="text-center text-2xl">Add Event</DialogTitle>
           <DialogDescription>
-            <ScheduleMeeting setShowDialog={setShowDialog} setMeetings={setMeetings} />
+            <ScheduleMeeting defaultForm={defaultForm} setShowDialog={setShowDialog} />
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

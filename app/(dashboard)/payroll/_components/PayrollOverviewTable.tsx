@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -16,6 +16,7 @@ import { Document, Page, Text, StyleSheet, View, pdf } from "@react-pdf/renderer
 import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Icons } from "@/components/Icons";
 
 const tableHeadValues: string[] = [
   "Name",
@@ -83,10 +84,10 @@ const styles = StyleSheet.create({
 });
 
 export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }) => {
-  // const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const handleGeneratePaySlip = async (payroll: Payroll) => {
-    // setIsLoading(true);
+    setIsLoading(true);
     let pdfBlob;
     try {
       pdfBlob = await pdf(<MyDoc selectedPayroll={payroll} />).toBlob();
@@ -95,7 +96,7 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
         description: "Something went very wrong while creating pdf",
         variant: "destructive",
       });
-      // setIsLoading(false);
+      setIsLoading(false);
       return;
     }
 
@@ -120,7 +121,7 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
         variant: "destructive",
       });
     } finally {
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -131,7 +132,7 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
           <TableRow className="bg-black text-white hover:bg-black">
             {tableHeadValues.map((value, index) => (
               <TableHead key={index} className="whitespace-nowrap px-4 py-2 text-white">
-                {value}
+                {value === "Special Allowance" ? "Other Allowance" : value}
               </TableHead>
             ))}
           </TableRow>
@@ -179,7 +180,7 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
                     <span>Sent</span>
                   ) : (
                     <>
-                      {/* {isLoading && <Icons.loader />} */}
+                      {isLoading && <Icons.loader />}
                       Send
                     </>
                   )}

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { formatTodaysDate, getFullName } from "@/lib/utils";
+import { formatTodaysDate } from "@/lib/utils";
 import { useClientAuth } from "@/context/auth-context";
 import WelcomeCardSkeleton from "../_skeletons/WelcomeCardSkeleton";
 import { toast } from "@/hooks/use-toast";
@@ -29,7 +29,6 @@ export default function WelcomeCard({ className }: { className: string }) {
     "Checked In" | "Checkout Out" | "Not Checked In" | null
   >(null);
 
-  console.log({ authUser });
   const formatTime = (timeString: string) => {
     const cleanedTime = timeString.split(".")[0];
     const parsedTime = parse(cleanedTime, "HH:mm:ss", new Date());
@@ -167,8 +166,14 @@ export default function WelcomeCard({ className }: { className: string }) {
     }
   }
   return (
-    <Card className={cn("relative mx-auto h-48 w-full overflow-hidden bg-black rounded-2xl", className)}>
-      <div className="absolute inset-0 bg-black bg-opacity-50" />
+    <Card
+      className={cn(
+        "relative mx-auto h-48 w-full overflow-hidden rounded-2xl bg-[#212721]",
+        className,
+      )}>
+      {/* <img src="/background.png" className="absolute inset-0 w-full h-full"/> */}
+      <img src="/texture.png" className="absolute inset-0 w-full h-full"/>
+      {/* <div className="absolute inset-0 bg-opacity-50" /> */}
       <CardContent className="relative z-10 flex h-full flex-col p-6">
         <div className="flex-grow">
           <h2 className="text-2xl font-bold text-white">{greet()}</h2>

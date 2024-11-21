@@ -13,13 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 import ScheduleInterview from "./ScheduleInterview";
 
-export default function AddNewInterview({
-  setMeetings: setInterviews,
-  className,
-}: {
-  setMeetings: any;
-  className?: string;
-}) {
+export default function AddNewInterview({ className }: { className?: string }) {
   const [showDialog, setShowDialog] = useState(false);
   return (
     <Dialog open={showDialog} onOpenChange={setShowDialog}>
@@ -33,7 +27,7 @@ export default function AddNewInterview({
         <DialogHeader>
           <DialogTitle>Schedule Interview</DialogTitle>
           <DialogDescription>
-            <ScheduleInterview setShowDialog={setShowDialog} setMeetings={setInterviews} />
+            <ScheduleInterview setShowDialog={setShowDialog} />
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

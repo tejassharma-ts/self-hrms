@@ -17,6 +17,7 @@ type EmployeeOnLeave = {
   email: string;
   phone_number: string;
   department: string;
+  leave_balance: number;
   profile_picture: string;
 };
 
@@ -82,6 +83,30 @@ export type Meeting = {
   status: string;
   created_at: string;
   updated_at: string;
+};
+
+export type EmployeeApplication = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+  qualification: string;
+  resume: string | null;
+  status: string;
+  meeting_link: string;
+  address: string;
+  gender: string;
+  position_applied: string;
+  previous_company_name: string;
+  previous_salary: string;
+  is_selected: string;
+  interview_date: string;
+  created_at: string;
+  updated_at: string;
+  company: string;
+  department: string;
+  user: string;
 };
 
 type AssignedEmployee = {

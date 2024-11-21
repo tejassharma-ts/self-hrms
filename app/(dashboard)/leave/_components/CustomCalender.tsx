@@ -59,15 +59,15 @@ const eventSchema = z.object({
   date: z.date({
     required_error: "A date of birth is required.",
   }),
-  description: z
-    .string()
-    .min(10, "Description should be at least 10 characters")
-    .max(500, "Description should not exceed 500 characters"),
+  // description: z
+  //   .string()
+  //   .min(10, "Description should be at least 10 characters")
+  //   .max(500, "Description should not exceed 500 characters"),
 });
 
 export default function CustomCalendar() {
-  const [selectedMonth, setSelectedMonth] = useState(0);
-  const [selectedYear, setSelectedYear] = useState(2024);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [events, setEvents] = useState<Event[] | []>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isHolidayModalOpen, setIsHolidayModalOpen] = useState(false);
@@ -76,7 +76,7 @@ export default function CustomCalendar() {
     resolver: zodResolver(eventSchema),
     defaultValues: {
       name: "",
-      description: "",
+      // description: "",
       date: new Date(),
     },
   });
@@ -167,6 +167,13 @@ export default function CustomCalendar() {
   }
 
   const daysInMonth = getDaysInMonth(selectedMonth, selectedYear);
+  const weeks = new Set(
+    Array.from({ length: daysInMonth }).map((_, day) => {
+      const date = new Date(selectedYear, selectedMonth, day + 1);
+      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      return dayName;
+    }),
+  );
 
   return (
     <div>
@@ -184,7 +191,7 @@ export default function CustomCalendar() {
               <DialogTitle className="flex justify-center">Holiday Submission Form</DialogTitle>
             </DialogHeader>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onAddHoliday)} className="flex flex-col space-y-4">
+              <form onSubmit={form.handleSubmit(onAddHoliday)} className="flex flex-col space-y-6">
                 <FormField
                   control={form.control}
                   name="name"
@@ -199,24 +206,24 @@ export default function CustomCalendar() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <FormControl>
-                        <Textarea
-                          placeholder="Persian New Year, celebrated as the first day of spring"
-                          className="resize-none"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormDescription>Add description</FormDescription>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                {/* <FormField */}
+                {/*   control={form.control} */}
+                {/*   name="description" */}
+                {/*   render={({ field }) => ( */}
+                {/*     <FormItem> */}
+                {/*       <FormLabel>Description</FormLabel> */}
+                {/*       <FormControl> */}
+                {/*         <Textarea */}
+                {/*           placeholder="Persian New Year, celebrated as the first day of spring" */}
+                {/*           className="resize-none" */}
+                {/*           {...field} */}
+                {/*         /> */}
+                {/*       </FormControl> */}
+                {/*       <FormDescription>Add description</FormDescription> */}
+                {/*       <FormMessage /> */}
+                {/*     </FormItem> */}
+                {/*   )} */}
+                {/* /> */}
                 <FormField
                   control={form.control}
                   name="date"
@@ -251,8 +258,11 @@ export default function CustomCalendar() {
                     </FormItem>
                   )}
                 />
-                <DialogFooter>
-                  <Button disabled={isLoading} type="submit" className="flex-1 space-x-2">
+                <DialogFooter className="sm:justify-center">
+                  <Button
+                    disabled={isLoading}
+                    type="submit"
+                    className="space-x-2 bg-[#14ae5c] px-10 hover:bg-[#14ae5c]/90">
                     {isLoading && <Icons.loader />}
                     <span>Add holiday</span>
                   </Button>
@@ -311,6 +321,9 @@ export default function CustomCalendar() {
       </div>
 
       <div className="mt-10 grid grid-cols-7">
+        {Array.from(weeks).map((week) => (
+          <span className="mb-4 font-medium text-muted-foreground">{week}</span>
+        ))}
         {Array.from({ length: daysInMonth }).map((_, day) => {
           const date = new Date(selectedYear, selectedMonth, day + 1);
           const formattedDate = date.toLocaleString("sv-SE").split(" ")[0];

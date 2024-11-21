@@ -41,6 +41,7 @@
     "cookies-next": "^4.2.1",
     "date-fns": "^3.6.0",
     "embla-carousel-react": "^8.2.0",
+    "framer-motion": "^11.11.13",
     "html-to-pdf": "^0.1.11",
     "html2canvas": "^1.4.1",
     "input-otp": "^1.2.4",

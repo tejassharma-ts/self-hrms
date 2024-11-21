@@ -16,7 +16,7 @@ export default async function PreviousPayroll({
   className,
 }: PendingRequestsProps) {
   return (
-    <Card className={cn("w-full rounded-2xl", className)}>
+    <Card className={cn("rounded-2xl", className)}>
       <CardHeader>
         <CardTitle>Quick Reports</CardTitle>
       </CardHeader>

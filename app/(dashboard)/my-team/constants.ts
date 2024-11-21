@@ -11,4 +11,4 @@ export const attendanceTableHead = ["Date", "Check In Time", "Check out Time", "
 export const bonusTableHead = ["Bonus", "Amount", "Payout Date"];
 
 export const deductionsTableHead = ["Deduction", "Amount", "Payout Date"];
-export const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+export const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];

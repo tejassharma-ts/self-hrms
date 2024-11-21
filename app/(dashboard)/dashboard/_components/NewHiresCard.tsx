@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getFullName } from "@/lib/utils";
 import { apiCaller } from "@/lib/auth";
-import { format, getMonth } from "date-fns";
+import { format } from "date-fns";
 import { YearMonthSelector } from "./YearMonthSelector";
 import { useEffect } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,15 +13,13 @@ import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 
 export default function NewHiresCard({ className }: { className: string }) {
   const currentDate = new Date();
+  const [open, setOpen] = useState(false);
   const [newHires, setNewHires] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
@@ -52,21 +50,18 @@ export default function NewHiresCard({ className }: { className: string }) {
   }
 
   return (
-    <Card className={cn("h-48 w-full rounded-2xl overflow-hidden", className)}>
-      <CardHeader className="flex flex-row items-center justify-between space-x-4 pb-4">
-        <CardTitle className="flex w-full items-center justify-between">New Hires</CardTitle>
+    <Card className={cn("h-48 w-full overflow-hidden rounded-2xl", className)}>
+      <CardHeader className="flex flex-row items-center justify-between space-x-4 pb-2 pt-2">
+        <CardTitle className="flex w-full items-center justify-between font-bold">
+          New Hires
+        </CardTitle>
         <YearMonthSelector
           selectedYear={selectedYear}
           selectedMonth={selectedMonth}
           setSelectedYear={setSelectedYear}
           setSelectedMonth={setSelectedMonth}
         />
-        <Dialog>
-          <DialogTrigger asChild>
-            <Button variant="ghost" size="sm">
-              View all
-            </Button>
-          </DialogTrigger>
+        <Dialog open={open} onOpenChange={setOpen}>
           <DialogContent>
             <DialogHeader>
               <DialogTitle className="mb-3 text-xl">List of new hires</DialogTitle>
@@ -78,7 +73,7 @@ export default function NewHiresCard({ className }: { className: string }) {
                         key={seeker.id}
                         className="mb-4 flex items-center justify-between last:mb-0">
                         <div className="flex flex-col space-y-0.5">
-                          <h3 className="font-semibold">
+                          <h3 className="font-normal">
                             {getFullName(seeker.first_name, seeker.last_name)}
                           </h3>
                           <p className="text-sm text-gray-500">{seeker.position}</p>
@@ -98,29 +93,41 @@ export default function NewHiresCard({ className }: { className: string }) {
           </DialogContent>
         </Dialog>
       </CardHeader>
-      <CardContent className="pt-0">
+      <CardContent className="flex flex-col pt-0">
         {isLoading ? (
           <NewHiresSkeleton />
         ) : newHires.length === 0 ? (
           <h1 className="mt-2 text-lg font-medium text-gray-500">No new hires</h1>
         ) : (
-          <ScrollArea className="h-20 w-full pr-4">
-            {newHires.map((seeker: any) => (
-              <div key={seeker.id} className="mb-4 flex items-center justify-between last:mb-0">
-                <div className="flex flex-col space-y-0.5">
-                  <h3 className="font-semibold">
-                    {getFullName(seeker.first_name, seeker.last_name)}
-                  </h3>
-                  <p className="text-sm text-gray-500">{seeker.position}</p>
+          <ScrollArea type="always" className="h-[102px] w-full pr-4">
+            <div className="flex flex-col justify-between gap-2">
+              {newHires.map((seeker: any) => (
+                <div
+                  key={seeker.id}
+                  className="tems-center grid grid-cols-3 justify-between border-b border-b-gray-100 pb-1 last:mb-0">
+                  <div className="flex flex-col space-y-0.5">
+                    <h3 className="text-sm font-medium">
+                      {getFullName(seeker.first_name, seeker.last_name)}
+                    </h3>
+                  </div>
+                  <div className="flex flex-col space-y-1 text-center text-sm">
+                    <span>{format(new Date(seeker.date_joined), "M/d/yyyy")}</span>
+                  </div>
+                  <p className="text-right text-sm">{seeker.position}</p>
                 </div>
-                <div className="flex flex-col space-y-1 text-xs">
-                  <span className="font-medium">Joined in</span>
-                  <span>{format(new Date(seeker.date_joined), "MMMM do, yyyy")}</span>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </ScrollArea>
         )}
+        {newHires.length ? (
+          <button
+            onClick={() => setOpen(true)}
+            className="ml-auto mr-4 text-sm underline opacity-50 hover:opacity-100">
+            View all
+          </button>
+        ) : null}
+        {/* <Button variant="outline" size="sm" className=""> */}
+        {/* </Button> */}
       </CardContent>
     </Card>
   );

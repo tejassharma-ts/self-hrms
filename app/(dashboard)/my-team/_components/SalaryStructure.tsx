@@ -10,7 +10,7 @@ import { apiCaller } from "@/lib/auth";
 // import { getAuthCookies } from "@/lib/server/api";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
-import { getFullName } from "@/lib/utils";
+import { formatCurrency, getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cookies } from "next/headers";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -66,7 +66,6 @@ async function getSalaryStructure() {
 
 export default async function SalaryStructure() {
   const salaryStructure = await getSalaryStructure();
-  console.log(salaryStructure);
   if (!salaryStructure) {
     return <h1>Opps</h1>;
   }
@@ -76,14 +75,14 @@ export default async function SalaryStructure() {
       <Table>
         <TableHeader>
           <TableRow>
-            {/* <TableCell>ID</TableCell> */}
+            <TableHead>Employee ID</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Position</TableHead>
-            <TableHead>Profile Picture</TableHead>
+            {/* <TableHead>Profile Picture</TableHead> */}
             <TableHead>Basic Salary</TableHead>
             <TableHead>HRA</TableHead>
             <TableHead>Conveyance</TableHead>
-            <TableHead>Allowances</TableHead>
+            {/* <TableHead>Allowances</TableHead> */}
             <TableHead>Other Allowance</TableHead>
             <TableHead>Bonus</TableHead>
             {/* <TableHead>Has Bonus</TableHead> */}
@@ -104,20 +103,21 @@ export default async function SalaryStructure() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <TableRow key={index}>
+                    <TableCell>{data.employee.id}</TableCell>
                     <TableCell>
                       {getFullName(data.employee.first_name, data.employee.last_name)}
                     </TableCell>
                     <TableCell>{data.employee.position}</TableCell>
-                    <TableCell>
-                      <Avatar>
-                        <AvatarImage src={data.employee.profile_picture} />
-                        <AvatarFallback>{data.employee.first_name}</AvatarFallback>
-                      </Avatar>
-                    </TableCell>
-                    <TableCell>{data.basic_salary}</TableCell>
+                    {/* <TableCell> */}
+                    {/*   <Avatar> */}
+                    {/*     <AvatarImage src={data.employee.profile_picture} /> */}
+                    {/*     <AvatarFallback>{data.employee.first_name}</AvatarFallback> */}
+                    {/*   </Avatar> */}
+                    {/* </TableCell> */}
+                    <TableCell>{formatCurrency(parseFloat(data.basic_salary))}</TableCell>
                     <TableCell>{data.hra}</TableCell>
                     <TableCell>{data.conveyance}</TableCell>
-                    <TableCell>{data.allowances}</TableCell>
+                    {/* <TableCell>{data.allowances}</TableCell> */}
                     <TableCell>{data.special_allowance}</TableCell>
                     <TableCell>{data.bonuses}</TableCell>
                     {/* <TableCell className="text-center"> */}
@@ -141,9 +141,12 @@ export default async function SalaryStructure() {
                     {/* <TableCell className="text-center"> */}
                     {/*   <Checkbox checked={data.has_pf} disabled /> */}
                     {/* </TableCell> */}
-                    <TableCell>{data.gross_monthly_salary}</TableCell>
-                    <TableCell>{data.total_ctc}</TableCell>
-                    <TableCell>{data.total_ctc}</TableCell>
+                    <TableCell>
+                      {formatCurrency(parseFloat(data.gross_monthly_salary) / 12)}
+                    </TableCell>
+                    {/* <TableCell>{(parseFloat(data.total_ctc) / 12).toFixed(2)}</TableCell> */}
+                    <TableCell>{formatCurrency(parseFloat(data.total_ctc))}</TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.total_ctc))}</TableCell>
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>

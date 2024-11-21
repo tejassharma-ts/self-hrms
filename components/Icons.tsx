@@ -22,6 +22,8 @@ import {
   RefreshCcw,
   Trash,
   BriefcaseBusiness,
+  Check,
+  Clock,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -66,4 +68,6 @@ export const Icons = {
   refresh: RefreshCcw,
   trash: Trash,
   bag: BriefcaseBusiness,
+  check: Check,
+  pending: Clock
 };
