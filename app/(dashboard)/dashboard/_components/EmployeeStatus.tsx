@@ -83,16 +83,16 @@ export default async function EmployeeStatus({ className }: { className: string 
                             </div>
                           </div>
                           <div className="flex flex-col">
-                            <p>
-                              Check in :{" "}
+                            <p className="grid grid-cols-2">
+                              <span>Check in :</span>
                               <span className="font-medium text-black">
                                 {formatTime(employee.check_in_time)}
                               </span>
                             </p>
-                            <p>
-                              Check out :{" "}
+                            <p className="grid grid-cols-2">
+                              <span>Check out :</span>
                               <span className="font-medium text-black">
-                                {formatTime(employee.check_in_time)}
+                                {formatTime(employee.check_out_time)}
                               </span>
                             </p>
                           </div>

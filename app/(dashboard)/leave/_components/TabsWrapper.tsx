@@ -43,7 +43,7 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
   }
 
   return (
-    <Card>
+    <Card className="shadow-none">
       <Tabs value={currentTab} onValueChange={onTabChange} defaultValue={currentTab}>
         <CardHeader className="relative">
           <TabsList className="self-start">

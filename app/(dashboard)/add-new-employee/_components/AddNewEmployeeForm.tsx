@@ -43,14 +43,30 @@ import { useAddEmployeeStore } from "@/model/add-employee";
 import { isString, isValidUrl } from "@/lib/string";
 import DepartmentSelector from "@/components/department-selector";
 
+const phoneNumberSchema = z
+  .string()
+  .refine((val) => /^[0-9]+$/.test(val) && val.length >= 10 && val.length <= 15, {
+    message: "Phone number must be between 10 and 15 digits and contain only numbers.",
+  });
+
 const employeeSchema = z.object({
-  first_name: z.string().max(50, "First name cannot exceed 50 characters"),
-  last_name: z.string().max(50, "Last name cannot exceed 50 characters"),
+  first_name: z
+    .string()
+    .min(3, "First name must be at least 3 characters long.")
+    .max(50, "First name cannot exceed 100 characters."),
+  last_name: z
+    .string()
+    .min(3, "Last name must be at least 3 characters long.")
+    .max(50, "Last name cannot exceed 50 characters"),
   email: z.string().email("Please enter a valid email address"),
-  phone_number: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
-  address: z.string().max(100, "Address cannot exceed 100 characters"),
+  phone_number: phoneNumberSchema,
+  address: z
+    .string()
+    .min(5, "Address name must be at least 5 characters long.")
+    .max(100, "Address cannot exceed 100 characters"),
   permanent_address: z
     .string()
+    .min(5, "Address name must be at least 5 characters long.")
     .max(100, "Permanent address cannot exceed 100 characters")
     .optional(),
   date_of_birth: z.date(),
@@ -58,10 +74,10 @@ const employeeSchema = z.object({
   salary: z.string().refine(
     (val) => {
       const parsed = parseFloat(val);
-      return !isNaN(parsed) && parsed > 0;
+      return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
     },
     {
-      message: "Salary must be a number greater than 0",
+      message: "Previous salary must be a positive number not exceeding 99,999,999.99.",
     },
   ),
   password: z.string().min(5, "Password must be at least 5 characters long"),
@@ -69,12 +85,8 @@ const employeeSchema = z.object({
   is_hr: z.boolean().default(false).optional(),
   profile_picture: z.union([z.instanceof(File), z.string()]).optional(),
   gender: z.string().max(25, "Gender description cannot exceed 25 characters").optional(),
-  emergency_phone_number: z
-    .string()
-    .regex(/^\d{10}$/, "Emergency contact number must be exactly 10 digits"),
-  official_phone_number: z
-    .string()
-    .regex(/^\d{10}$/, "Official phone number must be exactly 10 digits"),
+  emergency_phone_number: phoneNumberSchema,
+  official_phone_number: phoneNumberSchema,
   official_email: z.string().email("Please enter a valid official email address"),
 });
 
@@ -92,6 +104,7 @@ const designations = [
 export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
   const form = useForm<EmployeeFormValues>({
     mode: "onChange",
+    shouldFocusError: true,
     resolver: zodResolver(employeeSchema),
     defaultValues: {
       first_name: employee?.first_name,
@@ -110,7 +123,7 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
       is_hr: employee?.is_hr || true,
       department: employee?.department,
       gender: employee?.gender,
-      profile_picture: employee?.profile_picture,
+      profile_picture: employee?.profile_picture || undefined,
     },
   });
   const { authUser, authCompany } = useClientAuth();
@@ -152,17 +165,22 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
     try {
       setIsLoading(true);
       if (!employee) {
-        const formData = new FormData();
+        // const formData = new FormData();
+        //
+        // Object.keys(data).forEach((key) => {
+        //   // @ts-ignore
+        //   formData.append(key, data[key]);
+        // });
+        //
+        // formData.append("date_of_birth", format(data.date_of_birth, "yyyy-MM-dd"));
+        // formData.append("company_id", authUser?.employee_profile.company.id! || authCompany?.id!);
 
-        Object.keys(data).forEach((key) => {
-          // @ts-ignore
-          formData.append(key, data[key]);
+        // const res = await apiCaller.post("/api/companies-app/company/add-employee/", formData);
+        const res = await apiCaller.postForm("/api/companies-app/company/add-employee/", {
+          ...data,
+          date_of_birth: format(data.date_of_birth, "yyyy-MM-dd"),
+          company_id: authUser?.employee_profile.company.id! || authCompany?.id!,
         });
-
-        formData.append("date_of_birth", format(data.date_of_birth, "yyyy-MM-dd"));
-        formData.append("company_id", authUser?.employee_profile.company.id! || authCompany?.id!);
-
-        const res = await apiCaller.post("/api/companies-app/company/add-employee/", formData);
 
         toast({
           description: "Employee successfully added",
@@ -175,31 +193,47 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
         params.set("active_form", "bank-details");
         router.push(`${pathname}?${params.toString()}`);
       } else {
-        const formData = new FormData();
+        // const formData = new FormData();
 
         // @ts-ignore
-        data.date_of_birth = format(data.date_of_birth, "yyyy-MM-dd");
+        // data.date_of_birth = format(data.date_of_birth, "yyyy-MM-dd");
 
-        Object.keys(employee).map((key) => {
-          // @ts-ignore
-          if (data.hasOwnProperty(key) && employee[key] !== data[key]) {
-            // for image because only expiry time updates IDK why but, additional check will do the job for now
-            // if it is a valid url we can safely return without appending because if the assest has  really changed
-            // it would be having blob object
+        // Object.keys(employee).map((key) => {
+        // @ts-ignore
+        // if (data.hasOwnProperty(key) && employee[key] !== data[key]) {
+        // for image because only expiry time updates IDK why but, additional check will do the job for now
+        // if it is a valid url we can safely return without appending because if the assest has  really changed
+        // it would be having blob object
 
-            // @ts-ignore
-            if (isValidUrl(data[key])) return;
+        // @ts-ignore
+        // if (isValidUrl(data[key])) return;
 
-            // @ts-ignore
-            formData.append(key, data[key]);
-          }
-        });
+        // @ts-ignore
+        // formData.append(key, data[key]);
+        //   }
+        // });
 
-        await apiCaller.patch("/api/companies-app/company/add-employee/", formData, {
-          params: {
-            employee_id: employee.id,
+        await apiCaller.patch(
+          "/api/companies-app/company/add-employee/",
+          {
+            ...data,
+            department: undefined,
+            profile_picture: data.profile_picture
+              ? typeof data.profile_picture === "string"
+                ? undefined
+                : data.profile_picture
+              : undefined,
+            date_of_birth: format(data.date_of_birth, "yyyy-MM-dd"),
           },
-        });
+          {
+            params: {
+              employee_id: employee.id,
+            },
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          },
+        );
         toast({
           description: "Employee updated successfully",
         });

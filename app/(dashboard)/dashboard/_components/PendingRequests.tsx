@@ -16,7 +16,7 @@ export default async function PendingRequests({
   className,
 }: PendingRequestsProps) {
   return (
-    <Card className={cn("w-full rounded-2xl", className)}>
+    <Card className={cn("rounded-2xl", className)}>
       <CardHeader>
         <CardTitle>Pending Requests</CardTitle>
       </CardHeader>
@@ -37,7 +37,7 @@ function RequestItem({ label, value, href }: { label: string; value: number; hre
   return (
     <div className="flex">
       <div className="relative flex flex-col space-y-1">
-        <h1 className="text-lg font-medium text-gray-500">{label}</h1>
+        <h1 className="text-base font-medium text-gray-500 whitespace-nowrap">{label}</h1>
         <span className="text-3xl font-bold text-foreground">{value}</span>
         <Link href={href} className="absolute inset-0" />
       </div>

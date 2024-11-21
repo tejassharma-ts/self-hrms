@@ -35,7 +35,7 @@ export default function UserSigninForm({ className, actionText, ...props }: User
   const form = useForm({
     resolver: zodResolver(SigninFormSchema),
     defaultValues: {
-      email: "tejassharma2021@outlook.com",
+      email: "",
     },
   });
 
@@ -69,9 +69,9 @@ export default function UserSigninForm({ className, actionText, ...props }: User
               name="email"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start space-y-1">
-                  <FormLabel>Login OTP</FormLabel>
+                  <FormLabel>Login</FormLabel>
                   <FormControl>
-                    <Input placeholder="" {...field} />
+                    <Input placeholder="Enter registered email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

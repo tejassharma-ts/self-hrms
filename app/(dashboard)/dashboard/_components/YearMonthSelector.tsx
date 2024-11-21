@@ -43,7 +43,7 @@ export function YearMonthSelector({
       <Select
         value={selectedYear.toString()}
         onValueChange={(value) => setSelectedYear(Number(value))}>
-        <SelectTrigger className="order-1">
+        <SelectTrigger className="order-1 border-none text-black font-semibold text-[0.9rem] px-0">
           <SelectValue placeholder="Select year" />
         </SelectTrigger>
         <SelectContent>
@@ -58,7 +58,7 @@ export function YearMonthSelector({
       <Select
         value={selectedMonth.toString()}
         onValueChange={(value) => setSelectedMonth(Number(value))}>
-        <SelectTrigger className="">
+        <SelectTrigger className="border-none text-black font-semibold text-[0.9rem] px-0">
           <SelectValue placeholder="Select month" />
         </SelectTrigger>
         <SelectContent>

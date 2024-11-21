@@ -5,7 +5,14 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Form, FormField, FormItem, FormLabel, FormControl } from "@/components/ui/form";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
@@ -15,11 +22,55 @@ import { Icons } from "@/components/Icons";
 import { useAddEmployeeStore } from "@/model/add-employee";
 
 const ComponentSalarySchema = z.object({
-  basic_salary: z.string().optional(),
-  hra: z.string().optional(),
+  basic_salary: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+      },
+      {
+        message: "Basic salary must be a positive number not exceeding 99,999,999.99.",
+      },
+    )
+    .optional(),
+  hra: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+      },
+      {
+        message: "HRA must be a positive number not exceeding 99,999,999.99.",
+      },
+    )
+    .optional(),
   allowances: z.string().optional(),
-  medical: z.string().optional(),
-  conveyance: z.string().optional(),
+  medical: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+      },
+      {
+        message: "Medical Insurance must be a positive number not exceeding 99,999,999.99.",
+      },
+    )
+    .optional(),
+  conveyance: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+      },
+      {
+        message: "Conveyance must be a positive number not exceeding 99,999,999.99.",
+      },
+    )
+    .optional(),
   gratuity: z.string().optional(),
   has_lta: z.boolean().optional(),
   has_bonus: z.boolean().optional(),
@@ -46,6 +97,7 @@ const IsComponentBased = ({
 
   const form = useForm<ComponentSalaryFormValues>({
     resolver: zodResolver(ComponentSalarySchema),
+    mode: "onChange",
     defaultValues: {
       basic_salary: salaryStructure?.basic_salary || "",
       hra: salaryStructure?.hra || "",
@@ -65,6 +117,7 @@ const IsComponentBased = ({
     },
   });
 
+  console.log(form.getValues());
   useEffect(() => {
     if (formStore.personal) {
       form.setValue("basic_salary", formStore.personal.salary);
@@ -138,6 +191,7 @@ const IsComponentBased = ({
                   <FormControl>
                     <Input placeholder="Enter gross salary" {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -174,6 +228,7 @@ const IsComponentBased = ({
                   <FormControl>
                     <Input placeholder="Enter medical insurance" {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -186,6 +241,7 @@ const IsComponentBased = ({
                   <FormControl>
                     <Input placeholder="Enter conveyance" {...field} />
                   </FormControl>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -248,9 +304,42 @@ const IsComponentBased = ({
 export default IsComponentBased;
 
 const CompanyDefaults = z.object({
-  basic_salary_percentage: z.string().optional(),
-  hra_percentage: z.string().optional(),
-  allowance_percentage: z.string().optional(),
+  basic_salary_percentage: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed >= 0 && parsed <= 100;
+      },
+      {
+        message: "Basic salary percentage must be a number between 0 and 100.",
+      },
+    )
+    .optional(),
+  hra_percentage: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed >= 0 && parsed <= 100;
+      },
+      {
+        message: "HRA percentage must be a number between 0 and 100.",
+      },
+    )
+    .optional(),
+  allowance_percentage: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed >= 0 && parsed <= 100;
+      },
+      {
+        message: "Allowance percentage must be a number between 0 and 100.",
+      },
+    )
+    .optional(),
 });
 
 type CompanyDefaultsValues = z.infer<typeof CompanyDefaults>;
@@ -259,6 +348,7 @@ function DefaultSetting() {
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm<CompanyDefaultsValues>({
     resolver: zodResolver(CompanyDefaults),
+    mode: "onChange",
     defaultValues: {
       basic_salary_percentage: "20", // 50
       hra_percentage: "20", // 30
@@ -313,6 +403,7 @@ function DefaultSetting() {
                 <FormControl>
                   <Input type="number" placeholder="Enter basic salary percentage" {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -325,6 +416,7 @@ function DefaultSetting() {
                 <FormControl>
                   <Input type="number" placeholder="Enter HRA percentage" {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />
@@ -337,6 +429,7 @@ function DefaultSetting() {
                 <FormControl>
                   <Input placeholder="Enter allowance percentage" {...field} />
                 </FormControl>
+                <FormMessage />
               </FormItem>
             )}
           />

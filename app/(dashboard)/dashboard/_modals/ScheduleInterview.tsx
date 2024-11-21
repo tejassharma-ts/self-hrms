@@ -1,5 +1,6 @@
 "use client";
 
+import { Dispatch, SetStateAction } from "react";
 import { cn, combineDateAndTime } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -29,11 +30,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Icons } from "@/components/Icons";
 import { apiCaller } from "@/lib/auth";
-import MultipleSelector from "@/components/ui/multi-select";
-import useAuthStore from "@/model/auth";
 import { useClientAuth } from "@/context/auth-context";
 import DepartmentSelector from "@/components/department-selector";
 import { toast } from "@/hooks/use-toast";
+import useEventStore from "@/model/events";
 
 type Employee = {
   id: string;
@@ -45,19 +45,45 @@ type Employee = {
 };
 
 const formSchema = z.object({
-  first_name: z.string().min(1, "First name is required"),
-  last_name: z.string().min(1, "Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  qualification: z.string().min(1, "Qualification is required"),
-  address: z.string().min(1, "Address is required"),
-  gender: z.enum(["Male", "Female", "Other"]),
-  position_applied: z.string().min(1, "Position is required"),
+  first_name: z
+    .string()
+    .min(3, "First name must be at least 3 characters long.")
+    .max(100, "First name cannot exceed 100 characters."),
+  last_name: z
+    .string()
+    .min(5, "Last name must be at least 5 characters long.")
+    .max(100, "Last name cannot exceed 100 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  phone: z.string().refine((val) => /^[0-9]+$/.test(val) && val.length >= 10 && val.length <= 15, {
+    message: "Phone number must be between 10 and 15 digits and contain only numbers.",
+  }),
+  qualification: z
+    .string()
+    .min(3, "Qualification must be at least 3 characters long.")
+    .max(200, "Qualification cannot exceed 200 characters."),
+  address: z.string().min(1, "Address is required."),
+  gender: z.enum(["Male", "Female", "Other"], { required_error: "Gender is required." }),
+  position_applied: z.string().min(1, "Position applied for is required."),
   previous_company_name: z.string().optional(),
-  previous_salary: z.string().optional(),
-  interview_date: z.date(),
-  time: z.string(),
-  status: z.enum(["In Progress", "Completed", "Pending"]),
+  previous_salary: z
+    .string()
+    .refine(
+      (val) => {
+        const parsed = parseFloat(val);
+        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+      },
+      {
+        message: "Previous salary must be a positive number not exceeding 99,999,999.99.",
+      },
+    )
+    .optional(),
+  interview_date: z.date({
+    invalid_type_error: "Please provide a valid interview date (e.g., YYYY-MM-DD).",
+  }),
+  time: z.string().min(1, "Interview time is required."),
+  status: z.enum(["In Progress", "Completed", "Pending"], {
+    required_error: "Interview status is required.",
+  }),
   is_selected: z.enum([
     "Shortlisted",
     "Rejected",
@@ -77,8 +103,10 @@ const formSchema = z.object({
     "Withdrawn",
     "Talent Pooled",
   ]),
-  department: z.string().min(1, "Department is required"),
-  meeting_link: z.string(),
+  department: z.string().min(1, "Department is required."),
+  meeting_link: z
+    .string()
+    .url({ message: "Please provide a valid meeting link (e.g., https://example.com)." }),
 });
 
 const selectionStatus = [
@@ -101,16 +129,17 @@ const selectionStatus = [
   "Talent Pooled",
 ];
 
-export default function ScheduleInterview({
-  setShowDialog,
-  setMeetings: setInterviews,
-}: {
-  setShowDialog: any;
-  setMeetings: any;
-}) {
+type ScheduleInterviewProps = {
+  setShowDialog: (value: boolean) => void;
+};
+
+export default function ScheduleInterview({ setShowDialog }: ScheduleInterviewProps) {
   const { authUser, authCompany } = useClientAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const { interviews, setInterviews } = useEventStore();
   const form = useForm<z.infer<typeof formSchema>>({
+    mode: "onChange",
+    shouldFocusError: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
       first_name: "Tejas",
@@ -137,14 +166,21 @@ export default function ScheduleInterview({
       values.company_id = authUser?.employee_profile.company.id! || authCompany?.id!;
 
       setIsLoading(true);
-      const res = await apiCaller.post("/api/companies-app/schedule-interview/", {
+      const res = await apiCaller.post("api/companies-app/api-meeting-interview/", {
         ...values,
+        type: "interview",
         // is_selected: undefined,
         interview_date: combineDateAndTime(values.interview_date, values.time),
         status: "Scheduled",
       });
-      // @ts-ignore
-      setInterviews((pre) => [...pre, res.data.interview]);
+
+      if (
+        format(res.data.interview.interview_date, "yyy MM dd") ===
+        format(values.interview_date, "yyyy MM dd")
+      ) {
+        const latestInterviews = [...interviews, res.data.interview];
+        setInterviews(latestInterviews);
+      }
       toast({
         description: res.data.message,
       });
@@ -161,29 +197,9 @@ export default function ScheduleInterview({
     }
   }
 
-  async function onSearchHandler(value: string) {
-    try {
-      const res = await apiCaller.get("/api/employees-app/employees-search/", {
-        params: {
-          search: value,
-        },
-      });
-
-      const employees = res.data.map((employee: Employee) => ({
-        ...employee,
-        label: employee.name,
-        value: employee.name,
-      }));
-
-      return employees;
-    } catch (err) {
-      console.log("err", err);
-    }
-  }
-
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -341,7 +357,7 @@ export default function ScheduleInterview({
             <FormItem>
               <FormLabel>Previous Salary</FormLabel>
               <FormControl>
-                <Input type="number" {...field} />
+                <Input {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -438,10 +454,12 @@ export default function ScheduleInterview({
           )}
         />
 
-        <Button disabled={isLoading} type="submit" className="w-full">
-          {isLoading && <Icons.loader className="ml-2" />}
-          Schedule Interview
-        </Button>
+        <div className="flex w-full justify-center">
+          <Button disabled={isLoading} type="submit" className="w-full max-w-xs rounded-full">
+            {isLoading && <Icons.loader className="ml-2" />}
+            Schedule Interview
+          </Button>
+        </div>
       </form>
     </Form>
   );

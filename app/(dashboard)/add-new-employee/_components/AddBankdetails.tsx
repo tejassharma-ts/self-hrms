@@ -26,7 +26,10 @@ import { useAddEmployeeStore } from "@/model/add-employee";
 import { formatAdharNumber } from "@/lib/utils";
 
 const employeeSchema = z.object({
-  bank_name: z.string().min(1, "Bank Name is required"),
+  bank_name: z
+    .string()
+    .min(3, "Bank name must be at least 3 characters long.")
+    .max(100, "Bank name cannot exceed 100 characters."),
   account_holder_name: z
     .string()
     .min(1, "Account holder name is required")
@@ -143,7 +146,7 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { setEmployeeField } = useAddEmployeeStore();
+  const { setEmployeeField, form: storedForm } = useAddEmployeeStore();
   useEffect(() => {
     if (!employee) return;
     setEmployeeField("personal", employee);
@@ -204,6 +207,9 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
       toast({
         description: "Employee Bank details updated successfully",
       });
+
+      // showing a check in bank details form
+      setEmployeeField("personal", { ...storedForm, bank_name: "temp" });
 
       const params = new URLSearchParams(searchParams);
       params.set("active_form", "salary-structure");

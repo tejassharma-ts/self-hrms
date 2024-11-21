@@ -34,7 +34,7 @@ export default function UserSignupForm({ className, ...props }: UserSignupFromPr
   const form = useForm({
     resolver: zodResolver(SignupFormSchema),
     defaultValues: {
-      email: "varsha7022001@gmail.com",
+      email: "",
     },
   });
 

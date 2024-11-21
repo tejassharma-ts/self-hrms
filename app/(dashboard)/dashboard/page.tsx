@@ -20,17 +20,6 @@ export default function GridCards() {
         <MeetingCard className="col-span-4 row-span-3" />
         <EmployeesOnLeave className="col-span-8 row-span-3" />
       </div>
-      {/* <div className="mb-4"> */}
-      {/* </div> */}
-      {/* <EventsAndMeetings /> */}
-      {/* <div className="col-span-5 mb-4"> */}
-      {/*   <Suspense fallback={<ProjectAnalyticsSkeleton />}> */}
-      {/*     <ProjectAnalytics /> */}
-      {/*   </Suspense> */}
-      {/* </div> */}
-      {/* <div className="col-span-3 mb-4"> */}
-      {/*   <Project /> */}
-      {/* </div> */}
     </div>
   );
 }
