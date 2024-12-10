@@ -6,6 +6,8 @@ import IsComponentBased from "./IsComponentBased";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import useEmployeeStore from "@/model/employee";
+import { useAddEmployeeStore } from "@/model/add-employee";
 
 type SalaryDetailsFormProps = {
   salaryStructure?: any;
@@ -13,6 +15,12 @@ type SalaryDetailsFormProps = {
 };
 export default function SalaryDetailsForm({ salaryStructure, employeeID }: SalaryDetailsFormProps) {
   const [salaryVariant, setSalaryVariant] = useState("gross-based");
+  const { setEmployeeField } = useAddEmployeeStore();
+
+  useEffect(() => {
+    if (!salaryStructure) return;
+    setEmployeeField("salaryStructure", salaryStructure);
+  }, [salaryStructure]);
 
   useEffect(() => {
     if (!salaryStructure) return;

@@ -6,7 +6,7 @@ export const leaveRequestTableHead = [
   "Status",
 ];
 
-export const attendanceTableHead = ["Date", "Check In Time", "Check out Time", "Status"];
+export const attendanceTableHead = ["Date", "Login Time", "Log Out Time", "Status"];
 
 export const bonusTableHead = ["Bonus", "Amount", "Payout Date"];
 

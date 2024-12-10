@@ -1,5 +1,6 @@
 "use client";
 
+import { type CarouselApi } from "@/components/ui/carousel";
 import React, { useCallback, useEffect } from "react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -26,16 +27,27 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { YearMonthSelector } from "./YearMonthSelector";
+import { DayPicker } from "react-day-picker";
 
 export default function MeetingCard({ className }: { className: string }) {
   const currentDate = new Date();
   const [selectedDate, setSelectedDate] = useState(format(currentDate, "yyyy-MM-dd"));
-  const [selectedYear, setSelectedYear] = useState(currentDate.getFullYear());
-  const [selectedMonth, setSelectedMonth] = useState(currentDate.getMonth() + 1);
+  const [currentMonthYear, setCurrentMonthYear] = useState(new Date());
+  const [api, setApi] = useState<CarouselApi>();
+
+  useEffect(() => {
+    if (!api) {
+      return;
+    }
+    api.on("init", () => {
+      api.scrollTo(currentDate.getDate() - 1);
+    });
+  }, [api]);
 
   const getDatesPerWeekForCurrentMonth = useCallback(() => {
-    const today = new Date(selectedYear, selectedMonth - 1);
+    const year = currentMonthYear.getFullYear();
+    const month = currentMonthYear.getMonth();
+    const today = new Date(year, month);
     const firstDayOfMonth = startOfMonth(today); // Date Tue Oct 01 2024 00:00:00 GMT+0530 (India Standard Time)
     const lastDayOfMonth = endOfMonth(today); // Date Thu Oct 31 2024 23:59:59 GMT+0530 (India Standard Time)
 
@@ -57,10 +69,12 @@ export default function MeetingCard({ className }: { className: string }) {
     }
 
     return result;
-  }, [selectedMonth, selectedYear]);
+  }, [currentMonthYear]);
 
   function handleDateClick(currDate: string) {
-    const selectedDate = new Date(selectedYear, selectedMonth - 1);
+    const year = currentMonthYear.getFullYear();
+    const month = currentMonthYear.getMonth();
+    const selectedDate = new Date(year, month);
     const targetDate = setDate(selectedDate, parseInt(currDate, 10));
     const formattedDate = format(targetDate, "yyyy-MM-dd");
     setSelectedDate(formattedDate);
@@ -68,33 +82,41 @@ export default function MeetingCard({ className }: { className: string }) {
 
   return (
     <Card className={cn("relative flex flex-col overflow-hidden rounded-2xl", className)}>
-      <CardHeader>
-        <YearMonthSelector
-          selectedYear={selectedYear}
-          selectedMonth={selectedMonth}
-          setSelectedYear={(year: number) => {
-            setSelectedYear(year);
-            setSelectedDate("");
+      <CardHeader className="pb-2 pt-4">
+        <DayPicker
+          month={currentMonthYear}
+          onMonthChange={setCurrentMonthYear}
+          classNames={{
+            caption: "flex justify-center relative bg-[#f8f8f9] py-2.5 rounded-xl",
+            caption_label: "font-semibold text-lg",
+            nav_button: "size-7 bg-white shadow-sm rounded-full flex justify-center items-center",
+            nav_icon: "size-2.5",
+            nav_button_previous: "absolute left-4 top-1/2 -translate-y-1/2",
+            nav_button_next: "absolute right-4 top-1/2 -translate-y-1/2",
           }}
-          setSelectedMonth={(month: number) => {
-            setSelectedMonth(month);
-            setSelectedDate("");
+          components={{
+            Row(props) {
+              return null;
+            },
+            HeadRow() {
+              return null;
+            },
           }}
         />
       </CardHeader>
       <CardContent className="flex h-full flex-col pt-0">
-        <Carousel className="px-5">
+        <Carousel setApi={setApi} className="mx-4">
           <CarouselContent>
             {getDatesPerWeekForCurrentMonth().map((week) =>
               week.map((day, idx) => {
                 const [currDate, currDay] = day.split(" ");
                 return (
-                  <CarouselItem className="basis-[25%] py-2">
+                  <CarouselItem className="basis-[4.5rem] pl-0">
                     <Card
                       key={idx}
                       onClick={() => handleDateClick(currDate)}
                       className={cn(
-                        "inline-flex min-w-[4.5rem] justify-center hover:bg-gray-200 rounded-lg",
+                        "inline-flex w-[4rem] justify-center rounded-2xl shadow-none hover:bg-gray-200",
                         selectedDate.split("-")[2] === currDate && "bg-black hover:bg-black",
                       )}>
                       <CardContent
@@ -111,10 +133,16 @@ export default function MeetingCard({ className }: { className: string }) {
               }),
             )}
           </CarouselContent>
-          <CarouselPrevious className="-left-5" variant="ghost" />
-          <CarouselNext className="-right-5" variant="ghost" />
+          <CarouselPrevious
+            className="-left-8 flex size-7 items-center justify-center rounded-full bg-white shadow-lg"
+            variant="ghost"
+          />
+          <CarouselNext
+            className="-right-8 flex size-7 items-center justify-center rounded-full bg-white shadow-lg"
+            variant="ghost"
+          />
         </Carousel>
-        <MeetingDetailsTab selectedDate={selectedDate} className="relative h-full" />
+        <MeetingDetailsTab selectedDate={selectedDate} />
       </CardContent>
     </Card>
   );

@@ -72,13 +72,13 @@ export default async function StaffDetails() {
   }
 
   return (
-    <ScrollArea className="w-full whitespace-nowrap rounded-md border">
+    <ScrollArea className="w-full whitespace-nowrap rounded-md">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Employee ID</TableHead>
-            <TableHead>Profile Picture</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Profile Picture</TableHead>
             <TableHead>Gender</TableHead>
             {/* <TableHead>ID</TableHead> */}
             <TableHead>Email</TableHead>
@@ -88,16 +88,16 @@ export default async function StaffDetails() {
             <TableHead>Department</TableHead>
             <TableHead>Position</TableHead>
             <TableHead>Date Joined</TableHead>
-            <TableHead>Salary</TableHead>
+            {/* <TableHead>Salary</TableHead> */}
             {/* <TableHead>Is Active</TableHead> */}
-            <TableHead>Bank Name</TableHead>
-            <TableHead>Account Number</TableHead>
-            <TableHead>IFSC Code</TableHead>
+            {/* <TableHead>Bank Name</TableHead> */}
+            {/* <TableHead>Account Number</TableHead> */}
+            {/* <TableHead>IFSC Code</TableHead> */}
             <TableHead>Aadhar Number</TableHead>
             <TableHead>PAN Number</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Updated At</TableHead>
-            <TableHead>Is HR</TableHead>
+            {/* <TableHead>Created At</TableHead> */}
+            {/* <TableHead>Updated At</TableHead> */}
+            {/* <TableHead>Is HR</TableHead> */}
             {/* <TableHead>User</TableHead> */}
             {/* <TableHead>Company</TableHead> */}
           </TableRow>
@@ -109,38 +109,38 @@ export default async function StaffDetails() {
                 <TooltipTrigger asChild>
                   <TableRow key={index}>
                     <TableCell>{data.id}</TableCell>
-                    <TableCell>
+                    <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
+                    <TableCell className="flex justify-center">
                       <Avatar>
                         <AvatarImage src={data.profile_picture} />
                         <AvatarFallback>{data.first_name}</AvatarFallback>
                       </Avatar>
                     </TableCell>
-                    <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
                     <TableCell>{data.gender || "N/A"}</TableCell>
                     {/* <TableCell>{data.id}</TableCell> */}
                     <TableCell>{data.email}</TableCell>
                     <TableCell>{data.phone_number}</TableCell>
                     <TableCell>{data.address}</TableCell>
                     <TableCell>{data.date_of_birth}</TableCell>
-                    <TableCell>{data.department}</TableCell>
+                    <TableCell className="capitalize">{data.department}</TableCell>
                     <TableCell>{data.position}</TableCell>
                     <TableCell>{data.date_joined}</TableCell>
-                    <TableCell>{data.salary}</TableCell>
+                    {/* <TableCell>{data.salary}</TableCell> */}
                     {/* <TableCell className="text-center"> */}
                     {/*   <Checkbox checked={data.is_active} disabled /> */}
                     {/* </TableCell> */}
-                    <TableCell>{data.bank_name || "N/A"}</TableCell>
-                    <TableCell>{data.account_number || "N/A"}</TableCell>
-                    <TableCell>{data.ifsc_code || "N/A"}</TableCell>
+                    {/* <TableCell>{data.account_number || "N/A"}</TableCell> */}
+                    {/* <TableCell>{data.bank_name || "N/A"}</TableCell> */}
+                    {/* <TableCell>{data.ifsc_code || "N/A"}</TableCell> */}
                     <TableCell>{data.aadhar_number || "N/A"}</TableCell>
                     <TableCell>{data.pan_number || "N/A"}</TableCell>
                     {/* <TableCell>{data.user}</TableCell> */}
                     {/* <TableCell>{data.company}</TableCell> */}
-                    <TableCell>{formatISODate(data.created_at)}</TableCell>
-                    <TableCell>{formatISODate(data.updated_at)}</TableCell>
-                    <TableCell className="text-center">
-                      <Checkbox checked={data.is_hr} disabled />
-                    </TableCell>
+                    {/* <TableCell>{formatISODate(data.created_at)}</TableCell> */}
+                    {/* <TableCell>{formatISODate(data.updated_at)}</TableCell> */}
+                    {/* <TableCell className="text-center"> */}
+                    {/*   <Checkbox checked={data.is_hr} disabled /> */}
+                    {/* </TableCell> */}
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>

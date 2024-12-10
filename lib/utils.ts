@@ -69,12 +69,12 @@ export async function delay(duration: number) {
   return new Promise((res) => setTimeout(res, duration));
 }
 
-export function getFullName(firstName: string, lastName: string) {
-  return [firstName, lastName].join(" ");
+export function getFullName(firstName: string, lastName?: string) {
+  return [firstName, lastName || ""].join(" ");
 }
 
-export function getFullbackName(firstName: string, lastName: string) {
-  return [firstName[0], lastName[0]].join(" ");
+export function getFullbackName(firstName: string, lastName?: string) {
+  return [firstName[0], lastName?.[0] || ""].join(" ");
 }
 
 export function formatISODate(isoDate: string): string {
@@ -161,3 +161,14 @@ export const getDatesPerWeekForCurrentMonth = ({
 
   return result;
 };
+
+export const formatCurrency = (amount: number) => {
+  if (isNaN(amount)) return null;
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+

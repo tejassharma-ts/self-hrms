@@ -28,6 +28,7 @@ import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/Icons";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import useMultiSelect from "@/hooks/use-multiselect";
 
 type EmployeeLeaveRequestProps = {
   leaveRequest: LeaveRequest[] | null;
@@ -50,7 +51,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
     isOptionSelected: isLeaveSelected,
     selectedItems: selectedLeaves,
     clearSelectedItems: clearSelectedLeaves,
-  } = useSelectItems([]);
+  } = useMultiSelect<LeaveRequest>([], (leaveReq) => leaveReq.employee.id);
 
   useEffect(() => {
     if (selectedLeaves.length) {
@@ -101,8 +102,8 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
     <>
       <ScrollArea>
         <Table>
-          <TableHeader>
-            <TableRow className="hover:bg-transparent">
+          <TableHeader className="bg-transparent text-[#A7AAB4]">
+            <TableRow className="hover:bg-transparent [&_th]:text-black">
               <TableHead>
                 <div className="flex items-center space-x-2">
                   {/* <Checkbox checked={!!selectedLeaves.length} onCheckedChange={handleSelectAll} /> */}
@@ -145,7 +146,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                     <DropdownMenuSeparator />
                     <DropdownMenuRadioGroup value={status} onValueChange={onStatusChange}>
                       <DropdownMenuRadioItem value="approved">Approved</DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="rejected">Rejected</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="rejected">Decline</DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="pending">Pending</DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="">All Request</DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
@@ -157,13 +158,13 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
           </TableHeader>
           <TableBody>
             {leaveRequest.map((col, idx) => (
-              <TableRow key={idx} className={isLeaveSelected(col.id) ? "bg-muted/50" : ""}>
+              <TableRow key={idx} className={isLeaveSelected(col) ? "bg-muted/50" : ""}>
                 <TableCell>
                   <div className="flex items-center space-x-2">
                     <Checkbox
-                      checked={isLeaveSelected(col.id)}
+                      checked={isLeaveSelected(col)}
                       onCheckedChange={() => {
-                        handleSelectLeave(col.id);
+                        handleSelectLeave(col);
                       }}
                     />
                     <span className="line-clamp-1 text-ellipsis font-medium">
@@ -178,7 +179,30 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                   <span className="line-clamp-2">{col.reason}</span>
                 </TableCell>
                 <TableCell>{col?.leave_duration || "-"}</TableCell>
-                <TableCell className="capitalize">{col.status}</TableCell>
+                <TableCell className="capitalize">
+                  {col.status === "Approved" ? (
+                    <div className="flex items-center space-x-2">
+                      <span className="flex size-5 items-center justify-center rounded-full bg-[#14AE5C]">
+                        <Icons.check className="text-white" size={16} />
+                      </span>
+                      <span className="font-medium text-[#14AE5C]">Approved</span>
+                    </div>
+                  ) : col.status === "Rejected" ? (
+                    <div className="flex items-center space-x-2">
+                      <span className="flex size-5 items-center justify-center rounded-full bg-[#E8595A]">
+                        <Icons.close className="text-white" size={16} />
+                      </span>
+                      <span className="font-medium text-[#E8595A]">Declined</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <span className="flex size-6 items-center justify-center rounded-full ">
+                        <Icons.pending className="text-white fill-[#9d9d9d]" size={30} />
+                      </span>
+                      <span className="font-medium text-black">Pending</span>
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell>
                   <LeaveRequestOption
                     leaveRequest={col}
@@ -204,8 +228,10 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
         hideDropDown
         bulkAction={showBulkAction}
         setShowBulkAction={setShowBulkAction}
-        selectedLeaveIDs={selectedLeaves}
+        selectedLeaves={selectedLeaves}
+        selectedLeaveIDs={selectedLeaves.map((leave) => leave.id)}
         clearSelectedLeaves={clearSelectedLeaves}
+        handleSelectLeave={handleSelectLeave}
       />
     </>
   );

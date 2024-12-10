@@ -41,8 +41,11 @@ export const TabsCard = ({ employeeId }: { employeeId: string }) => {
   };
 
   return (
-    <Card className={"ml-2 max-h-[16rem]"}>
-      <CardContent className="w-[10rem] px-1 py-2">
+    <Card
+      className={
+        "ml-4 mt-4 flex h-[17.5rem] w-[14.875rem] items-center justify-center rounded-3xl"
+      }>
+      <CardContent>
         <div className="flex flex-col items-start gap-y-6">
           {tabLinks.map((tab) => (
             <button

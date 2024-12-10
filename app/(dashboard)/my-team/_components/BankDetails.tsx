@@ -82,8 +82,8 @@ export default async function BankDetails() {
             <TableHead>Bank Name</TableHead>
             <TableHead>Account Number</TableHead>
             <TableHead>IFSC Code</TableHead>
-            <TableHead>Aadhar Number</TableHead>
-            <TableHead>PAN Number</TableHead>
+            {/* <TableHead>Aadhar Number</TableHead> */}
+            {/* <TableHead>PAN umber</TableHead> */}
             {/* <TableHead>User</TableHead> */}
             {/* <TableHead>Company</TableHead> */}
           </TableRow>
@@ -98,12 +98,12 @@ export default async function BankDetails() {
                     <TableCell>{getFullName(data.first_name, data.last_name)}</TableCell>
                     <TableCell>{data.phone_number}</TableCell>
                     <TableCell>{data.position}</TableCell>
-                    <TableCell>{data.department}</TableCell>
+                    <TableCell className="capitalize">{data.department}</TableCell>
                     <TableCell>{data.bank_name || "N/A"}</TableCell>
                     <TableCell>{data.account_number || "N/A"}</TableCell>
                     <TableCell>{data.ifsc_code || "N/A"}</TableCell>
-                    <TableCell>{data.aadhar_number || "N/A"}</TableCell>
-                    <TableCell>{data.pan_number || "N/A"}</TableCell>
+                    {/* <TableCell>{data.aadhar_number || "N/A"}</TableCell> */}
+                    {/* <TableCell>{data.pan_number || "N/A"}</TableCell> */}
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>
