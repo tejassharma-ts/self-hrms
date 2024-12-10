@@ -69,8 +69,6 @@ const TableView = ({
     );
   }
 
-  console.log(holidaysInMonth);
-
   const monthName = getMonthNameFromNumber(month);
   return (
     <>
@@ -120,23 +118,28 @@ const TableView = ({
                 )}
 
                 <TableCell className="text-nowrap">
-                  {attendance.status === "Present" &&
-                  (!attendance.check_in_time || !attendance.check_out_time) ? (
-                    <div className={"relative"}>
-                      <button
-                        onClick={() => setShowActionDropdown(!showActionDropdown)}
-                        className={"text-[#0085FF]"}>
-                        Take Action
-                      </button>
-                      {showActionDropdown && (
-                        <div
-                          className={
-                            "absolute right-0 z-10 flex h-[65px] w-[106px] flex-col items-center justify-around rounded-lg border border-gray-100 bg-white"
-                          }>
-                          <p className={"text-xs text-[#3BA53B]"}>Mark Present</p>
-                          <p className={"text-xs text-[#D9282B]"}>Mark Absent</p>
-                        </div>
-                      )}
+                  {attendance.status ? (
+                    <div
+                      className={cn(
+                        "text-[#00000080]",
+                        attendance.status === "Present" && "text-green-500",
+                        attendance.status === "Absent" && "text-red-500",
+                      )}>
+                      {attendance.status}
+                      {/* <button */}
+                      {/*   onClick={() => setShowActionDropdown(!showActionDropdown)} */}
+                      {/*   className={"text-[#0085FF]"}> */}
+                      {/*   Take Action */}
+                      {/* </button> */}
+                      {/* {showActionDropdown && ( */}
+                      {/*   <div */}
+                      {/*     className={ */}
+                      {/*       "absolute right-0 z-10 flex h-[65px] w-[106px] flex-col items-center justify-around rounded-lg border border-gray-100 bg-white" */}
+                      {/*     }> */}
+                      {/*     <p className={"text-xs text-[#3BA53B]"}>Mark Present</p> */}
+                      {/*     <p className={"text-xs text-[#D9282B]"}>Mark Absent</p> */}
+                      {/*   </div> */}
+                      {/* )} */}
                     </div>
                   ) : (
                     <span
