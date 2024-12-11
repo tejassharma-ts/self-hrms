@@ -92,7 +92,7 @@ export default async function SalaryStructure() {
             {/* <TableHead>Has Special Allowance</TableHead> */}
             {/* <TableHead>Has ESI</TableHead> */}
             {/* <TableHead>Has PF</TableHead> */}
-            <TableHead>Gross Monthly</TableHead>
+            <TableHead>Monthly Gross</TableHead>
             <TableHead>Monthly CTC</TableHead>
             <TableHead>Annual CTC</TableHead>
           </TableRow>

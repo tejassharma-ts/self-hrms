@@ -24,6 +24,7 @@ import {
   BriefcaseBusiness,
   Check,
   Clock,
+  Percent,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -69,5 +70,6 @@ export const Icons = {
   trash: Trash,
   bag: BriefcaseBusiness,
   check: Check,
-  pending: Clock
+  pending: Clock,
+  percent: Percent,
 };

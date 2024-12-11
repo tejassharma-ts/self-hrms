@@ -86,15 +86,15 @@ export default async function StaffDetails() {
             <TableHead>Address</TableHead>
             <TableHead>Date of Birth</TableHead>
             <TableHead>Department</TableHead>
-            <TableHead>Position</TableHead>
-            <TableHead>Date Joined</TableHead>
+            <TableHead>Designation</TableHead>
+            <TableHead>Joining Date</TableHead>
             {/* <TableHead>Salary</TableHead> */}
             {/* <TableHead>Is Active</TableHead> */}
             {/* <TableHead>Bank Name</TableHead> */}
             {/* <TableHead>Account Number</TableHead> */}
             {/* <TableHead>IFSC Code</TableHead> */}
-            <TableHead>Aadhar Number</TableHead>
-            <TableHead>PAN Number</TableHead>
+            <TableHead>Aadhaar</TableHead>
+            <TableHead>PAN</TableHead>
             {/* <TableHead>Created At</TableHead> */}
             {/* <TableHead>Updated At</TableHead> */}
             {/* <TableHead>Is HR</TableHead> */}

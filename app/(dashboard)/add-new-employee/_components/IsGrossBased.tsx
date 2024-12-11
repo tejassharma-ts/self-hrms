@@ -34,18 +34,18 @@ const ComponentSalarySchema = z.object({
       },
     )
     .optional(),
-  hra: z
-    .string()
-    .refine(
-      (val) => {
-        const parsed = parseFloat(val);
-        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
-      },
-      {
-        message: "HRA must be a positive number not exceeding 99,999,999.99.",
-      },
-    )
-    .optional(),
+  // hra: z
+  //   .string()
+  //   .refine(
+  //     (val) => {
+  //       const parsed = parseFloat(val);
+  //       return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+  //     },
+  //     {
+  //       message: "HRA must be a positive number not exceeding 99,999,999.99.",
+  //     },
+  //   )
+  //   .optional(),
   allowances: z.string().optional(),
   medical: z
     .string()
@@ -100,7 +100,7 @@ const isGrossBased = ({
     mode: "onChange",
     defaultValues: {
       basic_salary: salaryStructure?.basic_salary || "",
-      hra: salaryStructure?.hra || "",
+      // hra: salaryStructure?.hra || "",
       allowances: salaryStructure?.allowances || "",
       medical: salaryStructure?.medical_insurance || "",
       has_medical_allowance: salaryStructure?.has_medical_allowance || "",
@@ -132,9 +132,9 @@ const isGrossBased = ({
         is_component_based: false,
         is_gross_based: true,
         gross_salary: data.basic_salary,
-        hra: data.hra || "0",
+        // hra: data.hra || "0",
         conveyance: data.conveyance,
-        allowances: data.hra || "0",
+        allowances: 0,
         medical_insurance: data.medical,
         gratuity: data.gratuity || "0",
         has_lta: data.has_lta,
