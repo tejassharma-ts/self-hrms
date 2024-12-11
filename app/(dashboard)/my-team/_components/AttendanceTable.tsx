@@ -100,10 +100,10 @@ const TableView = ({
                 (!attendance.check_in_time || !attendance.check_out_time) ? (
                   <>
                     <TableCell className="text-nowrap text-center">
-                      {formatTime(attendance?.check_in_time) || "N/A"}
+                      {formatTime(attendance?.check_in_time) || "Not Marked"}
                     </TableCell>
                     <TableCell className="text-nowrap text-center">
-                      {formatTime(attendance?.check_out_time) || "N/A"}
+                      {formatTime(attendance?.check_out_time) || "Not Marked"}
                     </TableCell>
                   </>
                 ) : (
@@ -189,7 +189,7 @@ const CalendarView = ({
   const monthParam = searchParams.get("month");
   let holidaysInMonth: any[] = [];
 
-  monthParam &&
+  if (monthParam)
     holidays[monthParam]?.map((eachHoliday: any) => {
       holidaysInMonth.push(new Date(eachHoliday.date).getDate(), eachHoliday.name);
     });
@@ -234,7 +234,6 @@ const CalendarView = ({
     }
   }
 
-  console.log({ month });
   return (
     <div>
       <div className="mb-10 flex items-center justify-between">
@@ -293,38 +292,51 @@ const CalendarView = ({
                 )}>
                 <p className="absolute left-2 top-2 text-xs font-medium text-black">{date}</p>
                 {holiday && holiday[0] === date ? (
-                  <span className="w-full text-nowrap text-center text-xs font-semibold text-amber-700">
+                  <span className="w-full text-center text-xs font-semibold text-amber-700">
                     {holiday[1]}
+                    {attendanceForDate?.status === "Present" ? (
+                      <h1 className="text-base font-semibold text-green-500">
+                        {attendanceForDate.status}
+                      </h1>
+                    ) : !isFutureDate ? (
+                      <Checkbox
+                        className="absolute right-2 top-2"
+                        checked={isOptionSelected(formatedDate)}
+                        onCheckedChange={() => handleSelectChange(formatedDate)}
+                      />
+                    ) : null}
                   </span>
                 ) : attendanceForDate ? (
                   attendanceForDate.status === "Absent" ? (
-                    <span className="bg-inherit text-lg font-semibold text-red-500">Absent</span>
-                  ) : attendanceForDate.status === "Present" &&
-                    attendanceForDate.check_in_time &&
+                    <span className="bg-inherit text-base font-semibold text-red-500">Absent</span>
+                  ) : (attendanceForDate.status === "Present" && attendanceForDate.check_in_time) ||
                     attendanceForDate.check_out_time ? (
-                    <p className="absolute bottom-0 flex gap-x-4 pb-2 text-[9px] font-medium">
+                    <p className="absolute bottom-0 flex gap-x-4 whitespace-nowrap pb-2 text-xs font-semibold">
                       <span className="text-center text-green-500">
                         In <br /> {formatTime(attendanceForDate?.check_in_time)}
                       </span>
                       <span className="text-center text-red-500">
-                        Out <br /> {formatTime(attendanceForDate?.check_out_time)}
+                        Out <br />
+                        {attendanceForDate?.check_out_time
+                          ? formatTime(attendanceForDate?.check_out_time)
+                          : "Not Marked"}
                       </span>
                     </p>
-                  ) : attendanceForDate.status ? (
-                    <h1 className="text-sm text-green-500">{attendanceForDate.status}</h1>
                   ) : attendanceForDate.status === "Half Day" ? (
                     <span className="text-lg font-semibold text-[#00000080]">Half Day</span>
                   ) : attendanceForDate.status === "On Leave" ? (
                     <span className="text-lg font-semibold text-[#00000080]">On Leave</span>
                   ) : (
-                    ""
+                    <h1 className="text-base font-semibold text-green-500">
+                      {attendanceForDate.status}
+                    </h1>
                   )
                 ) : (
-                  <p className="absolute bottom-0 flex gap-x-4 pb-2 text-[9px] font-medium">
-                    <span className="px-2 text-green-500">N/A</span>
-                    <span className="px-2 text-red-500">N/A</span>
+                  <p className="mt-auto flex gap-x-4 pb-2 text-xs font-medium text-muted-foreground">
+                    <span>Not Marked</span>
                     {!isFutureDate ? (
                       <Checkbox
+                        className="absolute right-2 top-2"
                         checked={isOptionSelected(formatedDate)}
                         onCheckedChange={() => handleSelectChange(formatedDate)}
                       />
