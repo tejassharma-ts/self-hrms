@@ -20,6 +20,37 @@ import { HistoryExpensesTable } from "@/app/(dashboard)/my-team/_components/Hist
 import { MonthFilter } from "@/components/MonthFilter";
 import { YearFilter } from "@/components/YearFilter";
 import { HistoryPayrollTable } from "@/app/(dashboard)/my-team/_components/HistoryPayrollTable";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+const LeaveBalanceTable = ({ leaves }: { leaves: any }) => {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Casual Leave</TableHead>
+          <TableHead>Privilege Leave</TableHead>
+          <TableHead>Sick Leave</TableHead>
+          <TableHead>Used Privilege Leaves</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>{leaves?.employee_leave_stats.total_casual_leaves}</TableCell>
+          <TableCell>{leaves?.employee_leave_stats.privilege_leave_balance}</TableCell>
+          <TableCell>{leaves?.employee_leave_stats.sick_leave_balance}</TableCell>
+          <TableCell>{leaves?.employee_leave_stats.used_privilege_leaves}</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+};
 
 export const HistoryDetails = ({
   attendance,
@@ -50,27 +81,9 @@ export const HistoryDetails = ({
 
   return (
     <div className={""}>
-      <div className={"flex items-center justify-between"}>
-        {category === "leaves" && (
-          <div>
-            <h1 className={"text-nowrap text-xl font-bold"}>
-              Casual Leave balance : {leaves?.employee_leave_stats.total_casual_leaves}
-            </h1>
-            <h1 className={"text-nowrap text-xl font-bold"}>
-              Privilege Leave Balance : {leaves?.employee_leave_stats.privilege_leave_balance}
-            </h1>
-            <h1 className={"text-nowrap text-xl font-bold"}>
-              Sick Leave Balance : {leaves?.employee_leave_stats.sick_leave_balance}
-            </h1>
-            <h1 className={"text-nowrap text-xl font-bold"}>
-              Total Sick leaves : {leaves?.employee_leave_stats.total_sick_leaves}
-            </h1>
-            <h1 className={"text-nowrap text-xl font-bold"}>
-              Used privilege leaves : {leaves?.employee_leave_stats.used_privilege_leaves}
-            </h1>
-          </div>
-        )}
-        <div className={"flex w-full justify-end gap-x-2"}>
+      <div className={"flex items-center justify-between gap-20"}>
+        {category === "leaves" && <LeaveBalanceTable leaves={leaves} />}
+        <div className={"flex justify-end gap-x-2"}>
           <MonthFilter />
           <YearFilter />
         </div>

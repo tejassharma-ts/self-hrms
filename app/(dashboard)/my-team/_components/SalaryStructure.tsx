@@ -141,11 +141,9 @@ export default async function SalaryStructure() {
                     {/* <TableCell className="text-center"> */}
                     {/*   <Checkbox checked={data.has_pf} disabled /> */}
                     {/* </TableCell> */}
-                    <TableCell>
-                      {formatCurrency(parseFloat(data.gross_monthly_salary) / 12)}
-                    </TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.gross_monthly_salary))}</TableCell>
                     {/* <TableCell>{(parseFloat(data.total_ctc) / 12).toFixed(2)}</TableCell> */}
-                    <TableCell>{formatCurrency(parseFloat(data.total_ctc))}</TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.total_ctc) / 12)}</TableCell>
                     <TableCell>{formatCurrency(parseFloat(data.total_ctc))}</TableCell>
                   </TableRow>
                 </TooltipTrigger>

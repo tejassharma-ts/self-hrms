@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { cn, formatTime, getMonthNameFromNumber } from "@/lib/utils";
 import { attendanceTableHead, days } from "@/app/(dashboard)/my-team/constants";
+import { Checkbox } from "@/components/ui/checkbox";
 import { EmployeeAttendance } from "@/types/types";
 import {
   Table,
@@ -12,7 +13,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useSearchParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
+import useMultiSelect from "@/hooks/use-multiselect";
+import useSelectItems from "@/hooks/use-select-items";
+import { Button } from "@/components/ui/button";
+import { apiCaller } from "@/lib/auth";
+import { Icons } from "@/components/Icons";
 
 const ThreeDotsIcon = () => (
   <svg
@@ -63,8 +69,6 @@ const TableView = ({
     );
   }
 
-  console.log(holidaysInMonth);
-
   const monthName = getMonthNameFromNumber(month);
   return (
     <>
@@ -114,23 +118,28 @@ const TableView = ({
                 )}
 
                 <TableCell className="text-nowrap">
-                  {attendance.status === "Present" &&
-                  (!attendance.check_in_time || !attendance.check_out_time) ? (
-                    <div className={"relative"}>
-                      <button
-                        onClick={() => setShowActionDropdown(!showActionDropdown)}
-                        className={"text-[#0085FF]"}>
-                        Take Action
-                      </button>
-                      {showActionDropdown && (
-                        <div
-                          className={
-                            "absolute right-0 z-10 flex h-[65px] w-[106px] flex-col items-center justify-around rounded-lg border border-gray-100 bg-white"
-                          }>
-                          <p className={"text-xs text-[#3BA53B]"}>Mark Present</p>
-                          <p className={"text-xs text-[#D9282B]"}>Mark Absent</p>
-                        </div>
-                      )}
+                  {attendance.status ? (
+                    <div
+                      className={cn(
+                        "text-[#00000080]",
+                        attendance.status === "Present" && "text-green-500",
+                        attendance.status === "Absent" && "text-red-500",
+                      )}>
+                      {attendance.status}
+                      {/* <button */}
+                      {/*   onClick={() => setShowActionDropdown(!showActionDropdown)} */}
+                      {/*   className={"text-[#0085FF]"}> */}
+                      {/*   Take Action */}
+                      {/* </button> */}
+                      {/* {showActionDropdown && ( */}
+                      {/*   <div */}
+                      {/*     className={ */}
+                      {/*       "absolute right-0 z-10 flex h-[65px] w-[106px] flex-col items-center justify-around rounded-lg border border-gray-100 bg-white" */}
+                      {/*     }> */}
+                      {/*     <p className={"text-xs text-[#3BA53B]"}>Mark Present</p> */}
+                      {/*     <p className={"text-xs text-[#D9282B]"}>Mark Absent</p> */}
+                      {/*   </div> */}
+                      {/* )} */}
                     </div>
                   ) : (
                     <span
@@ -169,7 +178,13 @@ const CalendarView = ({
   holidays: any;
 }) => {
   const searchParams = useSearchParams();
+  const { refresh } = useRouter();
+  const params = useParams();
   const [showActionDropdown, setShowActionDropdown] = useState<boolean>(false);
+  const [bulkActionLoading, setBulkActionLoading] = useState(false);
+
+  const { selectedItems, handleSelectChange, isOptionSelected, clearSelectedItems } =
+    useSelectItems();
 
   const monthParam = searchParams.get("month");
   let holidaysInMonth: any[] = [];
@@ -193,10 +208,58 @@ const CalendarView = ({
 
   const daysInMonth = new Date(year, month, 0).getDate();
 
+  async function performBulkAction(status: "Present" | "Absent") {
+    try {
+      setBulkActionLoading(true);
+      const attendances = selectedItems.map((date) => ({
+        date,
+        check_in_time: null,
+        check_out_time: null,
+        status,
+        lat: null,
+        long: null,
+      }));
+
+      await apiCaller.post("/api/companies-app/attendance/employee-create/", {
+        employee_id: params.employeeId,
+        attendances,
+      });
+
+      clearSelectedItems();
+      refresh();
+    } catch (err) {
+      console.log({ err });
+    } finally {
+      setBulkActionLoading(false);
+    }
+  }
+
+  console.log({ month });
   return (
     <div>
-      <div className="mb-10 text-base font-bold text-[#585757]">
-        {monthName}, {year}
+      <div className="mb-10 flex items-center justify-between">
+        <div className="text-base font-bold text-[#585757]">
+          {monthName}, {year}
+        </div>
+        {selectedItems.length ? (
+          <div className="flex items-center space-x-4">
+            <Button
+              disabled={bulkActionLoading}
+              size="sm"
+              onClick={() => performBulkAction("Present")}>
+              {bulkActionLoading ? <Icons.loader /> : null}
+              Bulk Approve
+            </Button>
+            <Button
+              disabled={bulkActionLoading}
+              size="sm"
+              onClick={() => performBulkAction("Absent")}
+              variant="destructive">
+              {bulkActionLoading ? <Icons.loader /> : null}
+              Bulk Decline
+            </Button>
+          </div>
+        ) : null}
       </div>
       <div className="grid grid-cols-7 rounded-t-md border text-center text-xs font-medium text-black">
         {days.map((day, index) => (
@@ -217,6 +280,8 @@ const CalendarView = ({
             const isFirstColumn = currentIndex % 7 === 0;
             const isLastColumn = (currentIndex + 1) % 7 === 0;
 
+            const isFutureDate = month === new Date().getMonth() + 1 && date > new Date().getDate();
+            const formatedDate = `${year}-${month}-${date}`;
             return (
               <div
                 key={`date-${index}`}
@@ -245,34 +310,8 @@ const CalendarView = ({
                         Out <br /> {formatTime(attendanceForDate?.check_out_time)}
                       </span>
                     </p>
-                  ) : (attendanceForDate.status === "Present" &&
-                      !attendanceForDate.check_in_time) ||
-                    !attendanceForDate.check_out_time ? (
-                    <div className={"absolute h-full w-full"}>
-                      <div className={"absolute right-0 top-0"}>
-                        <div className={"relative"}>
-                          <button onClick={() => setShowActionDropdown(!showActionDropdown)}>
-                            <ThreeDotsIcon />
-                          </button>
-
-                          {showActionDropdown && (
-                            <div
-                              className={
-                                "absolute right-2 top-8 z-10 flex h-[65px] w-[106px] flex-col items-center justify-around rounded-lg border border-gray-100 bg-white"
-                              }>
-                              <p className={"text-xs text-[#3BA53B]"}>Mark Present</p>
-                              <p className={"text-xs text-[#D9282B]"}>Mark Absent</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-
-                      <p className="absolute left-3 top-1/2 text-nowrap text-xs font-medium">
-                        <span className="rounded bg-[#0085FF1A] p-2 text-center text-[#0085FF]">
-                          Take Action
-                        </span>
-                      </p>
-                    </div>
+                  ) : attendanceForDate.status ? (
+                    <h1 className="text-sm text-green-500">{attendanceForDate.status}</h1>
                   ) : attendanceForDate.status === "Half Day" ? (
                     <span className="text-lg font-semibold text-[#00000080]">Half Day</span>
                   ) : attendanceForDate.status === "On Leave" ? (
@@ -284,6 +323,12 @@ const CalendarView = ({
                   <p className="absolute bottom-0 flex gap-x-4 pb-2 text-[9px] font-medium">
                     <span className="px-2 text-green-500">N/A</span>
                     <span className="px-2 text-red-500">N/A</span>
+                    {!isFutureDate ? (
+                      <Checkbox
+                        checked={isOptionSelected(formatedDate)}
+                        onCheckedChange={() => handleSelectChange(formatedDate)}
+                      />
+                    ) : null}
                   </p>
                 )}
               </div>
