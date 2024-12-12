@@ -1,9 +1,9 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { cn, formatTime, getMonthNameFromNumber } from "@/lib/utils";
 import { attendanceTableHead, days } from "@/app/(dashboard)/my-team/constants";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EmployeeAttendance } from "@/types/types";
+import { Attendance, EmployeeAttendance } from "@/types/types";
 import {
   Table,
   TableBody,
@@ -18,6 +18,34 @@ import { Button } from "@/components/ui/button";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { toast } from "@/hooks/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 const TableView = ({
   attendance,
@@ -142,6 +170,8 @@ const CalendarView = ({
   const { refresh } = useRouter();
   const params = useParams();
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const [updateAttendace, setUpdatedAttendance] = useState(false);
+  const [prevAttendance, setPrevAttendance] = useState<Attendance | null>(null);
 
   const { selectedItems, handleSelectChange, isOptionSelected, clearSelectedItems } =
     useSelectItems();
@@ -252,6 +282,19 @@ const CalendarView = ({
                   isLastColumn && "border-r-0",
                 )}>
                 <p className="absolute left-2 top-2 text-xs font-medium text-black">{date}</p>
+
+                {/* for updated attendance */}
+                {attendanceForDate?.status ? (
+                  <span
+                    onClick={() => {
+                      setPrevAttendance(attendanceForDate);
+                      setUpdatedAttendance(true);
+                    }}
+                    className="absolute right-2 top-2 cursor-pointer">
+                    <Icons.option size={16} />
+                  </span>
+                ) : null}
+
                 {holidayForDate ? (
                   <span className="w-full text-center text-xs font-semibold text-amber-700">
                     {holidayForDate.name}
@@ -307,8 +350,149 @@ const CalendarView = ({
               </div>
             );
           })}
+          <Dialog open={updateAttendace} onOpenChange={setUpdatedAttendance}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Attendance Record</DialogTitle>
+              </DialogHeader>
+              <AttendanceForm
+                prevAttendance={prevAttendance}
+                setUpdatedAttendance={setUpdatedAttendance}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
+    </div>
+  );
+};
+
+const formSchema = z.object({
+  status: z.enum(["Present", "On Leave", "Half Day", "Absent"]).optional(),
+  check_in_time: z.string().optional(),
+  check_out_time: z.string().optional(),
+});
+
+type AttendanceFormProps = {
+  prevAttendance: Attendance | null;
+  setUpdatedAttendance: (status: boolean) => void;
+};
+
+const AttendanceForm = ({ prevAttendance, setUpdatedAttendance }: AttendanceFormProps) => {
+  const { refresh } = useRouter();
+  const form = useForm<z.infer<typeof formSchema>>({
+    mode: "onBlur",
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      status: undefined,
+      check_in_time: undefined,
+      check_out_time: undefined,
+    },
+  });
+  const [loading, setLoading] = useState(false);
+
+  if (!prevAttendance) return;
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const attendance = {
+      attendance_id: prevAttendance!.id,
+      status: values.status,
+      check_in_time: values.check_in_time,
+      check_out_time: values.check_out_time,
+    };
+    try {
+      setLoading(true);
+      await apiCaller.patch("/api/companies-app/attendance/employee-create/", {
+        ...attendance,
+      });
+      refresh();
+      setUpdatedAttendance(false);
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    form.setValue("status", prevAttendance.status);
+    form.setValue("check_in_time", prevAttendance.check_in_time?.split(":").slice(0, -1).join(":"));
+    form.setValue(
+      "check_out_time",
+      prevAttendance.check_out_time?.split(":").slice(0, -1).join(":"),
+    );
+  }, [prevAttendance]);
+
+  return (
+    <div className="rounded-lg bg-white pt-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Present">Present</SelectItem>
+                    <SelectItem value="On Leave">On Leave</SelectItem>
+                    <SelectItem value="Half Day">Half Day</SelectItem>
+                    <SelectItem value="Absent">Absent</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>Current attendance status</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="check_in_time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Check-in Time</FormLabel>
+                <FormControl>
+                  <Input type="time" {...field} />
+                </FormControl>
+                <FormDescription>Time of check-in (HH:MM)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="check_out_time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Check-out Time</FormLabel>
+                <FormControl>
+                  <Input {...field} type="time" />
+                </FormControl>
+                <FormDescription>Time of check-out (HH:MM)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex w-full justify-end">
+            <Button disabled={loading} type="submit" className="">
+              {loading ? <Icons.loader /> : null}
+              Update Attendance
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };

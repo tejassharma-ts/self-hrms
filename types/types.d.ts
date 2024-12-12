@@ -135,6 +135,7 @@ type Attendance = {
   status: "Present" | "On Leave" | "Half Day" | "Absent";
   lat: string | null;
   long: string | null;
+  id: string;
 };
 
 type EmployeeAttendance = {
