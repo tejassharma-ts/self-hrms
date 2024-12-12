@@ -29,7 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-const LeaveBalanceTable = ({ leaves }) => {
+const LeaveBalanceTable = ({ leaves }: { leaves: any }) => {
   return (
     <Table>
       <TableHeader>
