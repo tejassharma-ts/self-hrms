@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { cn, formatTime, getMonthNameFromNumber } from "@/lib/utils";
 import { attendanceTableHead, days } from "@/app/(dashboard)/my-team/constants";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -18,14 +18,7 @@ import { Button } from "@/components/ui/button";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { toast } from "@/hooks/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -170,7 +163,7 @@ const CalendarView = ({
   const { refresh } = useRouter();
   const params = useParams();
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
-  const [updateAttendace, setUpdatedAttendance] = useState(false);
+  const [updateAttendance, setUpdatedAttendance] = useState(false);
   const [prevAttendance, setPrevAttendance] = useState<Attendance | null>(null);
 
   const { selectedItems, handleSelectChange, isOptionSelected, clearSelectedItems } =
@@ -302,6 +295,10 @@ const CalendarView = ({
                       <h1 className="text-base font-semibold text-green-500">
                         {attendanceForDate.status}
                       </h1>
+                    ) : attendanceForDate?.status === "Absent" ? (
+                      <h1 className="text-base font-semibold text-red-500">
+                        {attendanceForDate.status}
+                      </h1>
                     ) : !isFutureDate ? (
                       <Checkbox
                         className="absolute right-2 top-2"
@@ -350,7 +347,7 @@ const CalendarView = ({
               </div>
             );
           })}
-          <Dialog open={updateAttendace} onOpenChange={setUpdatedAttendance}>
+          <Dialog open={updateAttendance} onOpenChange={setUpdatedAttendance}>
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>Attendance Record</DialogTitle>
@@ -384,9 +381,9 @@ const AttendanceForm = ({ prevAttendance, setUpdatedAttendance }: AttendanceForm
     mode: "onBlur",
     resolver: zodResolver(formSchema),
     defaultValues: {
-      status: undefined,
-      check_in_time: undefined,
-      check_out_time: undefined,
+      status: prevAttendance?.status ?? undefined,
+      check_in_time: prevAttendance?.check_in_time ?? undefined,
+      check_out_time: prevAttendance?.check_out_time ?? undefined,
     },
   });
   const [loading, setLoading] = useState(false);
@@ -414,14 +411,16 @@ const AttendanceForm = ({ prevAttendance, setUpdatedAttendance }: AttendanceForm
     }
   }
 
-  useEffect(() => {
-    form.setValue("status", prevAttendance.status);
-    form.setValue("check_in_time", prevAttendance.check_in_time?.split(":").slice(0, -1).join(":"));
-    form.setValue(
-      "check_out_time",
-      prevAttendance.check_out_time?.split(":").slice(0, -1).join(":"),
-    );
-  }, [prevAttendance]);
+  // useEffect(() => {
+  //   form.setValue("status", undefined);
+  //   form.setValue("check_in_time", prevAttendance.check_in_time?.split(":").slice(0, -1).join(":"));
+  //   form.setValue(
+  //     "check_out_time",
+  //     prevAttendance.check_out_time?.split(":").slice(0, -1).join(":"),
+  //   );
+  // }, [prevAttendance]);
+
+  console.log(form.getValues());
 
   return (
     <div className="rounded-lg bg-white pt-4">
