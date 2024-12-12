@@ -1,6 +1,6 @@
 "use client";
 import * as React from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -13,7 +13,11 @@ import { cn } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { monthValues } from "@/app/(dashboard)/expenses/_data/filterDataValues";
 
-export const MonthFilter = (): React.ReactNode => {
+type MonthFilterProps = {
+  month?: string;
+};
+
+export const MonthFilter = ({ month }: MonthFilterProps): React.ReactNode => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const router = useRouter();
@@ -21,6 +25,18 @@ export const MonthFilter = (): React.ReactNode => {
   const searchParams = useSearchParams();
 
   const placeholder: string = "Month";
+
+  useEffect(() => {
+    if (month && !searchParams.get("month")) {
+      const current = new URLSearchParams(Array.from(searchParams.entries()));
+      current.set("month", month);
+
+      const search = current.toString();
+      const query = search ? `?${search}` : "";
+
+      router.replace(`${pathname}${query}`);
+    }
+  }, [month, pathname, router, searchParams]);
 
   const handleValueChange = (value: string): void => {
     const current = new URLSearchParams(Array.from(searchParams.entries()));
@@ -38,7 +54,10 @@ export const MonthFilter = (): React.ReactNode => {
   };
 
   return (
-    <Select onValueChange={handleValueChange} onOpenChange={(open) => setIsOpen(open)}>
+    <Select
+      onValueChange={handleValueChange}
+      onOpenChange={(open) => setIsOpen(open)}
+      defaultValue={month || ""}>
       <SelectTrigger
         className={cn(
           "h-8 w-32 rounded-full border border-black text-center transition-colors duration-200",
