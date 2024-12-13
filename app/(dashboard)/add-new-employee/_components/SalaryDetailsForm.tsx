@@ -14,7 +14,7 @@ type SalaryDetailsFormProps = {
   employeeID?: string;
 };
 export default function SalaryDetailsForm({ salaryStructure, employeeID }: SalaryDetailsFormProps) {
-  const [salaryVariant, setSalaryVariant] = useState("component-based");
+  const [salaryVariant, setSalaryVariant] = useState("gross-based");
   const { setEmployeeField } = useAddEmployeeStore();
 
   useEffect(() => {
@@ -24,7 +24,7 @@ export default function SalaryDetailsForm({ salaryStructure, employeeID }: Salar
 
   useEffect(() => {
     if (!salaryStructure) return;
-    // setSalaryVariant(salaryStructure.is_gross_based ? "gross-based" : "component-based");
+    setSalaryVariant(salaryStructure.is_gross_based ? "gross-based" : "component-based");
   }, [salaryStructure]);
 
   return (

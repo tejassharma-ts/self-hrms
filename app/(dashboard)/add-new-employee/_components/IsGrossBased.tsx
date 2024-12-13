@@ -155,7 +155,7 @@ const isGrossBased = ({
 
       await apiCaller.post("/api/payroll_app/salary-structures/", requestBody);
       toast({
-        description: "Component-based salary successfully added",
+        description: "Gross based salary successfully added",
       });
       router.refresh();
     } catch (err) {
