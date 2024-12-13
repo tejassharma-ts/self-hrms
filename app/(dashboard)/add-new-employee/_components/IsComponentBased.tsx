@@ -121,8 +121,8 @@ const IsComponentBased = ({
 
       const requestBody = {
         employee: employeeID,
-        is_component_based: true,
-        is_gross_based: false,
+        is_component_based: false,
+        is_gross_based: true,
         gross_salary: data.basic_salary,
         // hra: data.hra || "0",
         conveyance: data.conveyance,
