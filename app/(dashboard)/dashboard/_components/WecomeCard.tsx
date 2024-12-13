@@ -53,11 +53,11 @@ export default function WelcomeCard({ className }: { className: string }) {
           check_out_time: checkOutTime,
         });
       } catch (err) {
-        const customError = new AppError(err);
-        toast({
-          description: customError.message,
-          variant: "destructive",
-        });
+        // const customError = new AppError(err);
+        // toast({
+        //   description: customError.message,
+        //   variant: "destructive",
+        // });
       }
     }
 
