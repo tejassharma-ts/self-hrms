@@ -24,6 +24,7 @@ import { isString, isValidUrl } from "@/lib/string";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useAddEmployeeStore } from "@/model/add-employee";
 import { formatAdharNumber } from "@/lib/utils";
+import AppError from "@/lib/error";
 
 const employeeSchema = z.object({
   bank_name: z
@@ -215,12 +216,11 @@ export default function AddBankDetails({ employee }: AddBankDetailsProps) {
       params.set("active_form", "salary-structure");
       router.push(`${pathname}?${params.toString()}`);
     } catch (error) {
+      const customError = new AppError(error);
       toast({
-        description: "Something went wrong while updating employee details",
+        description: customError.message,
         variant: "destructive",
       });
-
-      console.error("Error updating employee details:", error);
     } finally {
       setIsLoading(false);
     }

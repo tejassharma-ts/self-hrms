@@ -12,6 +12,7 @@ import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { parse, format } from "date-fns";
 import { cn } from "@/lib/utils";
+import AppError from "@/lib/error";
 
 type AttendanceTiming = {
   check_in_time: string | null;
@@ -47,13 +48,12 @@ export default function WelcomeCard({ className }: { className: string }) {
         const checkInTime = res.data?.check_in_time ? formatTime(res.data.check_in_time) : null;
         const checkOutTime = res.data?.check_out_time ? formatTime(res.data.check_out_time) : null;
 
-        console.log(res);
         setAttendanceTiming({
           check_in_time: checkInTime,
           check_out_time: checkOutTime,
         });
       } catch (err) {
-        console.log(err);
+        const customErr = new AppError(err);
       }
     }
 
@@ -96,32 +96,29 @@ export default function WelcomeCard({ className }: { className: string }) {
         });
         setAttendanceStatus("Checkout Out");
         toast({
-          title: "Attendance",
           description: "Your attendance is recorded",
         });
       }
+
+      const res = await apiCaller.get("/api/attendance_app/login-time/", {
+        params: {
+          employee_id: authUser?.employee_profile.id,
+        },
+      });
+      const checkInTime = res.data?.check_in_time ? formatTime(res.data.check_in_time) : null;
+      const checkOutTime = res.data?.check_out_time ? formatTime(res.data.check_out_time) : null;
+
+      setAttendanceTiming({
+        check_in_time: checkInTime,
+        check_out_time: checkOutTime,
+      });
     } catch (err) {
+      const customError = new AppError(err);
       toast({
-        title: "Attendance check",
-        description: "Can't check in. Please try again later!",
+        description: customError.message,
         variant: "destructive",
       });
     } finally {
-      try {
-        const res = await apiCaller.get("/api/attendance_app/login-time/", {
-          params: {
-            employee_id: authUser?.employee_profile.id,
-          },
-        });
-        const checkInTime = res.data?.check_in_time ? formatTime(res.data.check_in_time) : null;
-        const checkOutTime = res.data?.check_out_time ? formatTime(res.data.check_out_time) : null;
-        setAttendanceTiming({
-          check_in_time: checkInTime,
-          check_out_time: checkOutTime,
-        });
-      } catch (err) {
-        console.log("Error");
-      }
       setAttendanceLoading(false);
     }
   }
@@ -172,7 +169,7 @@ export default function WelcomeCard({ className }: { className: string }) {
         className,
       )}>
       {/* <img src="/background.png" className="absolute inset-0 w-full h-full"/> */}
-      <img src="/texture.png" className="absolute inset-0 w-full h-full"/>
+      <img src="/texture.png" className="absolute inset-0 h-full w-full" />
       {/* <div className="absolute inset-0 bg-opacity-50" /> */}
       <CardContent className="relative z-10 flex h-full flex-col p-6">
         <div className="flex-grow">

@@ -140,7 +140,6 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
                         {isDeleteLoading && <Icons.loader />}
                         <span>Cancel</span>
                       </DropdownMenuItem>
-                      {/* <DropdownMenuItem>Edit</DropdownMenuItem> */}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -166,7 +165,6 @@ function Meetings({ selectedDate }: { selectedDate: any }) {
           </Card>
         ))}
       </ScrollArea>
-      {/* <AddNewEvent setMeetings={setMeetings} className="absolute bottom-0 w-full" /> */}
       <AddNewEvent className="mt-2 w-full" />
     </>
   );
@@ -198,29 +196,7 @@ type EmployeeApplication = {
 
 function Interviews({ selectedDate }: { selectedDate: any }) {
   const [isLoading, setIsLoading] = useState(true);
-  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
   const { interviews, setInterviews } = useEventStore();
-
-  async function removeEvent(meetindID: string) {
-    return;
-    try {
-      setIsDeleteLoading(true);
-      await apiCaller.delete("/api/employees-app/event-meetings/", {
-        params: {
-          event_id: meetindID,
-        },
-      });
-      const filteredEvents = interviews.filter((meeting) => meeting.id !== meetindID);
-      setInterviews(filteredEvents);
-    } catch (err) {
-      toast({
-        description: "Failed to remove events",
-        variant: "destructive",
-      });
-    } finally {
-      setIsDeleteLoading(false);
-    }
-  }
 
   useEffect(() => {
     async function getMeetings() {
@@ -282,31 +258,13 @@ function Interviews({ selectedDate }: { selectedDate: any }) {
                       <span>{meeting?.is_selected}</span>
                     </div>
                   </div>
-                  {/* <DropdownMenu> */}
-                  {/*   <DropdownMenuTrigger> */}
-                  {/*     <Icons.option size={15} /> */}
-                  {/*   </DropdownMenuTrigger> */}
-                  {/*   <DropdownMenuContent> */}
-                  {/*     <DropdownMenuItem */}
-                  {/*       className="flex space-x-2 text-destructive" */}
-                  {/*       onClick={() => removeEvent(meeting.id)}> */}
-                  {/*       {isDeleteLoading && <Icons.loader />} */}
-                  {/*       <span>Cancel</span> */}
-                  {/*     </DropdownMenuItem> */}
-                  {/*     <DropdownMenuItem>Edit</DropdownMenuItem> */}
-                  {/*   </DropdownMenuContent> */}
-                  {/* </DropdownMenu> */}
                 </div>
               </div>
             </CardContent>
           </Card>
         ))}
       </ScrollArea>
-      <AddNewEvent
-        className="absolute bottom-0 w-full"
-        defaultForm="interview"
-      />
-      {/* <AddNewInterview setMeetings={setInterviews} className="absolute bottom-0 w-full" /> */}
+      <AddNewEvent className="absolute bottom-0 w-full" defaultForm="interview" />
     </>
   );
 }

@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "@/hooks/use-toast";
 import { apiCaller } from "@/lib/auth";
+import AppError from "@/lib/error";
 
 type EventsDataApi = {
   [key: string]: {
@@ -112,8 +113,12 @@ export default function CustomCalendar() {
       });
       let activeMonth = Object.keys(res.data)[0] as string;
       setEvents(res.data[activeMonth] ? res.data[activeMonth] : []);
-    } catch (error) {
-      console.error("Failed to fetch filtered data:", error);
+    } catch (err) {
+      const customError = new AppError(err);
+      toast({
+        description: customError.message,
+        variant: "destructive",
+      });
     }
   }
 

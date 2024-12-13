@@ -17,9 +17,10 @@ import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
-import useEmployeeStore from "@/model/employee";
 import { Icons } from "@/components/Icons";
 import { useAddEmployeeStore } from "@/model/add-employee";
+import { formatCurrency } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const ComponentSalarySchema = z.object({
   basic_salary: z
@@ -34,18 +35,6 @@ const ComponentSalarySchema = z.object({
       },
     )
     .optional(),
-  // hra: z
-  //   .string()
-  //   .refine(
-  //     (val) => {
-  //       const parsed = parseFloat(val);
-  //       return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
-  //     },
-  //     {
-  //       message: "HRA must be a positive number not exceeding 99,999,999.99.",
-  //     },
-  //   )
-  //   .optional(),
   allowances: z.string().optional(),
   medical: z
     .string()
@@ -81,6 +70,7 @@ const ComponentSalarySchema = z.object({
   has_esi: z.boolean().optional(),
   has_pf: z.boolean().optional(),
   has_medical_allowance: z.boolean().optional(),
+  has_lwf: z.boolean().optional(),
 });
 
 type ComponentSalaryFormValues = z.infer<typeof ComponentSalarySchema>;
@@ -94,6 +84,7 @@ const IsComponentBased = ({
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { form: formStore } = useAddEmployeeStore();
+  const router = useRouter();
 
   const form = useForm<ComponentSalaryFormValues>({
     resolver: zodResolver(ComponentSalarySchema),
@@ -114,6 +105,7 @@ const IsComponentBased = ({
       has_special_allowance: salaryStructure?.has_special_allowance || false,
       has_esi: salaryStructure?.has_esi || false,
       has_pf: salaryStructure?.has_pf || false,
+      has_lwf: salaryStructure?.has_lwf || false,
     },
   });
 
@@ -146,12 +138,14 @@ const IsComponentBased = ({
         has_special_allowance: data.has_special_allowance,
         has_esi: data.has_esi,
         has_pf: data.has_pf,
+        has_lwf: data.has_lwf,
       };
 
       await apiCaller.post("/api/payroll_app/salary-structures/", requestBody);
       toast({
         description: "Component-based salary successfully added",
       });
+      router.refresh();
     } catch (err) {
       console.error(err);
       toast({
@@ -163,18 +157,7 @@ const IsComponentBased = ({
     }
   }
 
-  const fields: Array<{ name: keyof ComponentSalaryFormValues; label: string }> = [
-    { name: "has_hra", label: "HRA" },
-    { name: "has_lta", label: "LTA" },
-    // { name: "has_allowances", label: "Allowances" },
-    { name: "has_medical_allowance", label: "Medical Allowances" },
-    { name: "has_conveyance", label: "Conveyance" },
-    { name: "has_bonus", label: "Bonus" },
-    { name: "has_special_allowance", label: "Other Allowance" },
-    { name: "has_esi", label: "ESIC" },
-    { name: "has_pf", label: "PF" },
-  ];
-
+  const conveyanceChecked = form.watch("conveyance");
   return (
     <>
       <DefaultSetting />
@@ -194,30 +177,6 @@ const IsComponentBased = ({
                 </FormItem>
               )}
             />
-            {/* <FormField */}
-            {/*   control={form.control} */}
-            {/*   name="hra" */}
-            {/*   render={({ field }) => ( */}
-            {/*     <FormItem> */}
-            {/*       <FormLabel>HRA</FormLabel> */}
-            {/*       <FormControl> */}
-            {/*         <Input placeholder="Enter HRA" {...field} /> */}
-            {/*       </FormControl> */}
-            {/*     </FormItem> */}
-            {/*   )} */}
-            {/* /> */}
-            {/* <FormField */}
-            {/*   control={form.control} */}
-            {/*   name="allowances" */}
-            {/*   render={({ field }) => ( */}
-            {/*     <FormItem> */}
-            {/*       <FormLabel>Allowance</FormLabel> */}
-            {/*       <FormControl> */}
-            {/*         <Input placeholder="Enter  allowance" {...field} /> */}
-            {/*       </FormControl> */}
-            {/*     </FormItem> */}
-            {/*   )} */}
-            {/* /> */}
             <FormField
               control={form.control}
               name="medical"
@@ -244,28 +203,16 @@ const IsComponentBased = ({
                 </FormItem>
               )}
             />
-            {/* <FormField */}
-            {/*   control={form.control} */}
-            {/*   name="lta" */}
-            {/*   render={({ field }) => ( */}
-            {/*     <FormItem> */}
-            {/*       <FormLabel>LTA</FormLabel> */}
-            {/*       <FormControl> */}
-            {/*         <Input placeholder="Enter lta" {...field} /> */}
-            {/*       </FormControl> */}
-            {/*     </FormItem> */}
-            {/*   )} */}
-            {/* /> */}
           </div>
           <div className="flex flex-col">
             <h1 className="my-8 font-medium">Select the modules you would like to enable.</h1>
             <div className="flex flex-col gap-4">
-              {fields.map(({ name, label }) => (
-                <div className="">
+              <div className="grid grid-cols-2">
+                <div className="flex flex-col space-y-4">
+                  <h1 className="font-semibold italic">Earrings</h1>
                   <FormField
-                    key={name}
                     control={form.control}
-                    name={name}
+                    name="has_hra"
                     render={({ field }) => (
                       <FormItem>
                         <div className="flex items-center gap-2">
@@ -273,20 +220,215 @@ const IsComponentBased = ({
                             <Checkbox
                               checked={!!field.value}
                               onCheckedChange={field.onChange}
-                              id={name}
+                              id="has_hra"
                             />
                           </FormControl>
-                          <FormLabel htmlFor={name} className="text-base">
-                            {label}
+                          <FormLabel htmlFor="has_hra" className="text-base">
+                            HRA
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="has_medical_allowance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_medical_allowance"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
+                            Medical Allowance
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="has_conveyance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!conveyanceChecked || !!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_conveyance"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_conveyance" className="text-base">
+                            Conveyance
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="has_special_allowance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_special_allowance"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_special_allowance" className="text-base">
+                            Other Allowance
                           </FormLabel>
                         </div>
                       </FormItem>
                     )}
                   />
                 </div>
-              ))}
+                <div className="mt-10 flex flex-col space-y-4">
+                  <h1>{formatCurrency(salaryStructure?.hra) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.conveyance) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.special_allowance) || "-"}</h1>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2">
+                <div className="flex flex-col space-y-4">
+                  <h1 className="font-semibold italic">Statutory Benefits</h1>
+                  <FormField
+                    control={form.control}
+                    name="has_pf"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_pf"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_pf" className="text-base">
+                            Provident Fund (PF) 
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="has_esi"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_esi"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_esi" className="text-base">
+                            Employee State Insurance (ESIC)
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mt-10 flex flex-col space-y-4">
+                  <h1>
+                    {formatCurrency(
+                      salaryStructure?.employee_contribution_pf &&
+                        salaryStructure?.employee_contribution_pf * 12,
+                    ) || "-"}
+                  </h1>
+                  <h1>{formatCurrency(salaryStructure?.employee_contribution_esi) || "-"}</h1>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2">
+                <div className="flex flex-col space-y-4">
+                  <h1 className="font-semibold italic">Other Benefits</h1>
+                  <FormField
+                    control={form.control}
+                    name="has_lta"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_lta"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_lta" className="text-base">
+                            LTA
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="has_lwf"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_lwf"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_lwf" className="text-base">
+                            LWF
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="has_bonus"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_bonus"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_bonus" className="text-base">
+                            Bonus
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="mt-10 flex flex-col space-y-4">
+                  <h1>{formatCurrency(salaryStructure?.lta) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.lwf) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.bonuses) || "-"}</h1>
+                </div>
+              </div>
             </div>
           </div>
+
           {!salaryStructure ? (
             <div className="flex justify-center">
               <Button type="submit" className="mt-4" disabled={isLoading}>

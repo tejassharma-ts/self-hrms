@@ -29,20 +29,13 @@ import { apiCaller } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ScheduleInterview from "./ScheduleInterview";
-import {
-  Command,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-  CommandShortcut,
-} from "@/components/ui/command";
+import { Command, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { useDebouncedCallback } from "use-debounce";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import MemberTooltip, { MemberAvatar } from "@/components/member-tooltip";
 import { DialogClose } from "@radix-ui/react-dialog";
 import useMultiSelect from "@/hooks/use-multiselect";
 import useEventStore from "@/model/events";
-import { Meeting } from "@/types/dashboard";
 
 const eventSchema = z.object({
   title: z
@@ -179,12 +172,6 @@ function ScheduleMeetingForm({ setShowDialog }: ScheduleMeetingFormProps) {
           search: value,
         },
       });
-
-      // const employees = res.data.map((employee: Employee) => ({
-      //   ...employee,
-      //   label: employee.name,
-      //   value: employee.name,
-      // }));
 
       setEmployees(res.data);
     } catch (err) {
