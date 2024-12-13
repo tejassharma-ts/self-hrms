@@ -254,8 +254,7 @@ export default function LeaveRequestOption({
               You can later mark this leave as rejected
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-row justify-center gap-4">
             <AlertDialogAction
               onClick={async (e) => {
                 e.preventDefault();
@@ -271,6 +270,7 @@ export default function LeaveRequestOption({
               {isApproveLoading && <Icons.loader className="mr-2" />}
               Approve
             </AlertDialogAction>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
