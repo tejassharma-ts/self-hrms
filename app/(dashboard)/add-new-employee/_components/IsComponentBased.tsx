@@ -344,12 +344,7 @@ const IsComponentBased = ({
                   />
                 </div>
                 <div className="mt-10 flex flex-col space-y-4">
-                  <h1>
-                    {formatCurrency(
-                      salaryStructure?.employee_contribution_pf &&
-                        salaryStructure?.employee_contribution_pf * 12,
-                    ) || "-"}
-                  </h1>
+                  <h1>{formatCurrency(salaryStructure?.employee_contribution_pf) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.employee_contribution_esi) || "-"}</h1>
                 </div>
               </div>
