@@ -479,7 +479,11 @@ export default function LeaveRequestOption({
                     </div>
                     <div className="flex flex-col gap-2">
                       <Label>Duration</Label>
-                      <Input disabled placeholder="-" className="disabled:opacity-100" />
+                      <Input
+                        disabled
+                        placeholder={leaveRequest.leave_duration || "-"}
+                        className="disabled:opacity-100"
+                      />
                     </div>
                   </div>
                 </div>

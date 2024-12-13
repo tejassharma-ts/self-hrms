@@ -37,7 +37,7 @@ const formSchema = z.object({
   employee: z.string().min(2).max(50),
   pay_date: z.instanceof(Date),
   arrears_amount: z.string(),
-  arrears_month: z.instanceof(Date),
+  arrears_month: z.instanceof(Date).optional(),
 });
 
 export default function AddPayroll() {
@@ -66,7 +66,9 @@ export default function AddPayroll() {
       await apiCaller.post("/api/payroll_app/payrolls/", {
         ...values,
         pay_date: format(values.pay_date, "yyyy-MM-dd"),
-        arrears_month: format(values.arrears_month, "yyyy-MM-dd"),
+        arrears_month: values.arrears_month
+          ? format(values.arrears_month, "yyyy-MM-dd")
+          : undefined,
         salary_structure: salary.id,
       });
       router.refresh();
