@@ -20,6 +20,7 @@ import { SigninFormSchema } from "@/validations/auth";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import { publicApiCaller } from "@/lib/auth";
+import AppError from "@/lib/error";
 
 interface UserSigninFromProps extends React.HTMLAttributes<HTMLDivElement> {
   className?: string;
@@ -49,9 +50,10 @@ export default function UserSigninForm({ className, actionText, ...props }: User
       params.set("email", formData.email);
       replace(`${pathname}?${params.toString()}`);
     } catch (err: any) {
+      const customError = new AppError(err)
       toast({
         title: "Authentication",
-        description: "Something went wrong please try again later.",
+        description: customError.message,
         variant: "destructive",
       });
     } finally {

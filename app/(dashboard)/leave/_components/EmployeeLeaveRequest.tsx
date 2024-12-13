@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -95,7 +94,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
   }
 
   if (!leaveRequest) {
-    return <h1>Opps</h1>;
+    return <h1>OOPS...</h1>;
   }
 
   return (
@@ -196,8 +195,8 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                     </div>
                   ) : (
                     <div className="flex items-center space-x-2">
-                      <span className="flex size-6 items-center justify-center rounded-full ">
-                        <Icons.pending className="text-white fill-[#9d9d9d]" size={30} />
+                      <span className="flex size-6 items-center justify-center rounded-full">
+                        <Icons.pending className="fill-[#9d9d9d] text-white" size={30} />
                       </span>
                       <span className="font-medium text-black">Pending</span>
                     </div>

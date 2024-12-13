@@ -6,6 +6,7 @@ import EmployeePayroll from "../_components/EmployePayroll";
 import { apiCaller } from "@/lib/auth";
 import { Payroll } from "@/types/types";
 import { cookies } from "next/headers";
+import { toast } from "@/hooks/use-toast";
 
 export const dynamic = "force-dynamic";
 
@@ -26,6 +27,10 @@ async function getPayroll({ year, id }: { year: number; id: string }) {
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting payroll.",
+      variant: "destructive",
+    });
     throw new Error(`Error getPayroll: ${err}`);
   }
 }

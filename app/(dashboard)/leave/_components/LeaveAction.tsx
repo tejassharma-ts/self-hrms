@@ -46,6 +46,7 @@ import { apiCaller } from "@/lib/auth";
 import { isAppPageRouteDefinition } from "next/dist/server/future/route-definitions/app-page-route-definition";
 import { Label } from "@/components/ui/label";
 import { MemberAvatar } from "@/components/member-tooltip";
+import AppError from "@/lib/error";
 
 type LeaveRequestOptionProps = {
   leaveRequest?: LeaveRequest;
@@ -134,8 +135,9 @@ export default function LeaveRequestOption({
       //   clearSelectedLeaves();
       // }
     } catch (err) {
+      const customError = new AppError(err);
       toast({
-        description: "Something went wrong. Please try again later!",
+        description: customError.message,
         variant: "destructive",
       });
     } finally {
@@ -156,8 +158,9 @@ export default function LeaveRequestOption({
       });
       router.refresh();
     } catch (err) {
+      const customError = new AppError(err);
       toast({
-        description: "Something went wrong. Please try again later!",
+        description: customError.message,
         variant: "destructive",
       });
     } finally {
@@ -191,8 +194,9 @@ export default function LeaveRequestOption({
       });
       router.refresh();
     } catch (err) {
+      const customError = new AppError(err);
       toast({
-        description: "Something went wrong. Please try again later!",
+        description: customError.message,
         variant: "destructive",
       });
     } finally {
@@ -250,8 +254,7 @@ export default function LeaveRequestOption({
               You can later mark this leave as rejected
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogFooter className="flex-row justify-center gap-4">
             <AlertDialogAction
               onClick={async (e) => {
                 e.preventDefault();
@@ -267,6 +270,7 @@ export default function LeaveRequestOption({
               {isApproveLoading && <Icons.loader className="mr-2" />}
               Approve
             </AlertDialogAction>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

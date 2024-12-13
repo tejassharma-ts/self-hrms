@@ -12,11 +12,13 @@ import { payrollTableHead } from "@/app/(dashboard)/payroll/constant";
 import { YearFilter } from "@/components/YearFilter";
 
 export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React.ReactNode => {
+  const currentYear: number = new Date().getFullYear();
+
   return (
     <>
       <div className="mb-3 flex items-center justify-between gap-x-4">
         <h2 className="text-lg font-semibold">Payroll History</h2>
-        <YearFilter />
+        <YearFilter year={currentYear} />
       </div>
       <div className="rounded-md border">
         <Table>

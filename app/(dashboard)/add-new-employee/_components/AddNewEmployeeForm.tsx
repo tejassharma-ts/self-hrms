@@ -20,7 +20,6 @@ import { apiCaller } from "@/lib/auth";
 import { toast } from "@/hooks/use-toast";
 import { useClientAuth } from "@/context/auth-context";
 import { Icons } from "@/components/Icons";
-import useEmployeeStore from "@/model/employee";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Switch } from "@/components/ui/switch";
 import { Card, CardContent } from "@/components/ui/card";
@@ -40,8 +39,9 @@ import {
 } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useAddEmployeeStore } from "@/model/add-employee";
-import { isString, isValidUrl } from "@/lib/string";
+import { isString } from "@/lib/string";
 import DepartmentSelector from "@/components/department-selector";
+import AppError from "@/lib/error";
 
 const phoneNumberSchema = z
   .string()
@@ -239,9 +239,9 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
         });
       }
     } catch (err) {
-      console.log(err);
+      const customError = new AppError(err);
       toast({
-        description: "Something went very wrong",
+        description: customError.message,
         variant: "destructive",
       });
     } finally {

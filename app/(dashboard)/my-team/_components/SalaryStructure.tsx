@@ -115,11 +115,11 @@ export default async function SalaryStructure() {
                     {/*   </Avatar> */}
                     {/* </TableCell> */}
                     <TableCell>{formatCurrency(parseFloat(data.basic_salary))}</TableCell>
-                    <TableCell>{data.hra}</TableCell>
-                    <TableCell>{data.conveyance}</TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.hra))}</TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.conveyance))}</TableCell>
                     {/* <TableCell>{data.allowances}</TableCell> */}
-                    <TableCell>{data.special_allowance}</TableCell>
-                    <TableCell>{data.bonuses}</TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.special_allowance))}</TableCell>
+                    <TableCell>{formatCurrency(parseFloat(data.bonuses))}</TableCell>
                     {/* <TableCell className="text-center"> */}
                     {/*   <Checkbox checked={data.has_bonus} disabled /> */}
                     {/* </TableCell> */}
@@ -148,7 +148,7 @@ export default async function SalaryStructure() {
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>
-                  <Button className="relative" variant="ghost">
+                  <Button className="relative" variant="outline">
                     Edit employee
                     <Link
                       href={`my-team/employee-profile/${data.employee.id}/?tab=person-details`}

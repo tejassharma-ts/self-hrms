@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Table,
   TableBody,
@@ -8,10 +7,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { apiCaller } from "@/lib/auth";
-// import { getAuthCookies } from "@/lib/server/api";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Checkbox } from "@/components/ui/checkbox";
-import { formatISODate, getFullName } from "@/lib/utils";
+import { getFullName } from "@/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -68,7 +65,7 @@ async function getAllStaff() {
 export default async function StaffDetails() {
   const staffs = await getAllStaff();
   if (!staffs) {
-    return <h1>Opps</h1>;
+    return <h1>OOPS</h1>;
   }
 
   return (
@@ -144,7 +141,7 @@ export default async function StaffDetails() {
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>
-                  <Button className="relative" variant="ghost">
+                  <Button className="relative" variant="outline">
                     Edit employee
                     <Link
                       href={`my-team/employee-profile/${data.id}/?tab=person-details`}

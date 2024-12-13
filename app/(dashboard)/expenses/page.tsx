@@ -2,7 +2,7 @@ import React from "react";
 import { MonthFilter } from "@/components/MonthFilter";
 import { YearFilter } from "@/components/YearFilter";
 import { apiCaller } from "@/lib/auth";
-import { getMonthNumber } from "@/lib/utils";
+import { formatCurrency, getMonthNameFromNumber, getMonthNumber } from "@/lib/utils";
 import { Expenses } from "@/types/types";
 import { cookies } from "next/headers";
 import { ExpenseCard } from "@/app/(dashboard)/expenses/_components/ExpenseCard";
@@ -58,23 +58,26 @@ async function getExpenses(status?: string, month?: number, year?: number): Prom
 
 const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<React.ReactNode> => {
   const { month, year, status } = searchParams;
+  const monthNumber = month && getMonthNumber(month);
+  const currentYear = new Date().getFullYear();
+  const currentMonth = new Date().getMonth();
+  const updatedMonth = monthNumber ? monthNumber : currentMonth + 1;
+  const updatedYear = year ? year : currentYear;
+  const monthName = getMonthNameFromNumber(updatedMonth);
 
-  const updatedMonth = month ? getMonthNumber(month) : undefined;
-  const expensesEmployeeData: Expenses = await getExpenses(status, updatedMonth, year);
+  const expensesEmployeeData: Expenses = await getExpenses(status, updatedMonth, updatedYear);
+  const pendingTotal = formatCurrency(expensesEmployeeData?.pending_total) || "N/A";
+  const approvedTotal = formatCurrency(expensesEmployeeData?.approved_total) || "N/A";
+  const totalExpenses =
+    formatCurrency(expensesEmployeeData?.pending_total + expensesEmployeeData?.approved_total) ||
+    "N/A";
 
   return (
     <>
       <div className={"mb-10 grid grid-cols-4 gap-4"}>
-        <ExpenseCard heading={"Pending Expenses"} money={`${expensesEmployeeData.pending_total}`} />
-        <ExpenseCard
-          heading={"Approved Expenses"}
-          money={`${expensesEmployeeData.approved_total}`}
-        />
-        <ExpenseCard
-          isLast
-          heading={"Total Expenses"}
-          money={`${expensesEmployeeData.approved_total + expensesEmployeeData.pending_total}`}
-        />
+        <ExpenseCard heading={"Pending Expenses"} money={pendingTotal} />
+        <ExpenseCard heading={"Approved Expenses"} money={approvedTotal} />
+        <ExpenseCard isLast heading={"Total Expenses"} money={totalExpenses} />
         <div className={"col-span-1 mx-auto"}>
           <ExpensesStatusFilter />
         </div>
@@ -82,8 +85,8 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
 
       <div className="w-full">
         <div className="mb-10 flex justify-end gap-x-4">
-          <MonthFilter />
-          <YearFilter />
+          <MonthFilter month={monthName} />
+          <YearFilter year={updatedYear} />
         </div>
         <div>
           <div className="rounded-md border">
@@ -97,20 +100,20 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
               </TableHeader>
               <TableBody>
                 {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
-                  <TableRow key={eachExpensesEmployeeData.id} className="relative">
+                  <TableRow key={eachExpensesEmployeeData?.id} className="relative">
                     <TableCell className={"text-nowrap"}>
-                      {eachExpensesEmployeeData.employee.id.replaceAll("-", " ")}
+                      {eachExpensesEmployeeData?.employee?.id.replaceAll("-", " ")}
                     </TableCell>
-                    <TableCell>{eachExpensesEmployeeData.employee.first_name}</TableCell>
-                    <TableCell>{eachExpensesEmployeeData.employee.department}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData?.employee?.first_name}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData?.employee?.department}</TableCell>
                     <TableCell className={"text-nowrap"}>
-                      {eachExpensesEmployeeData.date_incurred}
+                      {eachExpensesEmployeeData?.date_incurred}
                     </TableCell>
-                    <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
-                    <TableCell>{eachExpensesEmployeeData.amount}</TableCell>
-                    <TableCell>{eachExpensesEmployeeData.status}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData?.amount}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData?.amount}</TableCell>
+                    <TableCell>{eachExpensesEmployeeData?.status}</TableCell>
                     <Link
-                      href={`/expenses/${eachExpensesEmployeeData.employee.id}`}
+                      href={`/expenses/${eachExpensesEmployeeData?.employee.id}`}
                       className="absolute inset-0"
                     />
                   </TableRow>

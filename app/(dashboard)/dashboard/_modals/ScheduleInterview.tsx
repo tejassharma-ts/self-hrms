@@ -1,6 +1,5 @@
 "use client";
 
-import { Dispatch, SetStateAction } from "react";
 import { cn, combineDateAndTime } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -142,21 +141,21 @@ export default function ScheduleInterview({ setShowDialog }: ScheduleInterviewPr
     shouldFocusError: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
-      first_name: "Tejas",
-      last_name: "Sharma",
-      email: "tejassharma2021@outlook.com",
-      phone: "6398284253",
-      qualification: "Graduation",
-      address: "Earth",
+      first_name: "",
+      last_name: "",
+      email: "",
+      phone: "",
+      qualification: "",
+      address: "",
       gender: "Male",
-      position_applied: "Eng",
-      previous_company_name: "Sun",
-      previous_salary: "300000",
+      position_applied: "",
+      previous_company_name: "",
+      previous_salary: "",
       interview_date: new Date(),
-      status: "Pending",
+      status: undefined,
       is_selected: undefined,
       department: "",
-      meeting_link: "http://localhost:3000/dashboard",
+      meeting_link: "",
     },
   });
 

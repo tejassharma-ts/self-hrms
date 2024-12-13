@@ -28,16 +28,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { getMonthNameFromNumber } from "@/lib/utils";
+
+const tableHeadValues: string[] = [
+  "Casual Leave",
+  "Privilege Leave",
+  "Sick Leave",
+  "Used Privilege Leaves",
+];
 
 const LeaveBalanceTable = ({ leaves }: { leaves: any }) => {
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Casual Leave</TableHead>
-          <TableHead>Privilege Leave</TableHead>
-          <TableHead>Sick Leave</TableHead>
-          <TableHead>Used Privilege Leaves</TableHead>
+          {tableHeadValues.map((eachTableHead: string, index: number) => (
+            <TableHead key={index}>{eachTableHead}</TableHead>
+          ))}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -78,14 +85,15 @@ export const HistoryDetails = ({
   const employeeId = employeeProfile.id;
   const searchParams = useSearchParams();
   const category = searchParams.get("category");
+  const monthName = getMonthNameFromNumber(month);
 
   return (
-    <div className={""}>
+    <div>
       <div className={"flex items-center justify-between gap-20"}>
         {category === "leaves" && <LeaveBalanceTable leaves={leaves} />}
         <div className={"flex justify-end gap-x-2"}>
-          <MonthFilter />
-          <YearFilter />
+          <MonthFilter month={monthName} />
+          <YearFilter year={year} />
         </div>
       </div>
       <HistoryTabs employeeId={employeeId} />

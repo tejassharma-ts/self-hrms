@@ -7,7 +7,6 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import { MeetingDetailsTab } from "@/app/(dashboard)/dashboard/_components/MeetingDetailsTab";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   startOfWeek,
   eachDayOfInterval,

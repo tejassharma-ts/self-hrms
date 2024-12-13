@@ -107,7 +107,7 @@ export default async function BankDetails() {
                   </TableRow>
                 </TooltipTrigger>
                 <TooltipContent align="end" asChild sideOffset={-10}>
-                  <Button className="relative" variant="ghost">
+                  <Button className="relative" variant="outline">
                     Edit employee
                     <Link
                       href={`my-team/employee-profile/${data.id}/?tab=person-details`}

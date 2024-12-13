@@ -1,10 +1,9 @@
 "use client";
-
 import React, { useState } from "react";
 import { cn, formatTime, getMonthNameFromNumber } from "@/lib/utils";
 import { attendanceTableHead, days } from "@/app/(dashboard)/my-team/constants";
 import { Checkbox } from "@/components/ui/checkbox";
-import { EmployeeAttendance } from "@/types/types";
+import { Attendance, EmployeeAttendance } from "@/types/types";
 import {
   Table,
   TableBody,
@@ -14,34 +13,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import useMultiSelect from "@/hooks/use-multiselect";
 import useSelectItems from "@/hooks/use-select-items";
 import { Button } from "@/components/ui/button";
 import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
-
-const ThreeDotsIcon = () => (
-  <svg
-    width="4"
-    height="13"
-    viewBox="0 0 4 13"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className="absolute right-2 top-2">
-    <path
-      d="M3.67853 1.61514C3.67853 2.50716 2.9554 3.23028 2.06338 3.23028C1.17137 3.23028 0.448242 2.50716 0.448242 1.61514C0.448242 0.723124 1.17137 0 2.06338 0C2.9554 0 3.67853 0.723124 3.67853 1.61514Z"
-      fill="#C5C6D0"
-    />
-    <path
-      d="M3.67853 6.46057C3.67853 7.35259 2.9554 8.07571 2.06338 8.07571C1.17137 8.07571 0.448242 7.35259 0.448242 6.46057C0.448242 5.56855 1.17137 4.84543 2.06338 4.84543C2.9554 4.84543 3.67853 5.56855 3.67853 6.46057Z"
-      fill="#C5C6D0"
-    />
-    <path
-      d="M2.06338 12.9211C2.9554 12.9211 3.67853 12.198 3.67853 11.306C3.67853 10.414 2.9554 9.69085 2.06338 9.69085C1.17137 9.69085 0.448242 10.414 0.448242 11.306C0.448242 12.198 1.17137 12.9211 2.06338 12.9211Z"
-      fill="#C5C6D0"
-    />
-  </svg>
-);
+import { toast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+import AppError from "@/lib/error";
 
 const TableView = ({
   attendance,
@@ -55,7 +53,6 @@ const TableView = ({
   year: number;
 }) => {
   const searchParams = useSearchParams();
-  const [showActionDropdown, setShowActionDropdown] = useState<boolean>(false);
 
   const monthParam = searchParams.get("month");
   let holidaysInMonth: { date: string; name: string }[] = [];
@@ -126,20 +123,6 @@ const TableView = ({
                         attendance.status === "Absent" && "text-red-500",
                       )}>
                       {attendance.status}
-                      {/* <button */}
-                      {/*   onClick={() => setShowActionDropdown(!showActionDropdown)} */}
-                      {/*   className={"text-[#0085FF]"}> */}
-                      {/*   Take Action */}
-                      {/* </button> */}
-                      {/* {showActionDropdown && ( */}
-                      {/*   <div */}
-                      {/*     className={ */}
-                      {/*       "absolute right-0 z-10 flex h-[65px] w-[106px] flex-col items-center justify-around rounded-lg border border-gray-100 bg-white" */}
-                      {/*     }> */}
-                      {/*     <p className={"text-xs text-[#3BA53B]"}>Mark Present</p> */}
-                      {/*     <p className={"text-xs text-[#D9282B]"}>Mark Absent</p> */}
-                      {/*   </div> */}
-                      {/* )} */}
                     </div>
                   ) : (
                     <span
@@ -180,26 +163,25 @@ const CalendarView = ({
   const searchParams = useSearchParams();
   const { refresh } = useRouter();
   const params = useParams();
-  const [showActionDropdown, setShowActionDropdown] = useState<boolean>(false);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const [updateAttendance, setUpdatedAttendance] = useState(false);
+  const [prevAttendance, setPrevAttendance] = useState<Attendance | null>(null);
 
   const { selectedItems, handleSelectChange, isOptionSelected, clearSelectedItems } =
     useSelectItems();
 
   const monthParam = searchParams.get("month");
-  let holidaysInMonth: any[] = [];
+  let h: { name: string; date: number }[] = [];
 
-  if (monthParam)
-    holidays[monthParam]?.map((eachHoliday: any) => {
-      holidaysInMonth.push(new Date(eachHoliday.date).getDate(), eachHoliday.name);
-    });
+  if (monthParam) {
+    h = (holidays[monthParam] || []).map((eachHoliday: any) => ({
+      name: eachHoliday.name,
+      date: new Date(eachHoliday.date).getDate(),
+    }));
+  }
 
   const getAttendanceForDate = (date: number) => {
     return attendance.attendances.find((att) => parseInt(att.date.split("-")[2]) === date);
-  };
-
-  const getHoliday = (date: number) => {
-    return holidaysInMonth[0] === date && holidaysInMonth;
   };
 
   const monthName = getMonthNameFromNumber(month);
@@ -227,8 +209,12 @@ const CalendarView = ({
 
       clearSelectedItems();
       refresh();
-    } catch (err) {
-      console.log({ err });
+    } catch (error) {
+      const customError = new AppError(error);
+      toast({
+        description: customError.message,
+        variant: "destructive",
+      });
     } finally {
       setBulkActionLoading(false);
     }
@@ -273,11 +259,11 @@ const CalendarView = ({
 
           {[...Array(daysInMonth)].map((_, index) => {
             const date = index + 1;
-            const holiday = getHoliday(date);
             const attendanceForDate = getAttendanceForDate(date);
             const currentIndex = index + firstDayOfMonth;
             const isFirstColumn = currentIndex % 7 === 0;
             const isLastColumn = (currentIndex + 1) % 7 === 0;
+            const holidayForDate = h.find((holiday) => holiday.date === date);
 
             const isFutureDate = month === new Date().getMonth() + 1 && date > new Date().getDate();
             const formatedDate = `${year}-${month}-${date}`;
@@ -291,11 +277,28 @@ const CalendarView = ({
                   isLastColumn && "border-r-0",
                 )}>
                 <p className="absolute left-2 top-2 text-xs font-medium text-black">{date}</p>
-                {holiday && holiday[0] === date ? (
+
+                {/* for updated attendance */}
+                {attendanceForDate?.status ? (
+                  <span
+                    onClick={() => {
+                      setPrevAttendance(attendanceForDate);
+                      setUpdatedAttendance(true);
+                    }}
+                    className="absolute right-2 top-2 cursor-pointer">
+                    <Icons.option size={16} />
+                  </span>
+                ) : null}
+
+                {holidayForDate ? (
                   <span className="w-full text-center text-xs font-semibold text-amber-700">
-                    {holiday[1]}
+                    {holidayForDate.name}
                     {attendanceForDate?.status === "Present" ? (
                       <h1 className="text-base font-semibold text-green-500">
+                        {attendanceForDate.status}
+                      </h1>
+                    ) : attendanceForDate?.status === "Absent" ? (
+                      <h1 className="text-base font-semibold text-red-500">
                         {attendanceForDate.status}
                       </h1>
                     ) : !isFutureDate ? (
@@ -346,8 +349,144 @@ const CalendarView = ({
               </div>
             );
           })}
+          <Dialog open={updateAttendance} onOpenChange={setUpdatedAttendance}>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Attendance Record</DialogTitle>
+              </DialogHeader>
+              <AttendanceForm
+                prevAttendance={prevAttendance}
+                setUpdatedAttendance={setUpdatedAttendance}
+              />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
+    </div>
+  );
+};
+
+const formSchema = z.object({
+  status: z.enum(["Present", "On Leave", "Half Day", "Absent"]).optional(),
+  check_in_time: z.string().optional(),
+  check_out_time: z.string().optional(),
+});
+
+type AttendanceFormProps = {
+  prevAttendance: Attendance | null;
+  setUpdatedAttendance: (status: boolean) => void;
+};
+
+const AttendanceForm = ({ prevAttendance, setUpdatedAttendance }: AttendanceFormProps) => {
+  const { refresh } = useRouter();
+  const form = useForm<z.infer<typeof formSchema>>({
+    mode: "onBlur",
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      status: prevAttendance?.status ?? undefined,
+      check_in_time: prevAttendance?.check_in_time ?? undefined,
+      check_out_time: prevAttendance?.check_out_time ?? undefined,
+    },
+  });
+  const [loading, setLoading] = useState(false);
+
+  if (!prevAttendance) return;
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const attendance = {
+      attendance_id: prevAttendance!.id,
+      status: values.status,
+      check_in_time: values.check_in_time,
+      check_out_time: values.check_out_time,
+    };
+    try {
+      setLoading(true);
+      await apiCaller.patch("/api/companies-app/attendance/employee-create/", {
+        ...attendance,
+      });
+      refresh();
+      setUpdatedAttendance(false);
+    } catch (error) {
+      const customError = new AppError(error);
+      toast({
+        description: customError.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div className="rounded-lg bg-white pt-4">
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Status</FormLabel>
+                <Select
+                  value={field.value}
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="Present">Present</SelectItem>
+                    <SelectItem value="On Leave">On Leave</SelectItem>
+                    <SelectItem value="Half Day">Half Day</SelectItem>
+                    <SelectItem value="Absent">Absent</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormDescription>Current attendance status</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="check_in_time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Check-in Time</FormLabel>
+                <FormControl>
+                  <Input type="time" {...field} />
+                </FormControl>
+                <FormDescription>Time of check-in (HH:MM)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="check_out_time"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Check-out Time</FormLabel>
+                <FormControl>
+                  <Input {...field} type="time" />
+                </FormControl>
+                <FormDescription>Time of check-out (HH:MM)</FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="flex w-full justify-end">
+            <Button disabled={loading} type="submit" className="">
+              {loading ? <Icons.loader /> : null}
+              Update Attendance
+            </Button>
+          </div>
+        </form>
+      </Form>
     </div>
   );
 };
