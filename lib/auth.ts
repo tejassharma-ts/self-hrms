@@ -20,5 +20,7 @@ const createPublicApi = ({ baseURL }: ApiConfig): AxiosInstance => {
   return apiPublic;
 };
 
-export const apiCaller = createApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });
-export const publicApiCaller = createPublicApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });
+// export const apiCaller = createApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });
+export const apiCaller = createApi({ baseURL: "https://hrm.kaliper.in" });
+// export const publicApiCaller = createPublicApi({ baseURL: process.env.NEXT_PUBLIC_SERVER_URL! });
+export const publicApiCaller = createPublicApi({ baseURL: "https://hrm.kaliper.in" });
