@@ -25,23 +25,26 @@ export const EmployeePayrollHistoryCard = ({ heading, payrollData }: IPayrollHea
       <CardContent className="flex h-full flex-col justify-between p-4">
         <div className={"flex items-center justify-between"}>
           <h2 className="text-md font-semibold">{heading}</h2>
-          {/* <div */}
-          {/*   onClick={handleViewClick} */}
-          {/*   className={ */}
-          {/*     "cursor-pointer rounded-full border border-black bg-transparent px-4 text-sm" */}
-          {/*   }> */}
-          {/*   View All */}
-          {/* </div> */}
+          {/*<div*/}
+          {/*  onClick={handleViewClick}*/}
+          {/*  className={*/}
+          {/*    "cursor-pointer rounded-full border border-black bg-transparent px-4 text-sm"*/}
+          {/*  }>*/}
+          {/*  View All*/}
+          {/*</div>*/}
         </div>
         <div>
           <div className="flex -space-x-4">
-            {payrollData.slice(0, 4).map((eachPayrollData) => (
+            {payrollData?.slice(0, 4).map((eachPayrollData: Payroll) => (
               <Link
                 key={eachPayrollData.id}
-                href={`/payroll/history/?id=${eachPayrollData.employee.id}`}>
+                href={`/payroll/history/?id=${eachPayrollData?.employee?.id}`}>
                 <Avatar className="h-16 w-16 border-2 border-white">
-                  <AvatarImage src={`${eachPayrollData.employee.profile_picture}`} alt="@shadcn" />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage
+                    src={`${eachPayrollData?.employee?.profile_picture}`}
+                    alt={eachPayrollData?.employee?.first_name}
+                  />
+                  <AvatarFallback>{eachPayrollData?.employee?.first_name}</AvatarFallback>
                 </Avatar>
               </Link>
             ))}

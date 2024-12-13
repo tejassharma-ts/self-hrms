@@ -24,7 +24,7 @@ const Pricing = ({ heading, price }: IPricingProps) => {
   return (
     <div className={"flex flex-col gap-y-1"}>
       <h2 className={"whitespace-nowrap text-nowrap text-center text-lg"}>{heading}</h2>
-      <p className={"whitespace-nowrap text-nowrap text-lg font-bold"}>Rs {formatPrice(price)}</p>
+      <p className={"whitespace-nowrap text-nowrap text-lg font-bold"}>₹ {formatPrice(price)}</p>
     </div>
   );
 };

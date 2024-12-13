@@ -20,6 +20,7 @@ import {
 } from "@/types/types";
 import { getMonthNumber } from "@/lib/utils";
 import { leaveData } from "@/app/(dashboard)/my-team/_data/dummyData";
+import { toast } from "@/hooks/use-toast";
 
 type params = {
   employeeId: string;
@@ -50,6 +51,10 @@ async function getEmployeeProfile({ employeeId, month, year }: EmployeeProfileAp
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee profile.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeeProfile: ${err}`);
   }
 }
@@ -65,6 +70,10 @@ async function getEmployeeDeductions({ employeeId, month, year }: EmployeeProfil
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee deductions.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeeDeductions: ${err}`);
   }
 }
@@ -80,6 +89,10 @@ async function getEmployeeExpenses({ employeeId, month, year }: EmployeeProfileA
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee expenses.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeeExpenses: ${err}`);
   }
 }
@@ -95,6 +108,10 @@ async function getEmployeeBonus({ employeeId, month, year }: EmployeeProfileApiP
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee bonus.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeeBonus: ${err}`);
   }
 }
@@ -111,6 +128,10 @@ async function getEmployeePayroll({ employeeId, month, year }: EmployeeProfileAp
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee payroll.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeePayroll: ${err}`);
   }
 }
@@ -126,6 +147,10 @@ async function getEmployeeAttendance({ employeeId, month, year }: EmployeeProfil
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee attendance.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeeAttendance: ${err}`);
   }
 }
@@ -141,6 +166,10 @@ async function getHolidays({ month, year }: { month: number; year: number }) {
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee holidays.",
+      variant: "destructive",
+    });
     throw new Error(`Error getEmployeeAttendance: ${err}`);
   }
 }
@@ -157,6 +186,10 @@ async function getLeavesOfEmployee({ employeeId, month, year }: EmployeeProfileA
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting leaves of employee.",
+      variant: "destructive",
+    });
     throw new Error("Error getting leaves of employee");
   }
 }
