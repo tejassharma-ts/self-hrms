@@ -1,6 +1,7 @@
 import { apiCaller } from "@/lib/auth";
 import { cookies } from "next/headers";
 import AddNewEmployeeForm from "./AddNewEmployeeForm";
+import { toast } from "@/hooks/use-toast";
 
 async function getEmployeeProfile(employeeID: string) {
   try {
@@ -17,6 +18,10 @@ async function getEmployeeProfile(employeeID: string) {
     });
     return res.data;
   } catch (err) {
+    toast({
+      description: "Error getting employee profile.",
+      variant: "destructive",
+    });
     console.log("err", err);
   }
 }

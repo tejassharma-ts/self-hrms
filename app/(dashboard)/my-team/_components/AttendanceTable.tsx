@@ -39,6 +39,7 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import AppError from "@/lib/error";
 
 const TableView = ({
   attendance,
@@ -208,10 +209,11 @@ const CalendarView = ({
 
       clearSelectedItems();
       refresh();
-    } catch (err) {
+    } catch (error) {
+      const customError = new AppError(error);
       toast({
-        title: "Something went wrong.",
-        description: `${err}`,
+        description: customError.message,
+        variant: "destructive",
       });
     } finally {
       setBulkActionLoading(false);
@@ -404,23 +406,16 @@ const AttendanceForm = ({ prevAttendance, setUpdatedAttendance }: AttendanceForm
       });
       refresh();
       setUpdatedAttendance(false);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      const customError = new AppError(error);
+      toast({
+        description: customError.message,
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
   }
-
-  // useEffect(() => {
-  //   form.setValue("status", undefined);
-  //   form.setValue("check_in_time", prevAttendance.check_in_time?.split(":").slice(0, -1).join(":"));
-  //   form.setValue(
-  //     "check_out_time",
-  //     prevAttendance.check_out_time?.split(":").slice(0, -1).join(":"),
-  //   );
-  // }, [prevAttendance]);
-
-  console.log(form.getValues());
 
   return (
     <div className="rounded-lg bg-white pt-4">

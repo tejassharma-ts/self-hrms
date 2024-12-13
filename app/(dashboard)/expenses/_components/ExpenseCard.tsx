@@ -18,7 +18,7 @@ export const ExpenseCard = ({ heading, money, isLast }: IEachExpenseCardProps): 
       <CardContent className="flex h-full flex-col justify-between p-6">
         <h2 className="text-md font-semibold text-gray-400">{heading}</h2>
         <h2 className={cn("mb-2 text-xl font-bold", isLast && "text-white")}>
-          Rs. {money.length > 7 ? money.slice(0, 1) + "." + money.slice(1, 3) + "" + "Cr" : money}
+          {money.length > 7 ? money.slice(0, 1) + "." + money.slice(1, 3) + "" + "Cr" : money}
         </h2>
       </CardContent>
     </Card>

@@ -10,7 +10,7 @@ export const EditButton = ({ employeeID }: { employeeID: string }) => {
       className={
         "relative flex gap-x-1 border bg-transparent text-sm text-black hover:bg-transparent"
       }>
-      <p>Edit</p>
+      Edit
       <span>
         <PencilLineIcon height={16} width={16} />
       </span>

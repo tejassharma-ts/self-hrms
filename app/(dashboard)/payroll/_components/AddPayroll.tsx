@@ -1,11 +1,9 @@
 "use client";
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -14,7 +12,6 @@ import { z } from "zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -24,7 +21,6 @@ import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -35,6 +31,7 @@ import { apiCaller } from "@/lib/auth";
 import { Icons } from "@/components/Icons";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import AppError from "@/lib/error";
 
 const formSchema = z.object({
   employee: z.string().min(2).max(50),
@@ -66,7 +63,6 @@ export default function AddPayroll() {
         },
       });
       const salary = res.data;
-
       await apiCaller.post("/api/payroll_app/payrolls/", {
         ...values,
         pay_date: format(values.pay_date, "yyyy-MM-dd"),
@@ -75,12 +71,11 @@ export default function AddPayroll() {
       });
       router.refresh();
       setOpen(false);
-    } catch (err) {
-      console.log(err);
+    } catch (error) {
+      const customError = new AppError(error);
       toast({
+        description: customError.message,
         variant: "destructive",
-        description:
-          "Either the employee's salary structure has not been created, or there has been an error on our part.",
       });
     } finally {
       setIsLoading(false);

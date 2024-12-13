@@ -30,15 +30,21 @@ import {
 } from "@/components/ui/table";
 import { getMonthNameFromNumber } from "@/lib/utils";
 
+const tableHeadValues: string[] = [
+  "Casual Leave",
+  "Privilege Leave",
+  "Sick Leave",
+  "Used Privilege Leaves",
+];
+
 const LeaveBalanceTable = ({ leaves }: { leaves: any }) => {
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Casual Leave</TableHead>
-          <TableHead>Privilege Leave</TableHead>
-          <TableHead>Sick Leave</TableHead>
-          <TableHead>Used Privilege Leaves</TableHead>
+          {tableHeadValues.map((eachTableHead: string, index: number) => (
+            <TableHead key={index}>{eachTableHead}</TableHead>
+          ))}
         </TableRow>
       </TableHeader>
       <TableBody>

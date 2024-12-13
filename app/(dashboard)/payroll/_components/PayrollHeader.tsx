@@ -9,6 +9,7 @@ export const PayrollHeader = ({ payrollData }: { payrollData: Payroll[] }): Reac
   const monthNumber = payrollData[0]?.created_at.split("-")[1];
   const month: string = getMonthNameFromNumber(parseInt(monthNumber));
   const year = parseInt(payrollData[0]?.created_at.split("-")[0]);
+
   return (
     <>
       <div className={"mb-10 flex max-w-screen-lg justify-between gap-x-4"}>
