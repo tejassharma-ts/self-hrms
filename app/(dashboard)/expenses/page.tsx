@@ -100,8 +100,8 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
               </TableHeader>
               <TableBody>
                 {expensesEmployeeData.expenses.map((eachExpensesEmployeeData) => (
-                  <TableRow key={eachExpensesEmployeeData?.id} className="relative">
-                    <TableCell className={"text-nowrap"}>
+                  <TableRow key={eachExpensesEmployeeData?.id} className="relative text-nowrap">
+                    <TableCell>
                       {eachExpensesEmployeeData?.employee?.id.replaceAll("-", " ")}
                     </TableCell>
                     <TableCell>{eachExpensesEmployeeData?.employee?.first_name}</TableCell>
@@ -109,8 +109,12 @@ const Page = async ({ searchParams }: { searchParams: SearchParams }): Promise<R
                     <TableCell className={"text-nowrap"}>
                       {eachExpensesEmployeeData?.date_incurred}
                     </TableCell>
-                    <TableCell>{eachExpensesEmployeeData?.amount}</TableCell>
-                    <TableCell>{eachExpensesEmployeeData?.amount}</TableCell>
+                    <TableCell>
+                      {formatCurrency(parseInt(eachExpensesEmployeeData?.amount)) || "N/A"}
+                    </TableCell>
+                    <TableCell>
+                      {formatCurrency(parseInt(eachExpensesEmployeeData?.amount)) || "N/A"}
+                    </TableCell>
                     <TableCell>{eachExpensesEmployeeData?.status}</TableCell>
                     <Link
                       href={`/expenses/${eachExpensesEmployeeData?.employee.id}`}

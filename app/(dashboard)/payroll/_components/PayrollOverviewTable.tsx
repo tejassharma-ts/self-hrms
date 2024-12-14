@@ -17,6 +17,7 @@ import { formatDate } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { Icons } from "@/components/Icons";
+import { formatCurrency } from "@/lib/utils";
 
 const tableHeadValues: string[] = [
   "Name",
@@ -146,30 +147,33 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
               <TableCell className="whitespace-nowrap px-4 py-2">
                 {eachPayroll.employee.id}
               </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">Rs {eachPayroll.hra}</TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.allowances}
+                {" "}
+                {formatCurrency(parseInt(eachPayroll?.hra)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.bonus || "0.00"}
+                {formatCurrency(parseInt(eachPayroll?.allowances)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.special_allowance}
+                {formatCurrency(eachPayroll?.bonus) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.esi_contribution}
+                {formatCurrency(parseInt(eachPayroll?.special_allowance)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.expense_reimbursement || "0.00"}
+                {formatCurrency(parseInt(eachPayroll?.esi_contribution)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.arrears_amount}
+                {formatCurrency(parseInt(eachPayroll?.expense_reimbursement)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.gross_salary}
+                {formatCurrency(parseInt(eachPayroll?.arrears_amount)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
-                Rs {eachPayroll.in_hand_salary}
+                {formatCurrency(parseInt(eachPayroll?.gross_salary)) || "N/A"}
+              </TableCell>
+              <TableCell className="whitespace-nowrap px-4 py-2">
+                {formatCurrency(parseInt(eachPayroll?.in_hand_salary)) || "N/A"}
               </TableCell>
               <TableCell className="whitespace-nowrap px-4 py-2">
                 <Button
