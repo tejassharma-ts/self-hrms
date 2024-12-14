@@ -13,6 +13,17 @@ import { Icons } from "@/components/Icons";
 import { parse, format } from "date-fns";
 import { cn } from "@/lib/utils";
 import AppError from "@/lib/error";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 type AttendanceTiming = {
   check_in_time: string | null;
@@ -29,6 +40,7 @@ export default function WelcomeCard({ className }: { className: string }) {
   const [attendanceStatus, setAttendanceStatus] = useState<
     "Checked In" | "Checkout Out" | "Not Checked In" | null
   >(null);
+  const [showAlert, setShowAlert] = useState(false);
 
   const formatTime = (timeString: string) => {
     const cleanedTime = timeString.split(".")[0];
@@ -124,6 +136,7 @@ export default function WelcomeCard({ className }: { className: string }) {
       });
     } finally {
       setAttendanceLoading(false);
+      setShowAlert(false);
     }
   }
 
@@ -131,10 +144,29 @@ export default function WelcomeCard({ className }: { className: string }) {
     if (authUser) {
       if (!attendanceTiming.check_in_time && !attendanceTiming.check_out_time)
         return (
-          <Button variant="secondary" className="self-start" onClick={onAttendanceHandle}>
-            <span className="mr-2">{attendanceLoading && <Icons.loader />}</span>
-            Check in
-          </Button>
+          <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+            <AlertDialogTrigger asChild>
+              <Button variant="secondary" className="self-start">
+                Check in
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Check-In</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action will record your attendance and cannot be undone. Are you sure you
+                  want to proceed?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter className="flex-row justify-end space-x-4">
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={onAttendanceHandle}>
+                  {attendanceLoading && <Icons.loader />}
+                  Check In
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         );
       else if (attendanceTiming.check_in_time && !attendanceTiming.check_out_time) {
         return (
@@ -142,10 +174,29 @@ export default function WelcomeCard({ className }: { className: string }) {
             <h1>
               Checked in: <span className="font-semibold">{attendanceTiming.check_in_time}</span>
             </h1>
-            <Button variant="secondary" className="order-1" onClick={onAttendanceHandle}>
-              <span className="mr-2">{attendanceLoading && <Icons.loader />}</span>
-              Check out
-            </Button>
+            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+              <AlertDialogTrigger asChild>
+                <Button variant="secondary" className="order-1">
+                  Check out
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirm Check-Out</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action will record your attendance and cannot be undone. Are you sure you
+                    want to proceed?
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter className="flex-row justify-end space-x-4">
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={onAttendanceHandle}>
+                    {attendanceLoading && <Icons.loader />}
+                    Check Out
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         );
       } else {
