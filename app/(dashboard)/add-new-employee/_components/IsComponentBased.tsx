@@ -23,7 +23,7 @@ import { formatCurrency } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 
 const ComponentSalarySchema = z.object({
-  basic_salary: z
+  gross_salary: z
     .string()
     .refine(
       (val) => {
@@ -86,11 +86,12 @@ const IsComponentBased = ({
   const { form: formStore } = useAddEmployeeStore();
   const router = useRouter();
 
+  console.log({ salaryStructure });
   const form = useForm<ComponentSalaryFormValues>({
     resolver: zodResolver(ComponentSalarySchema),
     mode: "onChange",
     defaultValues: {
-      basic_salary: salaryStructure?.basic_salary || "",
+      gross_salary: salaryStructure?.gross_monthly_salary || "",
       // hra: salaryStructure?.hra || "",
       allowances: salaryStructure?.allowances || "",
       medical: salaryStructure?.medical_insurance || "",
@@ -111,7 +112,7 @@ const IsComponentBased = ({
 
   useEffect(() => {
     if (formStore.personal) {
-      form.setValue("basic_salary", formStore.personal.salary);
+      form.setValue("gross_salary", formStore.personal.salary);
     }
   }, [formStore]);
 
@@ -123,7 +124,7 @@ const IsComponentBased = ({
         employee: employeeID,
         is_component_based: false,
         is_gross_based: true,
-        gross_salary: data.basic_salary,
+        gross_salary: data.gross_salary,
         // hra: data.hra || "0",
         conveyance: data.conveyance,
         allowances: 0,
@@ -166,7 +167,7 @@ const IsComponentBased = ({
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
             <FormField
               control={form.control}
-              name="basic_salary"
+              name="gross_salary"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Gross Salary</FormLabel>
@@ -210,6 +211,7 @@ const IsComponentBased = ({
               <div className="grid grid-cols-2">
                 <div className="flex flex-col space-y-4">
                   <h1 className="font-semibold italic">Earrings</h1>
+                  {salaryStructure ? <h1 className="font-medium">Basic Salary</h1> : null}
                   <FormField
                     control={form.control}
                     name="has_hra"
@@ -292,6 +294,7 @@ const IsComponentBased = ({
                   />
                 </div>
                 <div className="mt-10 flex flex-col space-y-4">
+                  {salaryStructure ? <h1>{formatCurrency(salaryStructure.basic_salary)}</h1> : null}
                   <h1>{formatCurrency(salaryStructure?.hra) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.conveyance) || "-"}</h1>
