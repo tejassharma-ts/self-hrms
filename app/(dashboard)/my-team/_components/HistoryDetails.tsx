@@ -49,7 +49,7 @@ const LeaveBalanceTable = ({ leaves }: { leaves: any }) => {
       </TableHeader>
       <TableBody>
         <TableRow>
-          <TableCell>{leaves?.employee_leave_stats.total_casual_leaves}</TableCell>
+          <TableCell>{leaves?.employee_leave_stats.casual_leave_balance}</TableCell>
           <TableCell>{leaves?.employee_leave_stats.privilege_leave_balance}</TableCell>
           <TableCell>{leaves?.employee_leave_stats.sick_leave_balance}</TableCell>
           <TableCell>{leaves?.employee_leave_stats.used_privilege_leaves}</TableCell>
