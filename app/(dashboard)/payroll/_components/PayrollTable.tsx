@@ -10,6 +10,7 @@ import {
 import { Payroll } from "@/types/types";
 import { payrollTableHead } from "@/app/(dashboard)/payroll/constant";
 import { YearFilter } from "@/components/YearFilter";
+import { formatCurrency } from "@/lib/utils";
 
 export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React.ReactNode => {
   const currentYear: number = new Date().getFullYear();
@@ -30,19 +31,27 @@ export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React
             </TableRow>
           </TableHeader>
           <TableBody>
-            {payrollData.map((eachPayroll: Payroll) => {
+            {payrollData?.map((eachPayroll: Payroll) => {
               return (
                 <TableRow key={eachPayroll.pay_date}>
                   <TableCell>
                     {new Date(eachPayroll.pay_date).toLocaleDateString("en-IN")}
                   </TableCell>
                   <TableCell className={"text-nowrap"}>
-                    Rs {eachPayroll.bonus ? eachPayroll.bonus : 0}
+                    {formatCurrency(eachPayroll?.bonus) || "N/A"}
                   </TableCell>
-                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.total_deductions}</TableCell>
-                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.in_hand_salary}</TableCell>
-                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.in_hand_salary}</TableCell>
-                  <TableCell className={"text-nowrap"}>Rs {eachPayroll.arrears_amount}</TableCell>
+                  <TableCell className={"text-nowrap"}>
+                    {formatCurrency(eachPayroll?.total_deductions) || "N/A"}
+                  </TableCell>
+                  <TableCell className={"text-nowrap"}>
+                    {formatCurrency(parseInt(eachPayroll?.in_hand_salary)) || "N/A"}
+                  </TableCell>
+                  <TableCell className={"text-nowrap"}>
+                    {formatCurrency(parseInt(eachPayroll?.in_hand_salary)) || "N/A"}
+                  </TableCell>
+                  <TableCell className={"text-nowrap"}>
+                    {formatCurrency(parseInt(eachPayroll?.arrears_amount)) || "N/A"}
+                  </TableCell>
                 </TableRow>
               );
             })}
