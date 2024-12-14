@@ -177,7 +177,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                 <TableCell>
                   <span className="line-clamp-2">{col.reason}</span>
                 </TableCell>
-                <TableCell>{col?.leave_duration || "-"}</TableCell>
+                <TableCell>{col?.leave_duration ? col?.leave_duration + " days" : "-"}</TableCell>
                 <TableCell className="capitalize">
                   {col.status === "Approved" ? (
                     <div className="flex items-center space-x-2">
