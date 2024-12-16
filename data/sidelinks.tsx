@@ -41,8 +41,20 @@ export const sidelinks: SideLink[] = [
   },
   {
     title: "Attendance",
-    href: "/attendance",
+    href: "#",
     icon: <Icons.finger size={18} />,
+    sub: [
+      {
+        title: "Overview",
+        href: "/attendance/overview",
+        icon: <Icons.leaveRequest size={18} />,
+      },
+      {
+        title: "Records",
+        href: "/attendance/records",
+        icon: <Icons.leaveRequest size={18} />,
+      },
+    ],
   },
   {
     title: "Leave",
@@ -62,6 +74,11 @@ export const sidelinks: SideLink[] = [
       {
         title: "Calendar",
         href: "/leave?tab=calender",
+        icon: <Icons.calendar size={18} />,
+      },
+      {
+        title: "Leave Record",
+        href: "/leave/records",
         icon: <Icons.calendar size={18} />,
       },
     ],

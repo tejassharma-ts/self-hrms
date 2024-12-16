@@ -3,6 +3,8 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "react-day-picker";
+import { Icons } from "@/components/Icons";
 
 type PendingRequestsProps = {
   leaveRequestCount?: number;
@@ -20,10 +22,27 @@ export default async function PreviousPayroll({
       <CardHeader>
         <CardTitle>Quick Reports</CardTitle>
       </CardHeader>
-      <CardContent className="mt-auto flex items-center space-x-8 px-6 pt-4">
-        {/* <RequestItem label="Leave Requests" value={leaveRequestCount} href="/leave" /> */}
-        {/* <Separator orientation="vertical" className="h-[60px]" /> */}
-        {/* <RequestItem label="Expense Requests" value={expenseRequestCount} href="/expenses" /> */}
+      <CardContent className="mt-auto flex flex-col items-center px-6 pt-0">
+        <div className="flex w-full items-center gap-4">
+          <Icons.attendance />
+          <h2 className="text-gray-500">Attendance Report</h2>
+          <Link
+            href="/attendance/records"
+            className="ml-auto rounded-sm border border-[#cbd5e1] bg-[#f1f5f9] p-1 px-1.5 text-sm">
+            View All
+          </Link>
+        </div>
+
+        <Separator className="my-3" />
+        <div className="flex w-full items-center gap-4">
+          <Icons.leaveCalendar />
+          <h2 className="text-gray-500">Leave Report</h2>
+          <Link
+            href="/leave/records"
+            className="ml-auto rounded-sm border border-[#cbd5e1] bg-[#f1f5f9] p-1 px-1.5 text-sm">
+            View All
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );
