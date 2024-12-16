@@ -168,7 +168,7 @@ const ProfileCarousel: React.FC<ProfileCarouselProps> = ({
             ))}
           </SelectContent>
         </Select>
-        <div className="hidden lg:flex flex-row gap-5 bg-white rounded-full">
+        <div className="hidden flex-row gap-5 bg-white rounded-full">
           <div className="flex items-center">
             {!isSearchActive ? (
               <div
