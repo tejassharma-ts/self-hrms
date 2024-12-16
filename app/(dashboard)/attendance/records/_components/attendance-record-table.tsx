@@ -67,6 +67,8 @@ export default function AttendanceRecordTable() {
         setReportData(res.data);
       } catch (err) {}
     }
+
+    if (!apiCaller.defaults.headers.Authorization) return;
     fetchRecords();
   }, [selectedYear, selectedMonth]);
 
@@ -78,6 +80,13 @@ export default function AttendanceRecordTable() {
     start: parseISO(from_date),
     end: parseISO(to_date),
   });
+
+  function formatHour(totalHours: number) {
+    const hours = Math.floor(totalHours);
+    const minutes = Math.round((totalHours - hours) * 60);
+    if (hours) return `${hours} hrs and ${minutes} mins`;
+    return `${minutes} mins`;
+  }
 
   const formattedDates = dateRange.map((date) => format(date, "yyyy-MM-dd"));
 
@@ -121,7 +130,9 @@ export default function AttendanceRecordTable() {
                 <TableCell>{employee.name}</TableCell>
                 <TableCell>{employee.department}</TableCell>
                 <TableCell>{employee.position}</TableCell>
-                <TableCell>{employee.total_hours}</TableCell>
+                <TableCell>
+                  {employee.total_hours ? formatHour(employee.total_hours) : "-"}
+                </TableCell>
                 <TableCell>{employee.days_attended}</TableCell>
                 {formattedDates.map((date) => {
                   const attendance = employee.attendance.find((att) => att.date === date);
