@@ -30,7 +30,9 @@ type Leave = {
 };
 
 type EmployeeLeaveReport = {
-  employee: string; // Employee email or identifier
+  name: string;
+  department: string;
+  position: string;
   total_leaves: number; // Total leaves taken by the employee
   leaves: Leave[]; // Array of individual leave records
 };
@@ -93,6 +95,8 @@ export default function EmployeeReportTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Employee</TableHead>
+              <TableHead>Department</TableHead>
+              <TableHead>Designation</TableHead>
               <TableHead>Leave Type</TableHead>
               <TableHead>Start Date</TableHead>
               <TableHead>End Date</TableHead>
@@ -105,8 +109,10 @@ export default function EmployeeReportTable() {
           <TableBody>
             {reportData.leave_reports.map((report) =>
               report.leaves.map((leave, index) => (
-                <TableRow key={`${report.employee}-${index}`}>
-                  <TableCell>{report.employee}</TableCell>
+                <TableRow key={`${report.name}-${index}`}>
+                  <TableCell>{report.name}</TableCell>
+                  <TableCell>{report.department}</TableCell>
+                  <TableCell>{report.position}</TableCell>
                   <TableCell>{leave.leave_type}</TableCell>
                   <TableCell>{leave.start_date}</TableCell>
                   <TableCell>{leave.end_date}</TableCell>

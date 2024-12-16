@@ -17,10 +17,6 @@ import { DownloadTableExcel } from "react-export-table-to-excel";
 import { Button } from "@/components/ui/button";
 
 type Attendance = {
-  name: string;
-  department: string;
-  position: string;
-  phone_number: string;
   date: string; // e.g., "2024-11-02"
   status: string; // e.g., "Present" or "Absent"
   check_in_time: string | null; // Nullable string
@@ -31,7 +27,11 @@ type Attendance = {
 };
 
 type EmployeeReport = {
+  name: string;
+  department: string;
+  position: string;
   employee: string; // Employee email or identifier
+  phone_number: string;
   total_hours: number; // Total hours worked
   days_attended: number; // Total days attended
   attendance: Attendance[]; // Array of attendance records
@@ -104,6 +104,8 @@ export default function EmployeeReportTable() {
           <TableHeader>
             <TableRow>
               <TableHead>Employee</TableHead>
+              <TableHead>Department</TableHead>
+              <TableHead>Designation</TableHead>
               <TableHead>Total Hours</TableHead>
               <TableHead>Days Attended</TableHead>
               {formattedDates.map((date) => (
@@ -116,7 +118,9 @@ export default function EmployeeReportTable() {
           <TableBody>
             {employee_reports.map((employee) => (
               <TableRow key={employee.employee}>
-                <TableCell>{employee.employee}</TableCell>
+                <TableCell>{employee.name}</TableCell>
+                <TableCell>{employee.department}</TableCell>
+                <TableCell>{employee.position}</TableCell>
                 <TableCell>{employee.total_hours}</TableCell>
                 <TableCell>{employee.days_attended}</TableCell>
                 {formattedDates.map((date) => {
