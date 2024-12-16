@@ -25,21 +25,21 @@ export default async function PreviousPayroll({
       <CardContent className="mt-auto flex flex-col items-center px-6 pt-0">
         <div className="flex w-full items-center gap-4">
           <Icons.attendance />
-          <h2 className="text-gray-500">Attendance Report</h2>
+          <h2 className="text-gray-500 font-medium">Attendance Report</h2>
           <Link
             href="/attendance/records"
-            className="ml-auto rounded-sm border border-[#cbd5e1] bg-[#f1f5f9] p-1 px-1.5 text-sm">
+            className="ml-auto rounded-sm border border-[#cbd5e1] bg-[#f1f5f9] p-1 px-1.5 text-xs">
             View All
           </Link>
         </div>
 
-        <Separator className="my-3" />
+        <Separator className="my-4" />
         <div className="flex w-full items-center gap-4">
           <Icons.leaveCalendar />
-          <h2 className="text-gray-500">Leave Report</h2>
+          <h2 className="text-gray-500 font-medium">Leave Report</h2>
           <Link
             href="/leave/records"
-            className="ml-auto rounded-sm border border-[#cbd5e1] bg-[#f1f5f9] p-1 px-1.5 text-sm">
+            className="ml-auto rounded-sm border border-[#cbd5e1] bg-[#f1f5f9] p-1 px-1.5 text-xs">
             View All
           </Link>
         </div>

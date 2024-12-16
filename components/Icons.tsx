@@ -47,7 +47,7 @@ function CustomLoader({ className }: CustomLoaderProps) {
 
 export function Attendance() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 27 26" className="size-7">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 27 26" className="size-[1.5rem]">
       <path
         fill="#6E6E6E"
         fillOpacity="0.27"
@@ -86,7 +86,7 @@ export function Attendance() {
 }
 
 const LeaveCalendar: React.FC<React.SVGProps<SVGElement>> = (props) => (
-  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 23 23" className="size-7">
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 23 23" className="size-[1.5rem]">
     <path
       fill="#6E6E6E"
       fillOpacity="0.19"

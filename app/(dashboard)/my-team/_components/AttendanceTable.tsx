@@ -296,6 +296,16 @@ const CalendarView = ({
                     {attendanceForDate?.status === "Present" ? (
                       <h1 className="text-base font-semibold text-green-500">
                         {attendanceForDate.status}
+                        <p className="absolute bottom-0 flex gap-x-4 whitespace-nowrap pb-2 text-[10px] font-semibold">
+                          <span className="text-center text-green-500">
+                            {formatTime(attendanceForDate?.check_in_time)}
+                          </span>
+                          <span className="text-center text-red-500">
+                            {attendanceForDate?.check_out_time
+                              ? formatTime(attendanceForDate?.check_out_time)
+                              : "Not Marked"}
+                          </span>
+                        </p>
                       </h1>
                     ) : attendanceForDate?.status === "Absent" ? (
                       <h1 className="text-base font-semibold text-red-500">
