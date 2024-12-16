@@ -149,6 +149,9 @@ importers:
       react-dropzone:
         specifier: ^14.2.9
         version: 14.3.5(react@18.3.1)
+      react-export-table-to-excel:
+        specifier: ^1.0.6
+        version: 1.0.6
       react-hook-form:
         specifier: ^7.53.0
         version: 7.53.2(react@18.3.1)
@@ -2130,6 +2133,9 @@ packages:
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
+
+  react-export-table-to-excel@1.0.6:
+    resolution: {integrity: sha512-2NKyor1rFFEqYDXQq5tPoVNwwdv5kT8DWc65wAmDa9Hi0441qHj0tOxegWhpW0vlCM2TypIsw+ghzIr900U4RA==}
 
   react-hook-form@7.53.2:
     resolution: {integrity: sha512-YVel6fW5sOeedd1524pltpHX+jgU2u3DSDtXEaBORNdqiNrsX/nUI/iGXONegttg0mJVnfrIkiV0cmTU6Oo2xw==}
@@ -4455,6 +4461,8 @@ snapshots:
       file-selector: 2.1.0
       prop-types: 15.8.1
       react: 18.3.1
+
+  react-export-table-to-excel@1.0.6: {}
 
   react-hook-form@7.53.2(react@18.3.1):
     dependencies:
