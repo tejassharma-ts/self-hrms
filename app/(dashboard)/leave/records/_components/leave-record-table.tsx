@@ -67,6 +67,8 @@ export default function LeaveRecordTable() {
         setReportData(res.data);
       } catch (err) {}
     }
+
+    if (!apiCaller.defaults.headers.Authorization) return;
     fetchRecords();
   }, [selectedYear, selectedMonth]);
 
