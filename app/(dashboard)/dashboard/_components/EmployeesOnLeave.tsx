@@ -77,7 +77,7 @@ export default async function EmployeesOnLeave({ className }: { className: strin
                     <TableCell className="whitespace-nowrap">
                       {request.employee.id.replaceAll("-", " ")}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="whitespace-nowrap">
                       {getFullName(request.employee.first_name, request.employee.last_name)}
                     </TableCell>
                     <TableCell className="capitalize">{request.employee.department}</TableCell>
@@ -85,14 +85,18 @@ export default async function EmployeesOnLeave({ className }: { className: strin
                     <TableCell className="whitespace-nowrap">
                       {formatISODate(request.start_date)}
                     </TableCell>
-                    <TableCell className="whitespace-nowrap">{formatISODate(request.end_date)}</TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {formatISODate(request.end_date)}
+                    </TableCell>
                     <TableCell>
                       {request.from_time ? format(parseISO(request.from_time), "HH:mm a") : "-"}
                     </TableCell>
                     <TableCell>
                       {request.to_time ? format(parseISO(request.to_time), "HH:mm a") : "-"}
                     </TableCell>
-                    <TableCell className="text-left whitespace-nowrap">{formatISODate(request.applied_at)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-left">
+                      {formatISODate(request.applied_at)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>

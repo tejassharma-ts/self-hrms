@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   Table,
   TableBody,
@@ -10,7 +10,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Attendance } from "@/types/types";
-import { formatTime } from "@/lib/utils";
+import { formatTime, getFullName } from "@/lib/utils";
 
 import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
@@ -26,7 +26,7 @@ type AttendanceListProps = {
 };
 
 export default function AttendanceList({ attendances }: AttendanceListProps) {
-  const [date, setDate] = React.useState<Date>();
+  const [date, setDate] = useState<Date>(new Date());
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { replace } = useRouter();
@@ -41,8 +41,8 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
       const params = new URLSearchParams(searchParams);
       params.set("date", formattedDate);
       replace(`${pathname}?${params.toString()}`);
+      setDate(date);
     }
-    setDate(date);
   }
   return (
     <div className="container mx-auto p-6">
@@ -79,7 +79,9 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
           {attendances.employees.map((employee: any) => (
             <TableRow key={employee.id}>
               <TableCell>{employee.id.replaceAll("-", " ")}</TableCell>
-              <TableCell>{`${employee.first_name} ${employee.last_name}`}</TableCell>
+              <TableCell className="whitespace-nowrap">
+                {getFullName(employee.first_name, employee.last_name)}
+              </TableCell>
               <TableCell>{employee.department.depart_name}</TableCell>
               <TableCell className="text-green-500">
                 {formatTime(employee.check_in_time) || "-"}

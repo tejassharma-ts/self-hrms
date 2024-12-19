@@ -127,7 +127,7 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
   };
 
   return (
-    <div className="w-full rounded-md border">
+    <div className="w-full rounded-md border mt-4">
       <Table className="w-full overflow-x-scroll">
         <TableHeader>
           <TableRow className="bg-black text-white hover:bg-black">

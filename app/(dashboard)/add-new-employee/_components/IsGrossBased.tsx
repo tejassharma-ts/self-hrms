@@ -22,6 +22,10 @@ import { Icons } from "@/components/Icons";
 import { useAddEmployeeStore } from "@/model/add-employee";
 import { formatCurrency } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import useAuthStore from "@/model/auth";
+import { useClientAuth } from "@/context/auth-context";
+import { setDefaultOptions } from "date-fns";
+import { CompanyAccount } from "@/types/auth";
 
 const ComponentSalarySchema = z.object({
   gross_salary: z
@@ -54,7 +58,7 @@ const ComponentSalarySchema = z.object({
     .refine(
       (val) => {
         const parsed = parseFloat(val);
-        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+        return !isNaN(parsed) && parsed >= 0 && parsed <= 99999999.99;
       },
       {
         message: "Medical Insurance must be a positive number not exceeding 99,999,999.99.",
@@ -66,7 +70,7 @@ const ComponentSalarySchema = z.object({
     .refine(
       (val) => {
         const parsed = parseFloat(val);
-        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
+        return !isNaN(parsed) && parsed >= 0 && parsed <= 99999999.99;
       },
       {
         message: "Conveyance must be a positive number not exceeding 99,999,999.99.",
@@ -88,6 +92,35 @@ const ComponentSalarySchema = z.object({
 
 type ComponentSalaryFormValues = z.infer<typeof ComponentSalarySchema>;
 
+type CompanyDetails = {
+  id: string;
+  company_name: string;
+  address: string;
+  created_at: string; // ISO date string
+  company_website_url: string;
+  esi_rate: string;
+  employer_contribution_esi_rate: string;
+  pf_rate: string;
+  bonus_percentage: string;
+  conveyance_percentage: string;
+  hra_percentage: string;
+  basic_salary_percentage: string;
+  allowance_percentage: string;
+  days_in_month: number;
+  working_days: string; // Consider converting to number if appropriate
+  yearly_working_days: string; // Consider converting to number if appropriate
+  no_of_employee_working: string; // Consider converting to number if appropriate
+  industry: string;
+  company_logo: string;
+  lat: string; // Consider converting to number if appropriate
+  long: string; // Consider converting to number if appropriate
+  location: string;
+  total_casual_leaves: number;
+  total_sick_leaves: number;
+  leave_carry_forward_policy: string;
+  owner: string;
+};
+
 const isGrossBased = ({
   salaryStructure = undefined,
   employeeID,
@@ -95,9 +128,25 @@ const isGrossBased = ({
   salaryStructure: any;
   employeeID?: any;
 }) => {
+  const [defaultSettings, setDefaultSettings] = useState<CompanyDetails | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { form: formStore } = useAddEmployeeStore();
   const router = useRouter();
+
+  const { token } = useClientAuth();
+
+  useEffect(() => {
+    async function getDefaultCompanySettings() {
+      try {
+        const res = await apiCaller.get("/api/companies-app/company/profile/");
+        setDefaultSettings(res.data);
+      } catch (err) {}
+    }
+
+    if (token) {
+      getDefaultCompanySettings();
+    }
+  }, [token]);
 
   const form = useForm<ComponentSalaryFormValues>({
     resolver: zodResolver(ComponentSalarySchema),
@@ -273,27 +322,11 @@ const isGrossBased = ({
                             />
                           </FormControl>
                           <FormLabel htmlFor="has_hra" className="text-base">
-                            HRA
-                          </FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="has_medical_allowance"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                              id="has_medical_allowance"
-                            />
-                          </FormControl>
-                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
-                            Medical Allowance
+                            HRA (
+                            {defaultSettings?.hra_percentage
+                              ? parseFloat(defaultSettings?.hra_percentage) + "%"
+                              : null}
+                            )
                           </FormLabel>
                         </div>
                       </FormItem>
@@ -313,7 +346,11 @@ const isGrossBased = ({
                             />
                           </FormControl>
                           <FormLabel htmlFor="has_conveyance" className="text-base">
-                            Conveyance
+                            Conveyance (
+                            {defaultSettings?.conveyance_percentage
+                              ? parseFloat(defaultSettings?.conveyance_percentage) + "%"
+                              : null}
+                            )
                           </FormLabel>
                         </div>
                       </FormItem>
@@ -333,7 +370,35 @@ const isGrossBased = ({
                             />
                           </FormControl>
                           <FormLabel htmlFor="has_special_allowance" className="text-base">
-                            Other Allowance
+                            Other Allowance (
+                            {defaultSettings?.other_allowance
+                              ? parseFloat(defaultSettings?.conveyance_percentage) + "%"
+                              : null}
+                            )
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="has_medical_allowance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_medical_allowance"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
+                            Medical Allowance (
+                            {defaultSettings?.med_allowance
+                              ? parseFloat(defaultSettings?.hra_percentage) + "%"
+                              : null}
+                            )
                           </FormLabel>
                         </div>
                       </FormItem>
@@ -343,9 +408,9 @@ const isGrossBased = ({
                 <div className="mt-10 flex flex-col space-y-4">
                   {salaryStructure ? <h1>{formatCurrency(salaryStructure.basic_salary)}</h1> : null}
                   <h1>{formatCurrency(salaryStructure?.hra) || "-"}</h1>
-                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.conveyance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.special_allowance) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                 </div>
               </div>
 
@@ -366,7 +431,11 @@ const isGrossBased = ({
                             />
                           </FormControl>
                           <FormLabel htmlFor="has_pf" className="text-base">
-                            Provident Fund (PF) 
+                            Provident Fund (PF) (
+                            {defaultSettings?.pf_rate
+                              ? parseFloat(defaultSettings?.pf_rate) + "%"
+                              : null}
+                            )
                           </FormLabel>
                         </div>
                       </FormItem>
@@ -386,7 +455,11 @@ const isGrossBased = ({
                             />
                           </FormControl>
                           <FormLabel htmlFor="has_esi" className="text-base">
-                            Employee State Insurance (ESIC)
+                            Employee State Insurance (ESIC) (
+                            {defaultSettings?.esi_rate
+                              ? parseFloat(defaultSettings?.esi_rate) + "%"
+                              : null}
+                            )
                           </FormLabel>
                         </div>
                       </FormItem>
@@ -416,7 +489,11 @@ const isGrossBased = ({
                             />
                           </FormControl>
                           <FormLabel htmlFor="has_lta" className="text-base">
-                            LTA
+                            LTA (
+                            {defaultSettings?.lta_rate
+                              ? parseFloat(defaultSettings?.esi_rate) + "%"
+                              : null}
+                            )
                           </FormLabel>
                         </div>
                       </FormItem>

@@ -32,12 +32,21 @@ import { Icons } from "@/components/Icons";
 import { useRouter } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 import AppError from "@/lib/error";
+import { YearMonthSelector } from "../../dashboard/_components/YearMonthSelector";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { monthValues } from "../../expenses/_data/filterDataValues";
 
 const formSchema = z.object({
   employee: z.string().min(2).max(50),
   pay_date: z.instanceof(Date),
   arrears_amount: z.string(),
-  arrears_month: z.instanceof(Date).optional(),
+  arrears_month: z.string().optional(),
 });
 
 export default function AddPayroll() {
@@ -66,9 +75,7 @@ export default function AddPayroll() {
       await apiCaller.post("/api/payroll_app/payrolls/", {
         ...values,
         pay_date: format(values.pay_date, "yyyy-MM-dd"),
-        arrears_month: values.arrears_month
-          ? format(values.arrears_month, "yyyy-MM-dd")
-          : undefined,
+        arrears_month: values.arrears_month,
         salary_structure: salary.id,
       });
       router.refresh();
@@ -87,11 +94,11 @@ export default function AddPayroll() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild className="mb-2 self-end">
-        <Button>Create Payroll</Button>
+        <Button>Run Payroll</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-2">Create Payroll</DialogTitle>
+          <DialogTitle className="mb-2">Run Payroll</DialogTitle>
           <Form {...form}>
             {/* @ts-ignore */}
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -176,40 +183,20 @@ export default function AddPayroll() {
                 render={({ field }) => (
                   <FormItem className="flex flex-col">
                     <FormLabel>Arrears month</FormLabel>
-                    <Popover modal>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant="outline"
-                            className={cn(
-                              "w-full justify-start text-left font-normal",
-                              !field.value && "text-gray-500",
-                            )}>
-                            <CalendarIcon className="mr-2 h-4 w-4" />
-                            {field.value ? format(field.value, "PPP") : "Select date"}
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0">
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={field.onChange}
-                          initialFocus
-                          disabled={(date) => {
-                            const today = new Date();
-                            const startOfCurrentMonth = new Date(
-                              today.getFullYear(),
-                              today.getMonth(),
-                              1,
-                            );
-
-                            return date >= startOfCurrentMonth || date < new Date("1900-01-01");
-                          }}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    {/* <FormDescription>Select the date of payment</FormDescription> */}
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select month" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {monthValues.map((value: string) => (
+                          <SelectItem key={value} value={value}>
+                            {value}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -217,7 +204,7 @@ export default function AddPayroll() {
 
               <Button disabled={isLoading} type="submit" className="w-full">
                 {isLoading && <Icons.loader />}
-                Create Payroll
+                Run Payroll
               </Button>
             </form>
           </Form>
