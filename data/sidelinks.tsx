@@ -66,11 +66,11 @@ export const sidelinks: SideLink[] = [
         href: "/leave?tab=leave-request",
         icon: <Icons.leaveRequest size={18} />,
       },
-      {
-        title: "On Leave",
-        href: "/leave?tab=on-leave",
-        icon: <Icons.absent size={18} />,
-      },
+      // {
+      //   title: "On Leave",
+      //   href: "/leave?tab=on-leave",
+      //   icon: <Icons.absent size={18} />,
+      // },
       {
         title: "Calendar",
         href: "/leave?tab=calender",

@@ -42,6 +42,7 @@ import { useAddEmployeeStore } from "@/model/add-employee";
 import { isString } from "@/lib/string";
 import DepartmentSelector from "@/components/department-selector";
 import AppError from "@/lib/error";
+import { roles } from "@/data/designation";
 
 const phoneNumberSchema = z
   .string()
@@ -52,11 +53,11 @@ const phoneNumberSchema = z
 const employeeSchema = z.object({
   first_name: z
     .string()
-    .min(3, "First name must be at least 3 characters long.")
+    .min(1, "First name is required.")
     .max(50, "First name cannot exceed 100 characters."),
   last_name: z
     .string()
-    .min(3, "Last name must be at least 3 characters long.")
+    .min(1, "Last name is required.")
     .max(50, "Last name cannot exceed 50 characters"),
   email: z.string().email("Please enter a valid email address"),
   phone_number: phoneNumberSchema,
@@ -88,6 +89,9 @@ const employeeSchema = z.object({
   emergency_phone_number: phoneNumberSchema,
   official_phone_number: phoneNumberSchema,
   official_email: z.string().email("Please enter a valid official email address"),
+  casual_leave_balance: z.number().optional(),
+  sick_leave_balance: z.number().optional(),
+  privilege_leave_balance: z.number().optional(),
 });
 
 type EmployeeFormValues = z.infer<typeof employeeSchema>;
@@ -124,11 +128,14 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
       department: employee?.department,
       gender: employee?.gender,
       profile_picture: employee?.profile_picture || undefined,
+      casual_leave_balance: employee?.casual_leave_balance ?? undefined,
+      sick_leave_balance: employee?.sick_leave_balance ?? undefined,
+      privilege_leave_balance: employee?.privilege_leave_balance ?? undefined,
     },
   });
   const { authUser, authCompany } = useClientAuth();
 
-  const { setEmployeeField } = useAddEmployeeStore();
+  const { setEmployeeField, reset } = useAddEmployeeStore();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -157,7 +164,7 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
   const router = useRouter();
 
   useEffect(() => {
-    if (!employee) return;
+    if (!employee) return reset();
     setEmployeeField("personal", employee);
   }, [employee]);
 
@@ -274,7 +281,7 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
       [
         firstName.trim().replaceAll(" ", ""),
         lastName?.trim().replaceAll(" ", ""),
-        format(dob, "yyyy_MM_dd"),
+        format(dob, "yyyyMMdd"),
       ]
         .join("")
         .toLowerCase(),
@@ -283,6 +290,7 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
   }
 
   const profile = fileRejections.length === 0 && form.getValues("profile_picture");
+
   return (
     <Card className="rounded-md">
       <CardContent className="pt-6">
@@ -297,7 +305,7 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
                     <div className="mb-16 flex items-center space-x-8">
                       <div
                         {...getRootProps()}
-                        className="relative size-40 overflow-hidden rounded-full bg-gray-500">
+                        className="relative size-40 overflow-hidden rounded-full">
                         {profile ? (
                           <img
                             // @ts-ignore
@@ -312,8 +320,8 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
                           />
                         ) : (
                           <img
-                            src="/default-avatar.svg"
-                            className="absolute inset-0 h-full w-full object-contain grayscale"
+                            // src="/default-avatar.svg"
+                            src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' stroke='%23707070'%3E%3Cg class='mectrl_stroke' fill='none'%3E%3Ccircle cx='32' cy='32' r='30.25' stroke-width='1.5'/%3E%3Cg transform='matrix(.9 0 0 .9 10.431 10.431)' stroke-width='2'%3E%3Ccircle cx='24.25' cy='18' r='9'/%3E%3Cpath d='M11.2 40a1 1 0 1126.1 0'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E"
                           />
                         )}
                         <input
@@ -640,10 +648,18 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {designations.map((designation) => (
-                              <SelectItem key={designation} value={designation}>
-                                {designation}
-                              </SelectItem>
+                            {Object.entries(roles).map(([category, designations]) => (
+                              <div key={category}>
+                                <div className="px-2 py-1 text-xs font-semibold uppercase text-gray-500">
+                                  {category}
+                                </div>
+
+                                {designations.map((designation) => (
+                                  <SelectItem key={designation} value={designation}>
+                                    {designation}
+                                  </SelectItem>
+                                ))}
+                              </div>
                             ))}
                           </SelectContent>
                         </Select>
@@ -695,6 +711,67 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
                         <FormControl>
                           <Switch checked={field.value} onCheckedChange={field.onChange} />
                         </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+              <div className="flex">
+                <h2 className="mb-4 ml-8 flex-1 text-lg font-semibold">Leaves</h2>
+                <div className="grid basis-[70%] grid-cols-2 gap-6">
+                  <FormField
+                    control={form.control}
+                    name="casual_leave_balance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Casual Leave Balance</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Enter Casual Leave Balance"
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="sick_leave_balance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Sick Leave Balance</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Enter Sick Leave Balance"
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="privilege_leave_balance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Privilege Leave Balance</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="Enter Privilege Leave Balance"
+                            {...field}
+                            onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                          />
+                        </FormControl>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />

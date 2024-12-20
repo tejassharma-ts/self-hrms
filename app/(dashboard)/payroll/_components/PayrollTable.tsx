@@ -7,6 +7,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Payroll } from "@/types/types";
 import { payrollTableHead } from "@/app/(dashboard)/payroll/constant";
 import { YearFilter } from "@/components/YearFilter";
@@ -21,7 +22,7 @@ export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React
         <h2 className="text-lg font-semibold">Payroll History</h2>
         <YearFilter year={currentYear} />
       </div>
-      <div className="rounded-md border">
+      <ScrollArea className="w-full whitespace-nowrap rounded-md border bg-white">
         <Table>
           <TableHeader>
             <TableRow>
@@ -57,7 +58,8 @@ export const PayrollTable = ({ payrollData }: { payrollData: Payroll[] }): React
             })}
           </TableBody>
         </Table>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </>
   );
 };

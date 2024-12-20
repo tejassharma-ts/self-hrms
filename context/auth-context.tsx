@@ -13,6 +13,7 @@ type AuthContextProps = {
   authUser: UserAccount | null;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
   logoutCleanup: () => void;
+  token: string;
 };
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -25,6 +26,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const router = useRouter();
   const { logout } = useAuthStore();
   const [isLoading, setIsLoading] = useState(true);
+  const [token, setToken] = useState("");
   const [authCompany, setAuthCompany] = useState<CompanyAccount | null>(null);
   const [authUser, setAuthUser] = useState<UserAccount | null>(null);
 
@@ -54,6 +56,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       } else if (session.role === "employee") {
         await fetchUserData();
       }
+      setToken(accessToken);
     } catch (err) {
       console.error(err);
     } finally {
@@ -87,7 +90,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ authUser, logoutCleanup, isLoading, setIsLoading, authCompany }}>
+    <AuthContext.Provider
+      value={{ authUser, logoutCleanup, isLoading, setIsLoading, authCompany, token }}>
       {children}
     </AuthContext.Provider>
   );

@@ -72,8 +72,6 @@ export default function LeaveRecordTable() {
     fetchRecords();
   }, [selectedYear, selectedMonth]);
 
-  if (!reportData) return null;
-
   return (
     <div className="flex flex-col space-y-4">
       <div className="flex space-x-4 self-end">
@@ -109,7 +107,7 @@ export default function LeaveRecordTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {reportData.leave_reports.map((report) =>
+            {reportData?.leave_reports.map((report) =>
               report.leaves.map((leave, index) => (
                 <TableRow key={`${report.name}-${index}`}>
                   <TableCell>{report.name}</TableCell>

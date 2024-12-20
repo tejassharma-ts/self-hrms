@@ -16,7 +16,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-const months = [
+export const months = [
   "January",
   "February",
   "March",
@@ -70,7 +70,7 @@ export async function delay(duration: number) {
 }
 
 export function getFullName(firstName: string, lastName?: string) {
-  return [firstName, lastName || ""].join(" ");
+  return [firstName, lastName ?? ""].join(" ");
 }
 
 export function getFullbackName(firstName: string, lastName?: string) {

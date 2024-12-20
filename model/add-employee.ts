@@ -16,6 +16,7 @@ interface AddEmployeeState {
     key: keyof EmployeeForm,
     values: Partial<EmployeeForm[keyof EmployeeForm]>,
   ) => void;
+  reset: () => void;
 }
 
 // Create the Zustand store with typed state and actions
@@ -33,6 +34,14 @@ export const useAddEmployeeStore = create<AddEmployeeState>((set) => ({
           ...state.form[key],
           ...values,
         },
+      },
+    })),
+
+  reset: () =>
+    set(() => ({
+      form: {
+        personal: undefined,
+        salaryStructure: undefined,
       },
     })),
 }));

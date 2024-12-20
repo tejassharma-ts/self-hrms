@@ -175,7 +175,7 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
                 <TableCell>{col.leave_type}</TableCell>
                 <TableCell>{formatISODate(col.start_date)}</TableCell>
                 <TableCell>
-                  <span className="line-clamp-2">{col.reason}</span>
+                  <span className="line-clamp-2">{col.reason || "-"}</span>
                 </TableCell>
                 <TableCell>{col?.leave_duration ? col?.leave_duration + " days" : "-"}</TableCell>
                 <TableCell className="capitalize">
@@ -219,7 +219,9 @@ export default function EmployeeLeaveRequest({ leaveRequest }: EmployeeLeaveRequ
         </Table>
       </ScrollArea>
       {selectedLeaves.length ? (
-        <Button onClick={() => setShowBulkAction(true)} className="absolute -top-12 right-0">
+        <Button
+          onClick={() => setShowBulkAction(true)}
+          className="absolute -top-8 right-40 -translate-y-full">
           Bulk Action
         </Button>
       ) : null}

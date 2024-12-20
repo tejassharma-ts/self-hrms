@@ -36,30 +36,24 @@ const ComponentSalarySchema = z.object({
     )
     .optional(),
   allowances: z.string().optional(),
-  medical: z
-    .string()
-    .refine(
-      (val) => {
-        const parsed = parseFloat(val);
-        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
-      },
-      {
-        message: "Medical Insurance must be a positive number not exceeding 99,999,999.99.",
-      },
-    )
-    .optional(),
-  conveyance: z
-    .string()
-    .refine(
-      (val) => {
-        const parsed = parseFloat(val);
-        return !isNaN(parsed) && parsed > 0 && parsed <= 99999999.99;
-      },
-      {
-        message: "Conveyance must be a positive number not exceeding 99,999,999.99.",
-      },
-    )
-    .optional(),
+  medical: z.string().refine(
+    (val) => {
+      const parsed = parseFloat(val);
+      return !isNaN(parsed) && parsed >= 0 && parsed <= 99999999.99;
+    },
+    {
+      message: "Medical Insurance must be a positive number not exceeding 99,999,999.99.",
+    },
+  ),
+  conveyance: z.string().refine(
+    (val) => {
+      const parsed = parseFloat(val);
+      return !isNaN(parsed) && parsed >= 0 && parsed <= 99999999.99;
+    },
+    {
+      message: "Conveyance must be a positive number not exceeding 99,999,999.99.",
+    },
+  ),
   gratuity: z.string().optional(),
   has_lta: z.boolean().optional(),
   has_bonus: z.boolean().optional(),
@@ -78,15 +72,16 @@ type ComponentSalaryFormValues = z.infer<typeof ComponentSalarySchema>;
 const IsComponentBased = ({
   salaryStructure = undefined,
   employeeID,
+  showDefaultSettings,
 }: {
   salaryStructure: any;
   employeeID?: any;
+  showDefaultSettings: boolean;
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { form: formStore } = useAddEmployeeStore();
   const router = useRouter();
 
-  console.log({ salaryStructure });
   const form = useForm<ComponentSalaryFormValues>({
     resolver: zodResolver(ComponentSalarySchema),
     mode: "onChange",
@@ -111,6 +106,7 @@ const IsComponentBased = ({
   });
 
   useEffect(() => {
+    // form.reset();
     if (formStore.personal) {
       form.setValue("gross_salary", formStore.personal.salary);
     }
@@ -126,9 +122,9 @@ const IsComponentBased = ({
         is_gross_based: true,
         gross_salary: data.gross_salary,
         // hra: data.hra || "0",
-        conveyance: data.conveyance,
+        conveyance: parseFloat(data.conveyance) === 0 ? undefined : data.conveyance, // to preserve back-end calculation
         allowances: 0,
-        medical_insurance: data.medical,
+        medical_insurance: parseFloat(data.medical) === 0 ? undefined : data.medical, // same above
         gratuity: data.gratuity || "0",
         has_lta: data.has_lta,
         has_bonus: data.has_bonus,
@@ -158,10 +154,11 @@ const IsComponentBased = ({
     }
   }
 
-  const conveyanceChecked = form.watch("conveyance");
+  const conveyanceValue = form.watch("conveyance");
+  const conveyanceChecked = conveyanceValue ? parseFloat(conveyanceValue) > 0 : false;
   return (
     <>
-      <DefaultSetting />
+      {showDefaultSettings ? <DefaultSetting /> : null}
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-3">
@@ -234,33 +231,13 @@ const IsComponentBased = ({
                   />
                   <FormField
                     control={form.control}
-                    name="has_medical_allowance"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                              id="has_medical_allowance"
-                            />
-                          </FormControl>
-                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
-                            Medical Allowance
-                          </FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
                     name="has_conveyance"
                     render={({ field }) => (
                       <FormItem>
                         <div className="flex items-center gap-2">
                           <FormControl>
                             <Checkbox
-                              checked={!!conveyanceChecked || !!field.value}
+                              checked={!!conveyanceChecked || field.value}
                               onCheckedChange={field.onChange}
                               id="has_conveyance"
                             />
@@ -292,13 +269,33 @@ const IsComponentBased = ({
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="has_medical_allowance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_medical_allowance"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
+                            Medical Allowance
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <div className="mt-10 flex flex-col space-y-4">
                   {salaryStructure ? <h1>{formatCurrency(salaryStructure.basic_salary)}</h1> : null}
                   <h1>{formatCurrency(salaryStructure?.hra) || "-"}</h1>
-                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.conveyance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.special_allowance) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                 </div>
               </div>
 

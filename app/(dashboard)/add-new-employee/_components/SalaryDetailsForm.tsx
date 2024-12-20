@@ -1,13 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import IsGrossBased from "./IsGrossBased";
+import { cn } from "@/lib/utils";
 import IsComponentBased from "./IsComponentBased";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import useEmployeeStore from "@/model/employee";
 import { useAddEmployeeStore } from "@/model/add-employee";
+import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { Icons } from "@/components/Icons";
 
 type SalaryDetailsFormProps = {
   salaryStructure?: any;
@@ -51,12 +53,24 @@ export default function SalaryDetailsForm({ salaryStructure, employeeID }: Salar
       </div>
 
       <Card className="rounded-md">
+        <Link
+          href="/my-team?tab=staff-details"
+          className={cn(buttonVariants({ variant: "ghost", className: "m-2" }))}>
+          <Icons.left className="mr-2 text-muted-foreground" />
+          Staff Details Overview
+        </Link>
+
         <CardContent className="pt-6">
-          {salaryVariant === "gross-based" ? (
-            <IsGrossBased salaryStructure={salaryStructure} employeeID={employeeID} />
-          ) : (
-            <IsComponentBased salaryStructure={salaryStructure} employeeID={employeeID} />
-          )}
+          <IsComponentBased
+            salaryStructure={salaryStructure}
+            employeeID={employeeID}
+            showDefaultSettings={salaryVariant !== "gross-based"}
+          />
+
+          {/* {salaryVariant === "gross-based" ? ( */}
+          {/*   <IsGrossBased salaryStructure={salaryStructure} employeeID={employeeID} /> */}
+          {/* ) : ( */}
+          {/* )} */}
         </CardContent>
       </Card>
     </>

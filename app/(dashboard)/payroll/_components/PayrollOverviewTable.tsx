@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -89,6 +90,10 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
   const router = useRouter();
   const handleGeneratePaySlip = async (payroll: Payroll) => {
     setIsLoading(true);
+    toast({
+      description: "Processing your request",
+      variant: "default",
+    });
     let pdfBlob;
     try {
       pdfBlob = await pdf(<MyDoc selectedPayroll={payroll} />).toBlob();
@@ -127,73 +132,69 @@ export const PayrollOverviewTable = ({ payrollData }: { payrollData: Payroll[] }
   };
 
   return (
-    <div className="w-full rounded-md border">
-      <Table className="w-full overflow-x-scroll">
-        <TableHeader>
-          <TableRow className="bg-black text-white hover:bg-black">
-            {tableHeadValues.map((value, index) => (
-              <TableHead key={index} className="whitespace-nowrap px-4 py-2 text-white">
-                {value === "Special Allowance" ? "Other Allowance" : value}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {payrollData.map((eachPayroll: Payroll) => (
-            <TableRow key={eachPayroll.id}>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {eachPayroll.employee.first_name} {eachPayroll.employee.last_name}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {eachPayroll.employee.id}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {" "}
-                {formatCurrency(parseInt(eachPayroll?.hra)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.allowances)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(eachPayroll?.bonus) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.special_allowance)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.esi_contribution)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.expense_reimbursement)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.arrears_amount)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.gross_salary)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                {formatCurrency(parseInt(eachPayroll?.in_hand_salary)) || "N/A"}
-              </TableCell>
-              <TableCell className="whitespace-nowrap px-4 py-2">
-                <Button
-                  variant="ghost"
-                  disabled={eachPayroll.slip_sent_status}
-                  onClick={() => handleGeneratePaySlip(eachPayroll)}>
-                  {eachPayroll.slip_sent_status ? (
-                    <span>Sent</span>
-                  ) : (
-                    <>
-                      {isLoading && <Icons.loader />}
-                      Send
-                    </>
-                  )}
-                </Button>
-              </TableCell>
+    <div className="mt-4 w-full rounded-md border">
+      <ScrollArea className="w-full whitespace-nowrap rounded-md border bg-white">
+        <Table className="w-full overflow-x-scroll">
+          <TableHeader>
+            <TableRow className="bg-black text-white hover:bg-black">
+              {tableHeadValues.map((value, index) => (
+                <TableHead key={index} className="whitespace-nowrap px-4 py-2 text-white">
+                  {value === "Special Allowance" ? "Other Allowance" : value}
+                </TableHead>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {payrollData.map((eachPayroll: Payroll) => (
+              <TableRow key={eachPayroll.id}>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {eachPayroll.employee.first_name} {eachPayroll.employee.last_name}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {eachPayroll.employee.id}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {" "}
+                  {formatCurrency(parseInt(eachPayroll?.hra)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.allowances)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(eachPayroll?.bonus) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.special_allowance)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.esi_contribution)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.expense_reimbursement)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.arrears_amount)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.gross_salary)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  {formatCurrency(parseInt(eachPayroll?.in_hand_salary)) || "N/A"}
+                </TableCell>
+                <TableCell className="whitespace-nowrap px-4 py-2">
+                  <Button
+                    variant="ghost"
+                    disabled={eachPayroll.slip_sent_status || isLoading}
+                    onClick={() => handleGeneratePaySlip(eachPayroll)}>
+                    {eachPayroll.slip_sent_status ? "Sent" : "Send"}
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 };

@@ -72,15 +72,6 @@ export default function AttendanceRecordTable() {
     fetchRecords();
   }, [selectedYear, selectedMonth]);
 
-  if (!reportData) return null;
-
-  const { from_date, to_date, employee_reports } = reportData;
-
-  const dateRange = eachDayOfInterval({
-    start: parseISO(from_date),
-    end: parseISO(to_date),
-  });
-
   function formatHour(totalHours: number) {
     const hours = Math.floor(totalHours);
     const minutes = Math.round((totalHours - hours) * 60);
@@ -88,7 +79,24 @@ export default function AttendanceRecordTable() {
     return `${minutes} mins`;
   }
 
-  const formattedDates = dateRange.map((date) => format(date, "yyyy-MM-dd"));
+  let from_date;
+  let to_date;
+  let employee_reports;
+  let dateRange;
+  let formattedDates: string[] = [];
+
+  if (reportData) {
+    from_date = reportData.from_date;
+    to_date = reportData.to_date;
+    employee_reports = reportData.employee_reports;
+
+    dateRange = eachDayOfInterval({
+      start: parseISO(from_date),
+      end: parseISO(to_date),
+    });
+
+    formattedDates = dateRange.map((date) => format(date, "yyyy-MM-dd"));
+  }
 
   return (
     <div className="flex flex-col space-y-4">
@@ -117,7 +125,7 @@ export default function AttendanceRecordTable() {
               <TableHead>Designation</TableHead>
               <TableHead>Total Hours</TableHead>
               <TableHead>Days Attended</TableHead>
-              {formattedDates.map((date) => (
+              {formattedDates?.map((date) => (
                 <TableHead key={date} className="whitespace-nowrap">
                   {format(date, "dd MMM")}
                 </TableHead>
@@ -125,7 +133,7 @@ export default function AttendanceRecordTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {employee_reports.map((employee) => (
+            {employee_reports?.map((employee) => (
               <TableRow key={employee.employee}>
                 <TableCell>{employee.name}</TableCell>
                 <TableCell>{employee.department}</TableCell>
@@ -138,7 +146,7 @@ export default function AttendanceRecordTable() {
                   const attendance = employee.attendance.find((att) => att.date === date);
                   return (
                     <TableCell key={date} className="whitespace-nowrap">
-                      {attendance ? attendance.status : "Absent"}
+                      {attendance ? attendance.status : "-"}
                     </TableCell>
                   );
                 })}
