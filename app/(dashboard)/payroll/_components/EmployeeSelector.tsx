@@ -88,7 +88,6 @@ export default function EmployeeSelector({ defaultValue, onChange }: DepartmentS
                 onSelect={(currentValue) => {
                   setValue(currentValue === value ? "" : currentValue);
                   setIsOpen(false);
-                  console.log(currentValue);
                   onChange(currentValue);
                 }}>
                 <Avatar>

@@ -7,6 +7,16 @@ import CustomCalendar from "./CustomCalender";
 import { LeavesDataApi } from "@/types/dashboard";
 import EmployeeLeaveRequest from "./EmployeeLeaveRequest";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import LeaveAssignmentForm from "./LeaveAssignmentForm";
 
 type ActiveTab = "leave-request" | "on-leave" | "calender";
 
@@ -19,6 +29,7 @@ type TabsWrapperProps = {
 };
 
 export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
+  const [open, setOpen] = useState(false);
   const [currentTab, setCurrentTab] = useState<ActiveTab>(activeTab);
 
   useEffect(() => {
@@ -45,12 +56,20 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
   return (
     <Card className="shadow-none">
       <Tabs value={currentTab} onValueChange={onTabChange} defaultValue={currentTab}>
-        <CardHeader className="relative">
-          <TabsList className="self-start">
+        <CardHeader className="relative flex-row items-center justify-between">
+          <TabsList className="">
             <TabsTrigger value="leave-request">Leave Request</TabsTrigger>
-            <TabsTrigger value="on-leave">On Leave</TabsTrigger>
+            {/* <TabsTrigger value="on-leave">On Leave</TabsTrigger> */}
             <TabsTrigger value="calender">Calender</TabsTrigger>
           </TabsList>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">Create Leave</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <LeaveAssignmentForm open={open} setOpen={setOpen} />
+            </DialogContent>
+          </Dialog>
         </CardHeader>
         <CardContent className="relative pt-0">
           <TabsContent value="leave-request">
@@ -60,13 +79,13 @@ export function TabsWrapper({ activeTab, leaveRequestData }: TabsWrapperProps) {
               }
             />
           </TabsContent>
-          <TabsContent value="on-leave">
-            <EmployeeLeaveRequest
-              leaveRequest={
-                leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null
-              }
-            />
-          </TabsContent>
+          {/* <TabsContent value="on-leave"> */}
+          {/*   <EmployeeLeaveRequest */}
+          {/*     leaveRequest={ */}
+          {/*       leaveRequestData?.leaves_request ? leaveRequestData.leaves_request : null */}
+          {/*     } */}
+          {/*   /> */}
+          {/* </TabsContent> */}
           <TabsContent value="calender">
             <CustomCalendar />
           </TabsContent>

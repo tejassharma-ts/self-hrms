@@ -231,26 +231,6 @@ const IsComponentBased = ({
                   />
                   <FormField
                     control={form.control}
-                    name="has_medical_allowance"
-                    render={({ field }) => (
-                      <FormItem>
-                        <div className="flex items-center gap-2">
-                          <FormControl>
-                            <Checkbox
-                              checked={!!field.value}
-                              onCheckedChange={field.onChange}
-                              id="has_medical_allowance"
-                            />
-                          </FormControl>
-                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
-                            Medical Allowance
-                          </FormLabel>
-                        </div>
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
                     name="has_conveyance"
                     render={({ field }) => (
                       <FormItem>
@@ -289,13 +269,33 @@ const IsComponentBased = ({
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="has_medical_allowance"
+                    render={({ field }) => (
+                      <FormItem>
+                        <div className="flex items-center gap-2">
+                          <FormControl>
+                            <Checkbox
+                              checked={!!field.value}
+                              onCheckedChange={field.onChange}
+                              id="has_medical_allowance"
+                            />
+                          </FormControl>
+                          <FormLabel htmlFor="has_medical_allowance" className="text-base">
+                            Medical Allowance
+                          </FormLabel>
+                        </div>
+                      </FormItem>
+                    )}
+                  />
                 </div>
                 <div className="mt-10 flex flex-col space-y-4">
                   {salaryStructure ? <h1>{formatCurrency(salaryStructure.basic_salary)}</h1> : null}
                   <h1>{formatCurrency(salaryStructure?.hra) || "-"}</h1>
-                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.conveyance) || "-"}</h1>
                   <h1>{formatCurrency(salaryStructure?.special_allowance) || "-"}</h1>
+                  <h1>{formatCurrency(salaryStructure?.med_allowance) || "-"}</h1>
                 </div>
               </div>
 

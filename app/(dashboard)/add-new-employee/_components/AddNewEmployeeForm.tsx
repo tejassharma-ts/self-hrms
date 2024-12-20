@@ -291,7 +291,6 @@ export default function AddNewEmployeeForm({ employee }: { employee?: any }) {
 
   const profile = fileRejections.length === 0 && form.getValues("profile_picture");
 
-  console.log({ employee });
   return (
     <Card className="rounded-md">
       <CardContent className="pt-6">

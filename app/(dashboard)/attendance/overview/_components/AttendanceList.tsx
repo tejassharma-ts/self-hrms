@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Table,
   TableBody,
@@ -52,7 +53,7 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
           <Button
             variant={"outline"}
             className={cn(
-              "w-[280px] justify-start rounded-sm text-left font-normal",
+              "w-[280px] justify-start rounded-sm text-left font-normal bg-white",
               !date && "text-muted-foreground",
             )}>
             <CalendarIcon className="mr-2 h-4 w-4" />
@@ -65,34 +66,37 @@ export default function AttendanceList({ attendances }: AttendanceListProps) {
       </Popover>
       {/* <p className="mb-4 text-sm text-gray-500">Date- {new Date().toLocaleDateString()}</p> */}
 
-      <Table className="mt-5">
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-gray-400">Employee ID</TableHead>
-            <TableHead className="text-gray-400">Name</TableHead>
-            <TableHead className="text-gray-400">Department</TableHead>
-            <TableHead className="text-gray-400">Log In Time</TableHead>
-            <TableHead className="text-gray-400">Log Out Time</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {attendances.employees.map((employee: any) => (
-            <TableRow key={employee.id}>
-              <TableCell>{employee.id.replaceAll("-", " ")}</TableCell>
-              <TableCell className="whitespace-nowrap">
-                {getFullName(employee.first_name, employee.last_name)}
-              </TableCell>
-              <TableCell>{employee.department.depart_name}</TableCell>
-              <TableCell className="text-green-500">
-                {formatTime(employee.check_in_time) || "-"}
-              </TableCell>
-              <TableCell className="text-red-500">
-                {formatTime(employee.check_out_time) || "-"}
-              </TableCell>
+      <ScrollArea className="w-full whitespace-nowrap rounded-md border bg-white">
+        <Table className="">
+          <TableHeader>
+            <TableRow>
+              <TableHead className="">Employee ID</TableHead>
+              <TableHead className="">Name</TableHead>
+              <TableHead className="">Department</TableHead>
+              <TableHead className="">Log In Time</TableHead>
+              <TableHead className="">Log Out Time</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {attendances.employees.map((employee: any) => (
+              <TableRow key={employee.id}>
+                <TableCell>{employee.id.replaceAll("-", " ")}</TableCell>
+                <TableCell className="whitespace-nowrap">
+                  {getFullName(employee.first_name, employee.last_name)}
+                </TableCell>
+                <TableCell>{employee.department.depart_name}</TableCell>
+                <TableCell className="text-green-500">
+                  {formatTime(employee.check_in_time) || "-"}
+                </TableCell>
+                <TableCell className="text-red-500">
+                  {formatTime(employee.check_out_time) || "-"}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 }
